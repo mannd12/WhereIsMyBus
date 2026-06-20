@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapView, { Polyline, type Region } from 'react-native-maps';
+import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { useLocation } from '../../hooks/useLocation';
 import { useNearbyStops } from '../../hooks/useNearbyStops';
@@ -40,7 +41,26 @@ function isNightBus(s: NearbyStop) { return /\bNight\b/i.test(s.stop_name); }
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: c.background },
+    mapWrap: { flex: 1 },
     map: { flex: 1 },
+    myLocBtn: {
+      position: 'absolute',
+      right: 16,
+      bottom: 16,
+      width: 46,
+      height: 46,
+      borderRadius: 23,
+      backgroundColor: c.surface,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: c.border,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      elevation: 5,
+    },
     zoomHint: {
       position: 'absolute',
       alignSelf: 'center',
@@ -212,12 +232,26 @@ export default function NearbyScreen() {
     setSelectedRouteId(null);
   }, []);
 
+  const goToMyLocation = useCallback(() => {
+    if (!location) return;
+    mapRef.current?.animateToRegion(
+      {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.008,
+        longitudeDelta: 0.008,
+      },
+      450,
+    );
+  }, [location]);
+
   const handleViewArrivals = useCallback((stop: NearbyStop) => {
     router.push(`/stop/${stop.stop_id}`);
   }, []);
 
   return (
     <View style={styles.container}>
+      <View style={styles.mapWrap}>
       {tabFocused && <MapView
         ref={mapRef}
         style={styles.map}
@@ -275,6 +309,18 @@ export default function NearbyScreen() {
           );
         })}
       </MapView>}
+
+        {location && (
+          <TouchableOpacity
+            style={styles.myLocBtn}
+            onPress={goToMyLocation}
+            activeOpacity={0.85}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="locate" size={22} color={Colors.primary} />
+          </TouchableOpacity>
+        )}
+      </View>
 
       <RouteFilterBar active={activeFilter} onChange={setActiveFilter} />
 

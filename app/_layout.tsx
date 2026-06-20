@@ -2,6 +2,7 @@ import { Stack, router, useSegments } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useEffect } from 'react';
+import * as Location from 'expo-location';
 import { useSettingsStore } from '../store/settings';
 
 const queryClient = new QueryClient({
@@ -27,6 +28,11 @@ function AuthGuard() {
 }
 
 export default function RootLayout() {
+  // Ask for location permission up front, as soon as the app launches.
+  useEffect(() => {
+    Location.requestForegroundPermissionsAsync().catch(() => {});
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
