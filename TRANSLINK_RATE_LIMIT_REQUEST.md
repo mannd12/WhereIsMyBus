@@ -1,11 +1,14 @@
 # TransLink API — Rate Limit Increase Request
 
-**How to send:** TransLink's Open API is managed at developer.translink.ca.
-Send this from the email tied to your developer account. The usual contact
-is the developer-program support address (check the portal's "Contact"/
-"Support" page for the current address — often `opendata@translink.ca` or a
-form on the site). Sending from your registered account email helps them
-match it to your app/key.
+**How to send (TransLink has no public developer-support email):**
+Best options, in order —
+1. **Reply to your API-key registration email** from developer.translink.ca
+   (the confirmation/welcome email you received when you registered). It's a
+   real monitored address and is already tied to your account/key. Paste the
+   message below as your reply.
+2. **Use the feedback form** at https://www.translink.ca/feedback — choose an
+   "App developer / Open API" type category if offered, and paste the message.
+Send from the email registered to your API key so they can match it.
 
 ---
 

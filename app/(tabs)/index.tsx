@@ -257,6 +257,7 @@ export default function NearbyScreen() {
               stop={stop}
               selected={selectedStop?.stop_id === stop.stop_id}
               onPress={handleStopPress}
+              onViewArrivals={handleViewArrivals}
             />
           ))}
 

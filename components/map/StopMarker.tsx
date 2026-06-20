@@ -7,9 +7,10 @@ interface Props {
   stop: NearbyStop;
   selected: boolean;
   onPress: (stop: NearbyStop) => void;
+  onViewArrivals?: (stop: NearbyStop) => void;
 }
 
-export function StopMarker({ stop, selected, onPress }: Props) {
+export function StopMarker({ stop, selected, onPress, onViewArrivals }: Props) {
   const primaryType = stop.route_types[0] ?? 3;
   const color = getRouteColor(primaryType);
 
@@ -22,9 +23,14 @@ export function StopMarker({ stop, selected, onPress }: Props) {
       <View style={[styles.pin, { backgroundColor: color }, selected && styles.pinSelected]}>
         <View style={styles.dot} />
       </View>
-      <Callout>
-        <Text style={styles.calloutText}>{stop.stop_name}</Text>
-        <Text style={styles.calloutSub}>Stop #{stop.stop_id}</Text>
+      <Callout onPress={() => onViewArrivals?.(stop)}>
+        <View style={styles.callout}>
+          <Text style={styles.calloutText}>{stop.stop_name}</Text>
+          <Text style={styles.calloutSub}>Stop #{stop.stop_id}</Text>
+          <View style={styles.calloutBtn}>
+            <Text style={styles.calloutBtnText}>Track buses →</Text>
+          </View>
+        </View>
       </Callout>
     </Marker>
   );
@@ -51,6 +57,10 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: '#fff',
   },
-  calloutText: { fontWeight: '600', fontSize: 13, maxWidth: 180 },
-  calloutSub: { color: '#666', fontSize: 11 },
+  // Explicit width keeps the iOS callout from collapsing to one-letter-per-line.
+  callout: { width: 210, paddingVertical: 2, paddingHorizontal: 2 },
+  calloutText: { fontWeight: '700', fontSize: 14, color: '#111', lineHeight: 18 },
+  calloutSub: { color: '#666', fontSize: 12, marginTop: 2 },
+  calloutBtn: { marginTop: 6 },
+  calloutBtnText: { color: '#005CA9', fontWeight: '700', fontSize: 13 },
 });

@@ -1,13 +1,36 @@
-import { useMemo } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import MapView, { Polyline, Marker } from 'react-native-maps';
+import { useMemo, useRef, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import MapView, { Polyline, Marker, type Region } from 'react-native-maps';
 import { useLocalSearchParams, Stack } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useVehiclePositions } from '../../hooks/useVehiclePositions';
 import { getRouteShape } from '../../services/gtfsStatic';
 import { CountdownBadge } from '../../components/ui/CountdownBadge';
 import { RouteChip } from '../../components/ui/RouteChip';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
+
+/** Bright yellow blinking beacon so the live bus is instantly findable on the map. */
+function BlinkingBeacon() {
+  const [on, setOn] = useState(true);
+  useEffect(() => {
+    const id = setInterval(() => setOn((o) => !o), 500);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <View style={beaconStyles.wrap}>
+      <View
+        style={[
+          beaconStyles.halo,
+          { opacity: on ? 0.8 : 0.15, transform: [{ scale: on ? 1 : 0.5 }] },
+        ]}
+      />
+      <View style={beaconStyles.ring}>
+        <View style={beaconStyles.core} />
+      </View>
+    </View>
+  );
+}
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -34,6 +57,24 @@ const makeStyles = (c: ThemeColors) =>
     },
     noVehicleText: { color: '#fff', fontSize: 12 },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
+    recenter: {
+      position: 'absolute',
+      right: 16,
+      bottom: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      backgroundColor: c.surface,
+      borderRadius: 22,
+      paddingVertical: 9,
+      paddingHorizontal: 14,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      elevation: 4,
+    },
+    recenterText: { fontSize: 13, fontWeight: '700', color: c.text },
   });
 
 export default function TripDetailScreen() {
@@ -49,6 +90,8 @@ export default function TripDetailScreen() {
 
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+  const mapRef = useRef<MapView>(null);
+  const hasCentered = useRef(false);
 
   const { data: vehicles, isLoading } = useVehiclePositions();
   const vehicle = vehicles?.find((v) => v.tripId === tripId) ?? null;
@@ -58,12 +101,12 @@ export default function TripDetailScreen() {
 
   const routeColor = `#${Colors.primary.replace('#', '')}`;
 
-  const initialRegion = vehicle
+  const initialRegion: Region = vehicle
     ? {
         latitude: vehicle.latitude,
         longitude: vehicle.longitude,
-        latitudeDelta: 0.04,
-        longitudeDelta: 0.04,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
       }
     : shapeCoords.length > 0
       ? {
@@ -73,6 +116,36 @@ export default function TripDetailScreen() {
           longitudeDelta: 0.15,
         }
       : { latitude: 49.2827, longitude: -123.1207, latitudeDelta: 0.1, longitudeDelta: 0.1 };
+
+  // Center on the bus once, the first time its position is available
+  // (covers the case where live data arrives after the map mounts).
+  useEffect(() => {
+    if (vehicle && !hasCentered.current) {
+      hasCentered.current = true;
+      mapRef.current?.animateToRegion(
+        {
+          latitude: vehicle.latitude,
+          longitude: vehicle.longitude,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        },
+        600,
+      );
+    }
+  }, [vehicle?.latitude, vehicle?.longitude]);
+
+  const recenter = () => {
+    if (!vehicle) return;
+    mapRef.current?.animateToRegion(
+      {
+        latitude: vehicle.latitude,
+        longitude: vehicle.longitude,
+        latitudeDelta: 0.012,
+        longitudeDelta: 0.012,
+      },
+      400,
+    );
+  };
 
   const eta = arrivalTime ? parseInt(arrivalTime, 10) : null;
 
@@ -95,22 +168,19 @@ export default function TripDetailScreen() {
         }}
       />
 
-      <MapView style={styles.map} initialRegion={initialRegion} showsUserLocation>
+      <MapView ref={mapRef} style={styles.map} initialRegion={initialRegion} showsUserLocation>
         {shapeCoords.length > 0 && (
-          <Polyline
-            coordinates={shapeCoords}
-            strokeColor={routeColor}
-            strokeWidth={3}
-            lineDashPattern={undefined}
-          />
+          <Polyline coordinates={shapeCoords} strokeColor={routeColor} strokeWidth={3} />
         )}
 
         {vehicle && (
           <Marker
             coordinate={{ latitude: vehicle.latitude, longitude: vehicle.longitude }}
             anchor={{ x: 0.5, y: 0.5 }}
+            tracksViewChanges
+            zIndex={999}
           >
-            <View style={vehicleStyles.dot} />
+            <BlinkingBeacon />
           </Marker>
         )}
       </MapView>
@@ -119,6 +189,13 @@ export default function TripDetailScreen() {
         <View style={styles.noVehicle}>
           <Text style={styles.noVehicleText}>No live vehicle data for this trip</Text>
         </View>
+      )}
+
+      {vehicle && (
+        <TouchableOpacity style={styles.recenter} onPress={recenter} activeOpacity={0.8}>
+          <Ionicons name="locate" size={16} color={Colors.primary} />
+          <Text style={styles.recenterText}>Find bus</Text>
+        </TouchableOpacity>
       )}
 
       <View style={styles.panel}>
@@ -146,13 +223,29 @@ export default function TripDetailScreen() {
   );
 }
 
-const vehicleStyles = StyleSheet.create({
-  dot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: Colors.primary,
-    borderWidth: 2,
-    borderColor: '#fff',
+const beaconStyles = StyleSheet.create({
+  wrap: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
+  halo: {
+    position: 'absolute',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FFD400',
+  },
+  ring: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  core: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#FFD400',
+    borderWidth: 1.5,
+    borderColor: '#1A1A1A',
   },
 });
