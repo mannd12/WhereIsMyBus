@@ -288,7 +288,7 @@ export default function TripDetailScreen() {
             color={Colors.primary.replace('#', '')}
             textColor="FFFFFF"
           />
-          <Text style={styles.headsign} numberOfLines={1}>
+          <Text style={styles.headsign} numberOfLines={2}>
             {headsign || 'In service'}
           </Text>
           {eta && <CountdownBadge arrivalTime={eta} />}

@@ -59,10 +59,22 @@ export default function RouteDetailScreen() {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          title: route ? `${route.route_short_name} — ${route.route_long_name}` : 'Route',
+          title: route ? `Route ${route.route_short_name}` : 'Route',
           headerStyle: { backgroundColor: Colors.primary },
           headerTintColor: '#fff',
           headerTitleStyle: { fontWeight: '700' },
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                if (router.canGoBack()) router.back();
+                else router.replace('/(tabs)');
+              }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              style={{ marginRight: 4 }}
+            >
+              <Ionicons name="close" size={24} color="#fff" />
+            </TouchableOpacity>
+          ),
         }}
       />
 

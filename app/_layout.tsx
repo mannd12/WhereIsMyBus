@@ -50,6 +50,17 @@ export default function RootLayout() {
               headerTitleStyle: { fontWeight: '700' },
             }}
           />
+          <Stack.Screen
+            name="route/[routeId]"
+            options={{
+              presentation: 'modal',
+              headerShown: true,
+              title: 'Route',
+              headerStyle: { backgroundColor: '#005CA9' },
+              headerTintColor: '#fff',
+              headerTitleStyle: { fontWeight: '700' },
+            }}
+          />
           <Stack.Screen name="setup" options={{ headerShown: false }} />
         </Stack>
       </QueryClientProvider>
