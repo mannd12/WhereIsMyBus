@@ -4,11 +4,26 @@ import MapView, { Polyline, Marker, type Region } from 'react-native-maps';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useVehiclePositions } from '../../hooks/useVehiclePositions';
-import { getRouteShape } from '../../services/gtfsStatic';
+import { getRouteShape, getStop } from '../../services/gtfsStatic';
+import { haversineDistance } from '../../services/translink';
 import { CountdownBadge } from '../../components/ui/CountdownBadge';
 import { RouteChip } from '../../components/ui/RouteChip';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
+
+/** Index of the route-shape point nearest a given lat/lon. */
+function nearestShapeIndex(shape: [number, number][], lat: number, lon: number): number {
+  let best = 0;
+  let bestD = Infinity;
+  for (let i = 0; i < shape.length; i++) {
+    const d = haversineDistance(lat, lon, shape[i][0], shape[i][1]);
+    if (d < bestD) {
+      bestD = d;
+      best = i;
+    }
+  }
+  return best;
+}
 
 /** Bright yellow blinking beacon so the live bus is instantly findable on the map. */
 function BlinkingBeacon() {
@@ -78,7 +93,7 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 export default function TripDetailScreen() {
-  const { tripId, routeId, routeShortName, headsign, arrivalTime, stopName } =
+  const { tripId, routeId, routeShortName, headsign, arrivalTime, stopName, stopId } =
     useLocalSearchParams<{
       tripId: string;
       routeId: string;
@@ -86,6 +101,7 @@ export default function TripDetailScreen() {
       headsign: string;
       arrivalTime: string;
       stopName: string;
+      stopId: string;
     }>();
 
   const c = useThemeColors();
@@ -98,6 +114,18 @@ export default function TripDetailScreen() {
 
   const shape = useMemo(() => getRouteShape(routeId ?? ''), [routeId]);
   const shapeCoords = shape.map(([latitude, longitude]) => ({ latitude, longitude }));
+
+  const stop = stopId ? getStop(stopId) : undefined;
+
+  // Red "upcoming path": the slice of the route between the bus and your stop.
+  const redPath = useMemo(() => {
+    if (!vehicle || !stop || shape.length < 2) return [];
+    const vIdx = nearestShapeIndex(shape, vehicle.latitude, vehicle.longitude);
+    const sIdx = nearestShapeIndex(shape, stop.stop_lat, stop.stop_lon);
+    const lo = Math.min(vIdx, sIdx);
+    const hi = Math.max(vIdx, sIdx);
+    return shape.slice(lo, hi + 1).map(([latitude, longitude]) => ({ latitude, longitude }));
+  }, [vehicle?.latitude, vehicle?.longitude, stop, shape]);
 
   const routeColor = `#${Colors.primary.replace('#', '')}`;
 
@@ -173,6 +201,30 @@ export default function TripDetailScreen() {
           <Polyline coordinates={shapeCoords} strokeColor={routeColor} strokeWidth={3} />
         )}
 
+        {/* Red upcoming path: bus → your stop */}
+        {redPath.length > 1 && (
+          <Polyline coordinates={redPath} strokeColor="#E4002B" strokeWidth={5} zIndex={3} />
+        )}
+
+        {/* The stop you're tracking */}
+        {stop && (
+          <Marker
+            coordinate={{ latitude: stop.stop_lat, longitude: stop.stop_lon }}
+            anchor={{ x: 0.5, y: 1 }}
+            tracksViewChanges={false}
+            zIndex={998}
+          >
+            <View style={stopPinStyles.wrap}>
+              <View style={stopPinStyles.label}>
+                <Text style={stopPinStyles.labelText} numberOfLines={1}>
+                  Your stop
+                </Text>
+              </View>
+              <View style={stopPinStyles.dot} />
+            </View>
+          </Marker>
+        )}
+
         {vehicle && (
           <Marker
             coordinate={{ latitude: vehicle.latitude, longitude: vehicle.longitude }}
@@ -222,6 +274,26 @@ export default function TripDetailScreen() {
     </View>
   );
 }
+
+const stopPinStyles = StyleSheet.create({
+  wrap: { alignItems: 'center' },
+  label: {
+    backgroundColor: '#005CA9',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    marginBottom: 3,
+  },
+  labelText: { color: '#fff', fontSize: 11, fontWeight: '700' },
+  dot: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#fff',
+    borderWidth: 4,
+    borderColor: '#005CA9',
+  },
+});
 
 const beaconStyles = StyleSheet.create({
   wrap: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },

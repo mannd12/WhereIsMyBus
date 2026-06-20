@@ -74,17 +74,29 @@ export default function StopDetailScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      title: stop?.stop_name ?? `Stop #${stopId}`,
-      headerRight: () => (
+      title: 'Arrivals',
+      headerBackVisible: false,
+      // Bookmark (star) on the LEFT
+      headerLeft: () => (
         <TouchableOpacity
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
             toggleFav(stopId ?? '');
           }}
+          style={{ marginLeft: 4, paddingRight: 12 }}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Ionicons name={isFav ? 'star' : 'star-outline'} size={24} color={isFav ? '#FFB800' : '#fff'} />
+        </TouchableOpacity>
+      ),
+      // Clear close (X) on the RIGHT
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
           style={{ marginRight: 4 }}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Ionicons name={isFav ? 'star' : 'star-outline'} size={22} color={isFav ? '#FFB800' : '#fff'} />
+          <Ionicons name="close" size={26} color="#fff" />
         </TouchableOpacity>
       ),
     });
@@ -162,7 +174,7 @@ export default function StopDetailScreen() {
               <Text style={styles.emptyText}>No real-time arrivals in the next hour.</Text>
             </View>
           }
-          renderItem={({ item }) => <ArrivalRow arrival={item} stopName={stop?.stop_name} />}
+          renderItem={({ item }) => <ArrivalRow arrival={item} stopName={stop?.stop_name} stopId={stopId} />}
         />
       )}
     </View>

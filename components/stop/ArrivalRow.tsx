@@ -11,6 +11,7 @@ import { scheduleArrivalNotification, isScheduled } from '../../services/notific
 interface Props {
   arrival: Arrival;
   stopName?: string;
+  stopId?: string;
 }
 
 function NotifyButton({ arrival, stopName }: { arrival: Arrival; stopName?: string }) {
@@ -67,7 +68,7 @@ const makeStyles = (c: ThemeColors) =>
     },
   });
 
-export function ArrivalRow({ arrival, stopName }: Props) {
+export function ArrivalRow({ arrival, stopName, stopId }: Props) {
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
 
@@ -77,7 +78,7 @@ export function ArrivalRow({ arrival, stopName }: Props) {
       activeOpacity={0.7}
       onPress={() =>
         router.push(
-          `/trip/${arrival.tripId}?routeId=${arrival.routeId}&routeShortName=${encodeURIComponent(arrival.routeShortName)}&headsign=${encodeURIComponent(arrival.headsign)}&arrivalTime=${arrival.arrivalTime}&stopName=${encodeURIComponent(stopName ?? '')}`,
+          `/trip/${arrival.tripId}?routeId=${arrival.routeId}&routeShortName=${encodeURIComponent(arrival.routeShortName)}&headsign=${encodeURIComponent(arrival.headsign)}&arrivalTime=${arrival.arrivalTime}&stopName=${encodeURIComponent(stopName ?? '')}&stopId=${encodeURIComponent(stopId ?? '')}`,
         )
       }
     >
