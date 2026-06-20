@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapView, { Polyline, type Region } from 'react-native-maps';
@@ -9,7 +9,7 @@ import { StopMarker } from '../../components/map/StopMarker';
 import { VehicleMarker } from '../../components/map/VehicleMarker';
 import { RouteFilterBar, type RouteFilter } from '../../components/map/RouteFilterBar';
 import { useVehiclePositions } from '../../hooks/useVehiclePositions';
-import type { NearbyStop } from '../../types/translink';
+import type { NearbyStop, VehiclePosition } from '../../types/translink';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
 import { getRouteColor, ROUTE_TYPE_SUBWAY, ROUTE_TYPE_FERRY, ROUTE_TYPE_RAIL } from '../../constants/routeTypes';
@@ -52,6 +52,37 @@ const makeStyles = (c: ThemeColors) =>
     zoomHintText: { color: '#fff', fontSize: 12, fontWeight: '500' },
     banner: { backgroundColor: '#FFF3CD', paddingHorizontal: 16, paddingVertical: 8 },
     bannerText: { fontSize: 13, color: '#7B5800' },
+    routeBanner: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      backgroundColor: c.surface,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: c.border,
+    },
+    routeBadge: {
+      minWidth: 44,
+      paddingHorizontal: 8,
+      height: 30,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    routeBadgeText: { color: '#fff', fontWeight: '800', fontSize: 15 },
+    routeBannerBody: { flex: 1 },
+    routeBannerName: { fontSize: 14, fontWeight: '600', color: c.text },
+    routeBannerSub: { fontSize: 12, color: c.textSecondary, marginTop: 1 },
+    routeBannerClose: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: c.background,
+    },
+    routeBannerCloseText: { fontSize: 14, color: c.textSecondary, fontWeight: '700' },
     panel: {
       backgroundColor: c.surface,
       borderTopLeftRadius: 16,
@@ -75,7 +106,7 @@ const makeStyles = (c: ThemeColors) =>
     },
     listPadding: { paddingHorizontal: 12, paddingBottom: 4 },
     stopCard: {
-      width: 140,
+      width: 172,
       backgroundColor: c.background,
       borderRadius: 12,
       padding: 12,
@@ -100,6 +131,8 @@ export default function NearbyScreen() {
   const [activeFilter, setActiveFilter] = useState<RouteFilter>('all');
   const [currentRegion, setCurrentRegion] = useState<Region>(VANCOUVER_REGION);
   const [tabFocused, setTabFocused] = useState(true);
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
+  const [blinkOn, setBlinkOn] = useState(true);
   const mapRef = useRef<MapView>(null);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
@@ -109,6 +142,14 @@ export default function NearbyScreen() {
     setTabFocused(true);
     return () => setTabFocused(false);
   }, []));
+
+  // Blink the selected route's live buses on/off while a route is selected.
+  useEffect(() => {
+    if (!selectedRouteId) return;
+    setBlinkOn(true);
+    const id = setInterval(() => setBlinkOn((b) => !b), 550);
+    return () => clearInterval(id);
+  }, [selectedRouteId]);
 
   const nearbyStops = useNearbyStops(location);
   const { data: vehicles } = useVehiclePositions();
@@ -136,12 +177,39 @@ export default function NearbyScreen() {
     }).filter((s) => s.coords.length > 0);
   }, [selectedStop]);
 
+  // Selected route: full shape + how many of its buses are live right now.
+  const selectedRoute = selectedRouteId ? getRoute(selectedRouteId) : undefined;
+  const selectedRouteShape = useMemo(() => {
+    if (!selectedRouteId) return null;
+    const route = getRoute(selectedRouteId);
+    const color = route?.route_color ? `#${route.route_color}` : Colors.primary;
+    const shape = getRouteShape(selectedRouteId);
+    return { color, coords: shape.map(([lat, lon]) => ({ latitude: lat, longitude: lon })) };
+  }, [selectedRouteId]);
+  const routeColor = selectedRouteShape?.color ?? Colors.primary;
+  const routeVehicleCount = useMemo(
+    () => (selectedRouteId ? (vehicles ?? []).filter((v) => v.routeId === selectedRouteId).length : 0),
+    [vehicles, selectedRouteId],
+  );
+
   const handleStopPress = useCallback((stop: NearbyStop) => {
+    setSelectedRouteId(null);
     setSelectedStop(stop);
     mapRef.current?.animateToRegion(
       { latitude: stop.stop_lat, longitude: stop.stop_lon, latitudeDelta: 0.006, longitudeDelta: 0.006 },
       300,
     );
+  }, []);
+
+  // One touch: tap any bus to instantly show its route + blink its live position.
+  const handleVehiclePress = useCallback((v: VehiclePosition) => {
+    setSelectedStop(null);
+    setSelectedRouteId(v.routeId);
+  }, []);
+
+  const clearSelection = useCallback(() => {
+    setSelectedStop(null);
+    setSelectedRouteId(null);
   }, []);
 
   const handleViewArrivals = useCallback((stop: NearbyStop) => {
@@ -160,7 +228,7 @@ export default function NearbyScreen() {
         zoomControlEnabled={false}
         mapPadding={{ top: safeTop + 54, right: 0, bottom: 0, left: 0 }}
         onRegionChange={setCurrentRegion}
-        onPress={() => setSelectedStop(null)}
+        onPress={clearSelection}
       >
         {/* Route shapes for selected stop */}
         {selectedShapes.map((s) => (
@@ -172,6 +240,16 @@ export default function NearbyScreen() {
           />
         ))}
 
+        {/* Highlighted full path for a tapped bus's route */}
+        {selectedRouteShape && selectedRouteShape.coords.length > 0 && (
+          <Polyline
+            coordinates={selectedRouteShape.coords}
+            strokeColor={selectedRouteShape.color}
+            strokeWidth={5}
+            zIndex={2}
+          />
+        )}
+
         {stopsZoomedIn &&
           filteredStops.map((stop) => (
             <StopMarker
@@ -182,9 +260,19 @@ export default function NearbyScreen() {
             />
           ))}
 
-        {(vehicles ?? []).map((v) => (
-          <VehicleMarker key={v.vehicleId} vehicle={v} />
-        ))}
+        {(vehicles ?? []).map((v) => {
+          const isOnRoute = selectedRouteId === v.routeId;
+          return (
+            <VehicleMarker
+              key={v.vehicleId}
+              vehicle={v}
+              highlighted={isOnRoute}
+              dimmed={selectedRouteId !== null && !isOnRoute}
+              blinkOn={isOnRoute ? blinkOn : false}
+              onPress={handleVehiclePress}
+            />
+          );
+        })}
       </MapView>}
 
       <RouteFilterBar active={activeFilter} onChange={setActiveFilter} />
@@ -200,6 +288,33 @@ export default function NearbyScreen() {
           <Text style={styles.bannerText}>{locError}</Text>
         </View>
       ) : null}
+
+      {selectedRoute && (
+        <View style={styles.routeBanner}>
+          <View style={[styles.routeBadge, { backgroundColor: routeColor }]}>
+            <Text style={styles.routeBadgeText} numberOfLines={1}>
+              {selectedRoute.route_short_name}
+            </Text>
+          </View>
+          <View style={styles.routeBannerBody}>
+            <Text style={styles.routeBannerName} numberOfLines={1}>
+              {selectedRoute.route_long_name || 'Route'}
+            </Text>
+            <Text style={styles.routeBannerSub}>
+              {routeVehicleCount > 0
+                ? `${routeVehicleCount} live ${routeVehicleCount === 1 ? 'bus' : 'buses'} · blinking on map`
+                : 'No live buses right now'}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={clearSelection}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            style={styles.routeBannerClose}
+          >
+            <Text style={styles.routeBannerCloseText}>✕</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <View style={styles.panel}>
         <Text style={styles.panelHeader}>

@@ -5,9 +5,21 @@ import { useThemeColors } from '../../hooks/useThemeColors';
 
 interface Props {
   arrivalTime: number; // epoch seconds
+  size?: 'normal' | 'large';
 }
 
-export function CountdownBadge({ arrivalTime }: Props) {
+/** Live label: "Due" ≤30s, m:ss under 10 min (winds down by the second), else "N min". */
+function formatCountdown(seconds: number): string {
+  if (seconds <= 30) return 'Due';
+  if (seconds < 600) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+  return `${Math.round(seconds / 60)} min`;
+}
+
+export function CountdownBadge({ arrivalTime, size = 'normal' }: Props) {
   const [seconds, setSeconds] = useState(() =>
     Math.max(0, arrivalTime - Math.floor(Date.now() / 1000)),
   );
@@ -32,14 +44,26 @@ export function CountdownBadge({ arrivalTime }: Props) {
   const color =
     seconds <= 60 ? c.due : seconds <= 300 ? c.arriving : c.scheduled;
 
-  let label: string;
-  if (seconds <= 30) label = 'Due';
-  else if (seconds < 60) label = '< 1 min';
-  else label = `${Math.round(seconds / 60)} min`;
-
-  return <Text style={[styles.text, { color }]}>{label}</Text>;
+  return (
+    <Text style={[size === 'large' ? styles.large : styles.text, { color }]}>
+      {formatCountdown(seconds)}
+    </Text>
+  );
 }
 
 const styles = StyleSheet.create({
-  text: { fontSize: 14, fontWeight: '700', minWidth: 48, textAlign: 'right' },
+  text: {
+    fontSize: 14,
+    fontWeight: '700',
+    minWidth: 58,
+    textAlign: 'right',
+    fontVariant: ['tabular-nums'],
+  },
+  large: {
+    fontSize: 30,
+    fontWeight: '800',
+    minWidth: 96,
+    textAlign: 'right',
+    fontVariant: ['tabular-nums'],
+  },
 });

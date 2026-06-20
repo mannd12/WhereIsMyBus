@@ -17,6 +17,7 @@ function tabIcon(name: IoniconName, outlineName: IoniconName) {
 export default function TabLayout() {
   const { data: alerts } = useServiceAlerts();
   const alertCount = alerts?.length ?? 0;
+  const alertBadge = alertCount > 99 ? '99+' : alertCount > 0 ? alertCount : undefined;
   const c = useThemeColors();
 
   return (
@@ -40,14 +41,14 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="favorites"
-        options={{ title: 'Favorites', tabBarIcon: tabIcon('star', 'star-outline'), headerShown: true }}
+        options={{ title: 'Favourites', tabBarIcon: tabIcon('star', 'star-outline'), headerShown: true }}
       />
       <Tabs.Screen
         name="alerts"
         options={{
           title: 'Alerts',
           tabBarIcon: tabIcon('warning', 'warning-outline'),
-          tabBarBadge: alertCount > 0 ? alertCount : undefined,
+          tabBarBadge: alertBadge,
           headerShown: true,
         }}
       />

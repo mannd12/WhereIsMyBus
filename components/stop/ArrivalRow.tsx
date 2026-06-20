@@ -87,7 +87,7 @@ export function ArrivalRow({ arrival, stopName }: Props) {
         color={arrival.routeColor}
         textColor={arrival.routeTextColor}
       />
-      <Text style={styles.headsign} numberOfLines={1}>
+      <Text style={styles.headsign} numberOfLines={2}>
         {arrival.headsign || 'In service'}
       </Text>
       <NotifyButton arrival={arrival} stopName={stopName} />

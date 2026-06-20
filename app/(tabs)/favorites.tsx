@@ -60,7 +60,7 @@ function FavoriteStopCard({ stopId }: { stopId: string }) {
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <TouchableOpacity style={styles.cardTitle} onPress={() => router.push(`/stop/${stopId}`)} activeOpacity={0.7}>
-          <Text style={styles.stopName} numberOfLines={1}>{stop?.stop_name ?? `Stop #${stopId}`}</Text>
+          <Text style={styles.stopName} numberOfLines={2}>{stop?.stop_name ?? `Stop #${stopId}`}</Text>
           <Text style={styles.stopId}>#{stopId}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => removeFavorite(stopId)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>

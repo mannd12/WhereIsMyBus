@@ -20,8 +20,10 @@
         "NSLocationWhenInUseUsageDescription": "Whereismybus uses your location to show nearby bus stops and real-time arrivals.",
         "NSLocationAlwaysUsageDescription": "Whereismybus uses your location to show nearby stops.",
         "UIBackgroundModes": [
+          "remote-notification",
           "remote-notification"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {

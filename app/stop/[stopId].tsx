@@ -10,6 +10,7 @@ import { useLocation } from '../../hooks/useLocation';
 import { getStop } from '../../services/gtfsStatic';
 import { haversineDistance } from '../../services/translink';
 import { ArrivalRow } from '../../components/stop/ArrivalRow';
+import { NextBusBanner } from '../../components/stop/NextBusBanner';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
 
@@ -115,6 +116,10 @@ export default function StopDetailScreen() {
         <Text style={styles.stopId}>Stop #{stopId}</Text>
       </View>
 
+      {arrivals && arrivals.length > 0 && (
+        <NextBusBanner arrival={arrivals[0]} stopName={stop?.stop_name} />
+      )}
+
       {walkMinutes !== null && nextBusMinutes !== null && (
         <View style={[styles.walkBanner, canMakeIt ? styles.walkBannerGreen : styles.walkBannerRed]}>
           <Ionicons
@@ -150,7 +155,7 @@ export default function StopDetailScreen() {
             <RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor={Colors.primary} />
           }
           ListHeaderComponent={
-            lastUpdated ? <Text style={styles.updated}>{lastUpdated} · auto-refreshes every 30s</Text> : null
+            lastUpdated ? <Text style={styles.updated}>{lastUpdated} · auto-refreshes every 60s</Text> : null
           }
           ListEmptyComponent={
             <View style={styles.center}>
