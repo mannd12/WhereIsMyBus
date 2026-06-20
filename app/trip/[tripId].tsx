@@ -1,7 +1,8 @@
 import { useMemo, useRef, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import MapView, { Polyline, Marker, type Region } from 'react-native-maps';
-import { useLocalSearchParams, Stack } from 'expo-router';
+import { useLocalSearchParams, Stack, router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useVehiclePositions } from '../../hooks/useVehiclePositions';
 import { getRouteShape, getStop } from '../../services/gtfsStatic';
@@ -70,6 +71,21 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: 12,
       paddingVertical: 5,
     },
+    closeBtn: {
+      position: 'absolute',
+      right: 16,
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      backgroundColor: 'rgba(0,0,0,0.62)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 5,
+    },
     noVehicleText: { color: '#fff', fontSize: 12 },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
     recenter: {
@@ -108,6 +124,12 @@ export default function TripDetailScreen() {
   const styles = useMemo(() => makeStyles(c), [c]);
   const mapRef = useRef<MapView>(null);
   const hasCentered = useRef(false);
+  const insets = useSafeAreaInsets();
+
+  const close = () => {
+    if (router.canGoBack()) router.back();
+    else router.replace('/(tabs)');
+  };
 
   const { data: vehicles, isLoading } = useVehiclePositions();
   const vehicle = vehicles?.find((v) => v.tripId === tripId) ?? null;
@@ -237,8 +259,17 @@ export default function TripDetailScreen() {
         )}
       </MapView>
 
+      <TouchableOpacity
+        style={[styles.closeBtn, { top: insets.top + 8 }]}
+        onPress={close}
+        activeOpacity={0.8}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      >
+        <Ionicons name="close" size={22} color="#fff" />
+      </TouchableOpacity>
+
       {!vehicle && (
-        <View style={styles.noVehicle}>
+        <View style={[styles.noVehicle, { top: insets.top + 56 }]}>
           <Text style={styles.noVehicleText}>No live vehicle data for this trip</Text>
         </View>
       )}
