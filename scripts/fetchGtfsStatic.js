@@ -93,22 +93,21 @@ async function main() {
   const tripsOut = {};
   const routeShapeMap = new Map(); // route_id → first shape_id encountered
 
+  const tripRouteMap = new Map(); // trip_id → route_id
+
   for (const t of tripsRaw) {
+    // Keep only the fields the app actually reads (route_id, trip_headsign).
+    // The trip_id is the map key, so storing it again is redundant.
     tripsOut[t.trip_id] = {
-      trip_id: t.trip_id,
       route_id: t.route_id,
       trip_headsign: t.trip_headsign || '',
-      direction_id: parseInt(t.direction_id, 10) || 0,
     };
+    tripRouteMap.set(t.trip_id, t.route_id);
     // Capture one shape_id per route (first encountered)
     if (t.shape_id && !routeShapeMap.has(t.route_id)) {
       routeShapeMap.set(t.route_id, t.shape_id);
     }
   }
-
-  const tripRouteMap = new Map(
-    Object.values(tripsOut).map((t) => [t.trip_id, t.route_id]),
-  );
 
   // ── stop_times.txt — derive route_types and stopRoutes per stop ─────────
   console.log('Processing stop_times.txt …');

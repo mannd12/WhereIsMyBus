@@ -33,12 +33,18 @@ export function useLocation() {
         setLoading(false);
         return;
       }
-      // Race GPS against a 5s timeout so emulator doesn't hang forever
+      // Instant: show stops immediately from the last-known position if we have one
+      const lastKnown = await Location.getLastKnownPositionAsync();
+      if (lastKnown) {
+        setLocation(lastKnown);
+        setLoading(false);
+      }
+      // Refine with a fresh fix (race against a 5s timeout so it never hangs)
       const loc = await Promise.race([
         Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }),
         new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
       ]);
-      setLocation(loc ?? VANCOUVER_FALLBACK);
+      setLocation(loc ?? lastKnown ?? VANCOUVER_FALLBACK);
       setLoading(false);
 
       sub = await Location.watchPositionAsync(

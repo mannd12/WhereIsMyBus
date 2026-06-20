@@ -6,25 +6,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useVehiclePositions } from '../../hooks/useVehiclePositions';
 import { getRouteShape, getStop } from '../../services/gtfsStatic';
-import { haversineDistance } from '../../services/translink';
 import { CountdownBadge } from '../../components/ui/CountdownBadge';
 import { RouteChip } from '../../components/ui/RouteChip';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
-
-/** Index of the route-shape point nearest a given lat/lon. */
-function nearestShapeIndex(shape: [number, number][], lat: number, lon: number): number {
-  let best = 0;
-  let bestD = Infinity;
-  for (let i = 0; i < shape.length; i++) {
-    const d = haversineDistance(lat, lon, shape[i][0], shape[i][1]);
-    if (d < bestD) {
-      bestD = d;
-      best = i;
-    }
-  }
-  return best;
-}
 
 /** Bright yellow blinking beacon so the live bus is instantly findable on the map. */
 function BlinkingBeacon() {
@@ -139,16 +124,6 @@ export default function TripDetailScreen() {
 
   const stop = stopId ? getStop(stopId) : undefined;
 
-  // Red "upcoming path": the slice of the route between the bus and your stop.
-  const redPath = useMemo(() => {
-    if (!vehicle || !stop || shape.length < 2) return [];
-    const vIdx = nearestShapeIndex(shape, vehicle.latitude, vehicle.longitude);
-    const sIdx = nearestShapeIndex(shape, stop.stop_lat, stop.stop_lon);
-    const lo = Math.min(vIdx, sIdx);
-    const hi = Math.max(vIdx, sIdx);
-    return shape.slice(lo, hi + 1).map(([latitude, longitude]) => ({ latitude, longitude }));
-  }, [vehicle?.latitude, vehicle?.longitude, stop, shape]);
-
   const routeColor = `#${Colors.primary.replace('#', '')}`;
 
   const initialRegion: Region = vehicle
@@ -221,11 +196,6 @@ export default function TripDetailScreen() {
       <MapView ref={mapRef} style={styles.map} initialRegion={initialRegion} showsUserLocation>
         {shapeCoords.length > 0 && (
           <Polyline coordinates={shapeCoords} strokeColor={routeColor} strokeWidth={3} />
-        )}
-
-        {/* Red upcoming path: bus → your stop */}
-        {redPath.length > 1 && (
-          <Polyline coordinates={redPath} strokeColor="#E4002B" strokeWidth={5} zIndex={3} />
         )}
 
         {/* The stop you're tracking */}

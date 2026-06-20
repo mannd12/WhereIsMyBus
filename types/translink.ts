@@ -16,10 +16,8 @@ export interface Route {
 }
 
 export interface Trip {
-  trip_id: string;
   route_id: string;
   trip_headsign: string;
-  direction_id: number;
 }
 
 export interface Arrival {
