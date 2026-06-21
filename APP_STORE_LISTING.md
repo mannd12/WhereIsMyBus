@@ -1,11 +1,11 @@
-# WhereIsMyBus — App Store Listing Copy
+# BusPulse — App Store Listing Copy
 
 Paste these directly into App Store Connect.
 
 ---
 
 ## Name
-WhereIsMyBus
+BusPulse
 
 ## Subtitle (30 chars max)
 Real-time TransLink arrivals
@@ -21,12 +21,12 @@ Secondary: Travel
 
 ## Description (paste into App Store Connect)
 
-WhereIsMyBus is the fastest way to find real-time bus, SkyTrain, SeaBus, and West Coast Express arrivals across Metro Vancouver.
+BusPulse is the fastest way to find real-time bus, SkyTrain, SeaBus, and West Coast Express arrivals across Metro Vancouver.
 
 No account. No sign-up. Open the app and see what's coming.
 
 **LIVE ARRIVALS ONLY**
-Unlike other apps, WhereIsMyBus shows only GPS-tracked real-time arrivals — no scheduled guesses. Every countdown ticks live to the second and turns red when your bus is due.
+Unlike other apps, BusPulse shows only GPS-tracked real-time arrivals — no scheduled guesses. Every countdown ticks live to the second and turns red when your bus is due.
 
 **NEARBY MAP**
 See live vehicle positions for every TransLink vehicle on the map. Zoom in to reveal stop markers. Filter by route type — Bus, B-Line, RapidBus, SkyTrain, SeaBus, Night Bus, or WCE — with one tap.

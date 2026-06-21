@@ -12,11 +12,11 @@ Send from the email registered to your API key so they can match it.
 
 ---
 
-**Subject:** API rate limit increase request — WhereIsMyBus (registered app)
+**Subject:** API rate limit increase request — BusPulse (registered app)
 
 Hello TransLink Open API team,
 
-I'm the developer of **WhereIsMyBus**, an iOS app that shows riders real-time
+I'm the developer of **BusPulse**, an iOS app that shows riders real-time
 bus/SkyTrain/SeaBus arrivals and live vehicle positions using your GTFS-Realtime
 V3 feeds (gtfsposition, gtfsrealtime, gtfsalerts).
 
@@ -46,7 +46,7 @@ possible. Please let me know if you need any additional information.
 
 Best regards,
 Prabhdeep Mann
-WhereIsMyBus
+BusPulse
 mannprabhdeep95@gmail.com
 
 ---

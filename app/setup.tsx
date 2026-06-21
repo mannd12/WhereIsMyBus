@@ -30,7 +30,7 @@ export default function SetupScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <StatusBar style="light" />
       <View style={styles.hero}>
-        <Text style={styles.appName}>Whereismybus</Text>
+        <Text style={styles.appName}>BusPulse</Text>
         <Text style={styles.tagline}>Real-time TransLink arrivals</Text>
       </View>
 

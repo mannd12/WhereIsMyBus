@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "WhereIsMyBus",
+    "name": "BusPulse",
     "slug": "whereismybus",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,10 +17,9 @@
       "bundleIdentifier": "com.whereismybus.app",
       "buildNumber": "1",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Whereismybus uses your location to show nearby bus stops and real-time arrivals.",
-        "NSLocationAlwaysUsageDescription": "Whereismybus uses your location to show nearby stops.",
+        "NSLocationWhenInUseUsageDescription": "BusPulse uses your location to show nearby bus stops and real-time arrivals.",
+        "NSLocationAlwaysUsageDescription": "BusPulse uses your location to show nearby stops.",
         "UIBackgroundModes": [
-          "remote-notification",
           "remote-notification"
         ],
         "ITSAppUsesNonExemptEncryption": false
@@ -51,7 +50,7 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Whereismybus uses your location to show nearby stops and real-time arrivals."
+          "locationAlwaysAndWhenInUsePermission": "BusPulse uses your location to show nearby stops and real-time arrivals."
         }
       ],
       [
