@@ -171,7 +171,11 @@ export default function StopDetailScreen() {
           }
           ListEmptyComponent={
             <View style={styles.center}>
-              <Text style={styles.emptyText}>No real-time arrivals in the next hour.</Text>
+              <Ionicons name="time-outline" size={44} color={c.border} />
+              <Text style={styles.errorText}>No buses scheduled</Text>
+              <Text style={styles.emptyText}>
+                There are no buses scheduled for this stop in the next hour. Pull down to refresh.
+              </Text>
             </View>
           }
           renderItem={({ item }) => <ArrivalRow arrival={item} stopName={stop?.stop_name} stopId={stopId} />}
