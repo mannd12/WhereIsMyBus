@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useServiceAlerts } from '../../hooks/useServiceAlerts';
+import { useRelevantAlerts } from '../../hooks/useRelevantAlerts';
+import { useAlertsSeenStore } from '../../store/alertsSeen';
 import { AlertBanner } from '../../components/stop/AlertBanner';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
@@ -28,9 +30,13 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 export default function AlertsScreen() {
-  const { data: alerts, isLoading, isError, refetch, isFetching } = useServiceAlerts();
+  const { alerts, isLoading, isError, refetch, isFetching } = useRelevantAlerts();
+  const markSeen = useAlertsSeenStore((s) => s.markSeen);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+
+  // Opening the tab clears the badge for today (it returns next day at 3am).
+  useFocusEffect(useCallback(() => { markSeen(); }, [markSeen]));
 
   if (isLoading) {
     return (
