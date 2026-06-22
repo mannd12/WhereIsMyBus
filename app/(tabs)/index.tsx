@@ -14,6 +14,7 @@ import type { NearbyStop, VehiclePosition } from '../../types/translink';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
 import { getRouteColor, ROUTE_TYPE_SUBWAY, ROUTE_TYPE_FERRY, ROUTE_TYPE_RAIL } from '../../constants/routeTypes';
+import { getStopsInRegion } from '../../services/translink';
 import { VANCOUVER_REGION } from '../../constants/config';
 import { getStopRoutes, getRoute, getRouteShape } from '../../services/gtfsStatic';
 
@@ -185,6 +186,27 @@ export default function NearbyScreen() {
     [nearbyStops, activeFilter],
   );
 
+  // Map markers: every stop inside the visible region (so zoom/pan reveals them all),
+  // not just the handful near the user.
+  const mapStops = useMemo(() => {
+    if (!stopsZoomedIn) return [];
+    const { latitude, longitude, latitudeDelta, longitudeDelta } = currentRegion;
+    return getStopsInRegion(
+      latitude - latitudeDelta / 2,
+      latitude + latitudeDelta / 2,
+      longitude - longitudeDelta / 2,
+      longitude + longitudeDelta / 2,
+      location?.coords.latitude,
+      location?.coords.longitude,
+    ).filter((s) => matchesFilter(s, activeFilter));
+  }, [
+    currentRegion,
+    stopsZoomedIn,
+    activeFilter,
+    location?.coords.latitude,
+    location?.coords.longitude,
+  ]);
+
   // Route shapes for selected stop
   const selectedShapes = useMemo(() => {
     if (!selectedStop) return [];
@@ -261,7 +283,7 @@ export default function NearbyScreen() {
         toolbarEnabled={false}
         zoomControlEnabled={false}
         mapPadding={{ top: safeTop + 54, right: 0, bottom: 0, left: 0 }}
-        onRegionChange={setCurrentRegion}
+        onRegionChangeComplete={setCurrentRegion}
         onPress={clearSelection}
       >
         {/* Route shapes for selected stop */}
@@ -285,7 +307,7 @@ export default function NearbyScreen() {
         )}
 
         {stopsZoomedIn &&
-          filteredStops.map((stop) => (
+          mapStops.map((stop) => (
             <StopMarker
               key={stop.stop_id}
               stop={stop}
