@@ -8,7 +8,7 @@ Paste these directly into App Store Connect.
 BusPulse
 
 ## Subtitle (30 chars max)
-Real-time TransLink arrivals
+Live Vancouver bus arrivals
 
 ## Category
 Primary: Navigation
@@ -21,7 +21,7 @@ Secondary: Travel
 
 ## Description (paste into App Store Connect)
 
-BusPulse is the fastest way to find real-time bus, SkyTrain, SeaBus, and West Coast Express arrivals across Metro Vancouver.
+BusPulse is the fastest way to catch your bus across Metro Vancouver — live, GPS-tracked arrivals and real-time bus positions on the map.
 
 No account. No sign-up. Open the app and see what's coming.
 
@@ -29,7 +29,7 @@ No account. No sign-up. Open the app and see what's coming.
 Unlike other apps, BusPulse shows only GPS-tracked real-time arrivals — no scheduled guesses. Every countdown ticks live to the second and turns red when your bus is due.
 
 **NEARBY MAP**
-See live vehicle positions for every TransLink vehicle on the map. Zoom in to reveal stop markers. Filter by route type — Bus, B-Line, RapidBus, SkyTrain, SeaBus, Night Bus, or WCE — with one tap.
+See live positions for every bus on the map. Zoom in to reveal stop markers. Filter by route type — Bus, B-Line, RapidBus, or Night Bus — with one tap.
 
 **WALK TIME VS. NEXT BUS**
 Open any stop to instantly see your walk time compared to the next arrival. Know in seconds whether to walk or run.
@@ -54,7 +54,7 @@ Powered by TransLink's official GTFS real-time feed. Arrivals update every 60 se
 ---
 
 ## Keywords (100 chars max — no spaces after commas)
-translink,bus,skytrain,vancouver,transit,arrivals,stops,seabus,schedule,realtime,bline,rapidbus
+translink,bus,vancouver,transit,arrivals,stops,realtime,bline,rapidbus,nightbus,livebus,bustracker
 
 ---
 

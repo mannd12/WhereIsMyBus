@@ -4,18 +4,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
 
-export type RouteFilter = 'all' | 'bus' | 'bline' | 'rapidbus' | 'skytrain' | 'seabus' | 'wce' | 'night';
+export type RouteFilter = 'all' | 'bus' | 'bline' | 'rapidbus' | 'night';
 
 interface FilterOption { id: RouteFilter; label: string; color: string; }
 
+// TransLink's public real-time feed only covers buses — SkyTrain, SeaBus and
+// WCE have no live data, so they aren't offered as filters.
 const FILTERS: FilterOption[] = [
   { id: 'all',      label: 'All',      color: Colors.primary },
-  { id: 'skytrain', label: 'SkyTrain', color: Colors.skytrainExpo },
   { id: 'bus',      label: 'Bus',      color: Colors.bus },
   { id: 'bline',    label: 'B-Line',   color: Colors.bLine },
   { id: 'rapidbus', label: 'RapidBus', color: '#0085CA' },
-  { id: 'seabus',   label: 'SeaBus',   color: Colors.seaBus },
-  { id: 'wce',      label: 'WCE',      color: Colors.westCoastExpress },
   { id: 'night',    label: 'Night',    color: '#1A1A3E' },
 ];
 

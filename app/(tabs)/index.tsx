@@ -13,7 +13,7 @@ import { useVehiclePositions } from '../../hooks/useVehiclePositions';
 import type { NearbyStop, VehiclePosition } from '../../types/translink';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
-import { getRouteColor, ROUTE_TYPE_SUBWAY, ROUTE_TYPE_FERRY, ROUTE_TYPE_RAIL } from '../../constants/routeTypes';
+import { getRouteColor } from '../../constants/routeTypes';
 import { getStopsInRegion } from '../../services/translink';
 import { VANCOUVER_REGION } from '../../constants/config';
 import { getStopRoutes, getRoute, getRouteShape } from '../../services/gtfsStatic';
@@ -24,9 +24,6 @@ function matchesFilter(stop: NearbyStop, filter: RouteFilter): boolean {
   if (filter === 'all') return true;
   const types = stop.route_types;
   switch (filter) {
-    case 'skytrain': return types.includes(ROUTE_TYPE_SUBWAY);
-    case 'seabus':   return types.includes(ROUTE_TYPE_FERRY);
-    case 'wce':      return types.includes(ROUTE_TYPE_RAIL);
     case 'bus':      return types.includes(3) && !isBLine(stop) && !isRapidBus(stop) && !isNightBus(stop);
     case 'bline':    return isBLine(stop);
     case 'rapidbus': return isRapidBus(stop);
