@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useRelevantAlerts } from '../../hooks/useRelevantAlerts';
@@ -12,15 +12,21 @@ const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     list: { backgroundColor: c.background },
     content: { paddingTop: 8, paddingBottom: 24 },
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+    },
     header: {
       fontSize: 13,
       fontWeight: '600',
       color: c.textSecondary,
-      paddingHorizontal: 16,
-      paddingVertical: 10,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
     },
+    clearAll: { fontSize: 13, fontWeight: '700', color: Colors.primary },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12, padding: 32 },
     loadingText: { color: c.textSecondary, fontSize: 14 },
     errorTitle: { fontSize: 17, fontWeight: '700', color: c.text },
@@ -32,11 +38,16 @@ const makeStyles = (c: ThemeColors) =>
 export default function AlertsScreen() {
   const { alerts, isLoading, isError, refetch, isFetching } = useRelevantAlerts();
   const markSeen = useAlertsSeenStore((s) => s.markSeen);
+  const dismissAll = useAlertsSeenStore((s) => s.dismissAll);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
 
   // Opening the tab clears the badge for today (it returns next day at 3am).
   useFocusEffect(useCallback(() => { markSeen(); }, [markSeen]));
+
+  const handleClearAll = useCallback(() => {
+    dismissAll(alerts.map((a) => a.id));
+  }, [dismissAll, alerts]);
 
   if (isLoading) {
     return (
@@ -65,9 +76,16 @@ export default function AlertsScreen() {
       contentContainerStyle={styles.content}
       refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor={Colors.primary} />}
       ListHeaderComponent={
-        <Text style={styles.header}>
-          {alerts?.length ? `${alerts.length} active alert${alerts.length !== 1 ? 's' : ''}` : 'No active alerts'}
-        </Text>
+        alerts.length > 0 ? (
+          <View style={styles.headerRow}>
+            <Text style={styles.header}>
+              {`${alerts.length} active alert${alerts.length !== 1 ? 's' : ''}`}
+            </Text>
+            <TouchableOpacity onPress={handleClearAll} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Text style={styles.clearAll}>Clear all</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null
       }
       ListEmptyComponent={
         <View style={styles.empty}>

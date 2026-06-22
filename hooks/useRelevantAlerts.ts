@@ -4,6 +4,7 @@ import type { ServiceAlert } from '../types/translink';
 import { useServiceAlerts } from './useServiceAlerts';
 import { getRoutesNear } from '../services/translink';
 import { ALERTS_NEARBY_RADIUS_M } from '../constants/config';
+import { useAlertsSeenStore, transitDay } from '../store/alertsSeen';
 
 /**
  * Service alerts trimmed to the user's area: only alerts whose affected routes
@@ -13,6 +14,8 @@ import { ALERTS_NEARBY_RADIUS_M } from '../constants/config';
 export function useRelevantAlerts() {
   const query = useServiceAlerts();
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const dismissedDay = useAlertsSeenStore((s) => s.dismissedDay);
+  const dismissedIds = useAlertsSeenStore((s) => s.dismissedIds);
 
   useEffect(() => {
     let alive = true;
@@ -27,13 +30,21 @@ export function useRelevantAlerts() {
   }, []);
 
   const alerts: ServiceAlert[] = useMemo(() => {
-    const all = query.data ?? [];
-    if (!coords) return all;
-    const nearRoutes = getRoutesNear(coords.lat, coords.lon, ALERTS_NEARBY_RADIUS_M);
-    return all.filter(
-      (a) => a.affectedRoutes.length === 0 || a.affectedRoutes.some((r) => nearRoutes.has(r)),
-    );
-  }, [query.data, coords]);
+    let list = query.data ?? [];
+    // Trim to the user's area
+    if (coords) {
+      const nearRoutes = getRoutesNear(coords.lat, coords.lon, ALERTS_NEARBY_RADIUS_M);
+      list = list.filter(
+        (a) => a.affectedRoutes.length === 0 || a.affectedRoutes.some((r) => nearRoutes.has(r)),
+      );
+    }
+    // Hide alerts the user cleared today (resets at 3am with the day)
+    if (dismissedDay === transitDay() && dismissedIds.length > 0) {
+      const dismissed = new Set(dismissedIds);
+      list = list.filter((a) => !dismissed.has(a.id));
+    }
+    return list;
+  }, [query.data, coords, dismissedDay, dismissedIds]);
 
   return { ...query, alerts };
 }

@@ -12,13 +12,23 @@ export function transitDay(date = new Date()): string {
 interface AlertsSeenState {
   lastSeenDay: string;
   markSeen: () => void;
+  dismissedDay: string;
+  dismissedIds: string[];
+  dismissAll: (ids: string[]) => void;
 }
 
 export const useAlertsSeenStore = create<AlertsSeenState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       lastSeenDay: '',
       markSeen: () => set({ lastSeenDay: transitDay() }),
+      dismissedDay: '',
+      dismissedIds: [],
+      dismissAll: (ids) => {
+        const today = transitDay();
+        const existing = get().dismissedDay === today ? get().dismissedIds : [];
+        set({ dismissedDay: today, dismissedIds: Array.from(new Set([...existing, ...ids])) });
+      },
     }),
     {
       name: 'buspulse-alerts-seen',
