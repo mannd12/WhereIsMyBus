@@ -10,14 +10,18 @@ import { Colors } from '../../constants/colors';
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
+    screen: { flex: 1, backgroundColor: c.background },
     list: { backgroundColor: c.background },
-    content: { paddingTop: 8, paddingBottom: 24 },
+    content: { paddingTop: 4, paddingBottom: 24 },
     headerRow: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 16,
-      paddingVertical: 10,
+      paddingVertical: 12,
+      backgroundColor: c.surface,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: c.border,
     },
     header: {
       fontSize: 13,
@@ -69,31 +73,32 @@ export default function AlertsScreen() {
   }
 
   return (
-    <FlatList
-      style={styles.list}
-      data={alerts ?? []}
-      keyExtractor={(a) => a.id}
-      contentContainerStyle={styles.content}
-      refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor={Colors.primary} />}
-      ListHeaderComponent={
-        alerts.length > 0 ? (
-          <View style={styles.headerRow}>
-            <Text style={styles.header}>
-              {`${alerts.length} active alert${alerts.length !== 1 ? 's' : ''}`}
-            </Text>
-            <TouchableOpacity onPress={handleClearAll} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <Text style={styles.clearAll}>Clear all</Text>
-            </TouchableOpacity>
-          </View>
-        ) : null
-      }
-      ListEmptyComponent={
-        <View style={styles.empty}>
-          <Ionicons name="checkmark-circle-outline" size={52} color={Colors.skytrainCanada} />
-          <Text style={styles.allClearText}>All clear — no service disruptions.</Text>
+    <View style={styles.screen}>
+      {/* Fixed header — stays put so Clear all is always reachable without scrolling */}
+      {alerts.length > 0 && (
+        <View style={styles.headerRow}>
+          <Text style={styles.header}>
+            {`${alerts.length} active alert${alerts.length !== 1 ? 's' : ''}`}
+          </Text>
+          <TouchableOpacity onPress={handleClearAll} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Text style={styles.clearAll}>Clear all</Text>
+          </TouchableOpacity>
         </View>
-      }
-      renderItem={({ item }) => <AlertBanner alert={item} />}
-    />
+      )}
+      <FlatList
+        style={styles.list}
+        data={alerts ?? []}
+        keyExtractor={(a) => a.id}
+        contentContainerStyle={styles.content}
+        refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor={Colors.primary} />}
+        ListEmptyComponent={
+          <View style={styles.empty}>
+            <Ionicons name="checkmark-circle-outline" size={52} color={Colors.skytrainCanada} />
+            <Text style={styles.allClearText}>All clear — no service disruptions.</Text>
+          </View>
+        }
+        renderItem={({ item }) => <AlertBanner alert={item} />}
+      />
+    </View>
   );
 }
