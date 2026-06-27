@@ -39,6 +39,9 @@ export function RouteFilterBar({ active, onChange }: Props) {
               style={[styles.chip, isActive ? { backgroundColor: f.color, borderColor: f.color } : inactiveChipStyle]}
               onPress={() => onChange(f.id)}
               activeOpacity={0.75}
+              accessibilityRole="button"
+              accessibilityState={{ selected: isActive }}
+              accessibilityLabel={`Filter: ${f.label}`}
             >
               <Text style={[styles.label, { color: isActive ? '#fff' : c.text }]}>{f.label}</Text>
             </TouchableOpacity>

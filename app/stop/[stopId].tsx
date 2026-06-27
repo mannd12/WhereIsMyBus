@@ -124,8 +124,8 @@ export default function StopDetailScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.stopInfo}>
-        <Text style={styles.stopName}>{stop?.stop_name ?? `Stop #${stopId}`}</Text>
-        <Text style={styles.stopId}>Stop #{stopId}</Text>
+        <Text style={styles.stopName}>{stop?.stop_name ?? `Stop #${stop?.stop_code ?? stopId}`}</Text>
+        <Text style={styles.stopId}>Stop #{stop?.stop_code ?? stopId}</Text>
       </View>
 
       {arrivals && arrivals.length > 0 && (

@@ -18,6 +18,17 @@ const makeStyles = (c: ThemeColors) =>
     },
     routeName: { fontSize: 18, fontWeight: '700', color: c.text },
     routeSub: { fontSize: 13, color: c.textSecondary, marginTop: 2 },
+    mapBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      marginTop: 12,
+      backgroundColor: Colors.primary,
+      borderRadius: 10,
+      paddingVertical: 11,
+    },
+    mapBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
     count: {
       fontSize: 12,
       fontWeight: '600',
@@ -83,6 +94,16 @@ export default function RouteDetailScreen() {
           {route?.route_short_name ?? routeId} — {route?.route_long_name ?? ''}
         </Text>
         <Text style={styles.routeSub}>{stops.length} stops serve this route</Text>
+        <TouchableOpacity
+          style={styles.mapBtn}
+          onPress={() => router.push(`/route-map/${routeId}`)}
+          activeOpacity={0.85}
+          accessibilityRole="button"
+          accessibilityLabel="Show live buses on this route on the map"
+        >
+          <Ionicons name="map" size={16} color="#fff" />
+          <Text style={styles.mapBtnText}>Show live buses on map</Text>
+        </TouchableOpacity>
       </View>
 
       <Text style={styles.count}>{stops.length} stops</Text>
@@ -105,7 +126,7 @@ export default function RouteDetailScreen() {
             <View style={[styles.dot, { backgroundColor: routeColor }]} />
             <View style={styles.rowText}>
               <Text style={styles.stopName}>{item.stop_name}</Text>
-              <Text style={styles.stopId}>#{item.stop_id}</Text>
+              <Text style={styles.stopId}>#{item.stop_code}</Text>
             </View>
             <TouchableOpacity
               onPress={() => toggleFav(item.stop_id)}

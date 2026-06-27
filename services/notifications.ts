@@ -32,17 +32,16 @@ export function isScheduled(arrivalTime: number): boolean {
   return scheduled.has(arrivalTime);
 }
 
-const NOTIFY_MINUTES_BEFORE = 5;
-
 export async function scheduleArrivalNotification(
   arrival: Arrival,
   stopName: string,
+  leadMinutes = 5,
 ): Promise<boolean> {
   if (!Notifications) return false;
   const granted = await requestNotificationPermissions();
   if (!granted) return false;
 
-  const triggerMs = arrival.arrivalTime * 1000 - NOTIFY_MINUTES_BEFORE * 60 * 1000;
+  const triggerMs = arrival.arrivalTime * 1000 - leadMinutes * 60 * 1000;
   const secondsFromNow = Math.round((triggerMs - Date.now()) / 1000);
 
   const content: import('expo-notifications').NotificationContentInput = {
@@ -50,7 +49,7 @@ export async function scheduleArrivalNotification(
     body:
       secondsFromNow <= 0
         ? `Route ${arrival.routeShortName} is arriving at ${stopName}`
-        : `Route ${arrival.routeShortName} arrives in ${NOTIFY_MINUTES_BEFORE} min at ${stopName}`,
+        : `Route ${arrival.routeShortName} arrives in ${leadMinutes} min at ${stopName}`,
     sound: true,
   };
 

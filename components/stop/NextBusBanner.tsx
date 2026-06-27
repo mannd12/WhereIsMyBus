@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { Arrival } from '../../types/translink';
 import { RouteChip } from '../ui/RouteChip';
 import { CountdownBadge } from '../ui/CountdownBadge';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
-import { scheduleArrivalNotification, isScheduled } from '../../services/notifications';
+import { isScheduled } from '../../services/notifications';
+import { useArrivalReminder } from '../../hooks/useArrivalReminder';
 
 interface Props {
   arrival: Arrival;
@@ -39,18 +40,11 @@ export function NextBusBanner({ arrival, stopName }: Props) {
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
   const [scheduled, setScheduled] = useState(() => isScheduled(arrival.arrivalTime));
+  const remind = useArrivalReminder();
 
-  const handleNotify = async () => {
+  const handleNotify = () => {
     if (scheduled) return;
-    const ok = await scheduleArrivalNotification(arrival, stopName ?? 'this stop');
-    if (ok) {
-      setScheduled(true);
-    } else {
-      Alert.alert(
-        'Notifications disabled',
-        'Enable notifications in Settings to get a heads-up before your bus arrives.',
-      );
-    }
+    remind(arrival, stopName ?? 'this stop', () => setScheduled(true));
   };
 
   return (
@@ -69,6 +63,8 @@ export function NextBusBanner({ arrival, stopName }: Props) {
           onPress={handleNotify}
           style={styles.bell}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          accessibilityRole="button"
+          accessibilityLabel={scheduled ? 'Reminder set' : 'Set a reminder before this bus'}
         >
           <Ionicons
             name={scheduled ? 'notifications' : 'notifications-outline'}

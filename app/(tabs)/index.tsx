@@ -17,6 +17,8 @@ import { getRouteColor } from '../../constants/routeTypes';
 import { getStopsInRegion } from '../../services/translink';
 import { VANCOUVER_REGION } from '../../constants/config';
 import { getStopRoutes, getRoute, getRouteShape } from '../../services/gtfsStatic';
+import { useSettingsStore } from '../../store/settings';
+import { OnboardingCard } from '../../components/OnboardingCard';
 
 const STOP_VISIBILITY_DELTA = 0.012;
 
@@ -151,6 +153,8 @@ export default function NearbyScreen() {
   const [tabFocused, setTabFocused] = useState(true);
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [blinkOn, setBlinkOn] = useState(true);
+  const hasOnboarded = useSettingsStore((s) => s.hasOnboarded);
+  const setHasOnboarded = useSettingsStore((s) => s.setHasOnboarded);
   const mapRef = useRef<MapView>(null);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
@@ -335,6 +339,8 @@ export default function NearbyScreen() {
             onPress={goToMyLocation}
             activeOpacity={0.85}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityRole="button"
+            accessibilityLabel="Center the map on my location"
           >
             <Ionicons name="locate" size={22} color={Colors.primary} />
           </TouchableOpacity>
@@ -420,6 +426,8 @@ export default function NearbyScreen() {
           />
         )}
       </View>
+
+      <OnboardingCard visible={!hasOnboarded} onDismiss={() => setHasOnboarded(true)} />
     </View>
   );
 }

@@ -1,12 +1,13 @@
 import { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import type { Arrival } from '../../types/translink';
 import { RouteChip } from '../ui/RouteChip';
 import { CountdownBadge } from '../ui/CountdownBadge';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
-import { scheduleArrivalNotification, isScheduled } from '../../services/notifications';
+import { isScheduled } from '../../services/notifications';
+import { useArrivalReminder } from '../../hooks/useArrivalReminder';
 
 interface Props {
   arrival: Arrival;
@@ -17,15 +18,11 @@ interface Props {
 function NotifyButton({ arrival, stopName }: { arrival: Arrival; stopName?: string }) {
   const [scheduled, setScheduled] = useState(() => isScheduled(arrival.arrivalTime));
   const c = useThemeColors();
+  const remind = useArrivalReminder();
 
-  const handlePress = async () => {
+  const handlePress = () => {
     if (scheduled) return;
-    const ok = await scheduleArrivalNotification(arrival, stopName ?? 'this stop');
-    if (ok) {
-      setScheduled(true);
-    } else {
-      Alert.alert('Notifications disabled', 'Enable notifications in Settings to get bus alerts.');
-    }
+    remind(arrival, stopName ?? 'this stop', () => setScheduled(true));
   };
 
   return (
@@ -33,6 +30,12 @@ function NotifyButton({ arrival, stopName }: { arrival: Arrival; stopName?: stri
       onPress={handlePress}
       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       style={{ padding: 2 }}
+      accessibilityRole="button"
+      accessibilityLabel={
+        scheduled
+          ? `Reminder set for route ${arrival.routeShortName}`
+          : `Set a reminder before route ${arrival.routeShortName}`
+      }
     >
       <Ionicons
         name={scheduled ? 'notifications' : 'notifications-outline'}
@@ -76,6 +79,8 @@ export function ArrivalRow({ arrival, stopName, stopId }: Props) {
     <TouchableOpacity
       style={styles.row}
       activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={`Route ${arrival.routeShortName} to ${arrival.headsign || 'destination'}. Tap to track the bus.`}
       onPress={() =>
         router.push(
           `/trip/${arrival.tripId}?routeId=${arrival.routeId}&routeShortName=${encodeURIComponent(arrival.routeShortName)}&headsign=${encodeURIComponent(arrival.headsign)}&arrivalTime=${arrival.arrivalTime}&stopName=${encodeURIComponent(stopName ?? '')}&stopId=${encodeURIComponent(stopId ?? '')}`,

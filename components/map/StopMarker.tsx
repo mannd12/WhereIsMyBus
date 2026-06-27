@@ -26,7 +26,7 @@ export function StopMarker({ stop, selected, onPress, onViewArrivals }: Props) {
       <Callout onPress={() => onViewArrivals?.(stop)}>
         <View style={styles.callout}>
           <Text style={styles.calloutText}>{stop.stop_name}</Text>
-          <Text style={styles.calloutSub}>Stop #{stop.stop_id}</Text>
+          <Text style={styles.calloutSub}>Stop #{stop.stop_code}</Text>
           <View style={styles.calloutBtn}>
             <Text style={styles.calloutBtnText}>Track buses →</Text>
           </View>

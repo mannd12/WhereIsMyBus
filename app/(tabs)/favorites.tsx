@@ -32,6 +32,7 @@ const makeStyles = (c: ThemeColors) =>
       borderBottomColor: c.border,
     },
     cardTitle: { flex: 1 },
+    reorder: { alignItems: 'center', justifyContent: 'center' },
     stopName: { fontSize: 15, fontWeight: '700', color: c.text },
     stopId: { fontSize: 12, color: c.textSecondary, marginTop: 1 },
     loading: { fontSize: 13, color: c.textSecondary, padding: 12 },
@@ -48,10 +49,11 @@ const makeStyles = (c: ThemeColors) =>
     emptySubtitle: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 20 },
   });
 
-function FavoriteStopCard({ stopId }: { stopId: string }) {
+function FavoriteStopCard({ stopId, index, total }: { stopId: string; index: number; total: number }) {
   const stop = getStop(stopId);
   const { data: arrivals, isLoading } = useStopArrivals(stopId);
   const removeFavorite = useFavoritesStore((s) => s.removeFavorite);
+  const moveFavorite = useFavoritesStore((s) => s.moveFavorite);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
   const next = (arrivals ?? []).slice(0, 2) as Arrival[];
@@ -59,11 +61,44 @@ function FavoriteStopCard({ stopId }: { stopId: string }) {
   return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
-        <TouchableOpacity style={styles.cardTitle} onPress={() => router.push(`/stop/${stopId}`)} activeOpacity={0.7}>
+        <TouchableOpacity
+          style={styles.cardTitle}
+          onPress={() => router.push(`/stop/${stopId}`)}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={`${stop?.stop_name ?? 'Stop'} ${stop?.stop_code ?? stopId}, open arrivals`}
+        >
           <Text style={styles.stopName} numberOfLines={2}>{stop?.stop_name ?? `Stop #${stopId}`}</Text>
-          <Text style={styles.stopId}>#{stopId}</Text>
+          <Text style={styles.stopId}>#{stop?.stop_code ?? stopId}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => removeFavorite(stopId)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        {total > 1 && (
+          <View style={styles.reorder}>
+            <TouchableOpacity
+              disabled={index === 0}
+              onPress={() => moveFavorite(stopId, -1)}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+              accessibilityRole="button"
+              accessibilityLabel="Move favourite up"
+            >
+              <Ionicons name="chevron-up" size={20} color={index === 0 ? c.border : c.textSecondary} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              disabled={index === total - 1}
+              onPress={() => moveFavorite(stopId, 1)}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+              accessibilityRole="button"
+              accessibilityLabel="Move favourite down"
+            >
+              <Ionicons name="chevron-down" size={20} color={index === total - 1 ? c.border : c.textSecondary} />
+            </TouchableOpacity>
+          </View>
+        )}
+        <TouchableOpacity
+          onPress={() => removeFavorite(stopId)}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          accessibilityRole="button"
+          accessibilityLabel="Remove from favourites"
+        >
           <Ionicons name="star" size={20} color="#FFB800" />
         </TouchableOpacity>
       </View>
@@ -101,7 +136,9 @@ export default function FavoritesScreen() {
       style={styles.list}
       data={stopIds}
       keyExtractor={(id) => id}
-      renderItem={({ item }) => <FavoriteStopCard stopId={item} />}
+      renderItem={({ item, index }) => (
+        <FavoriteStopCard stopId={item} index={index} total={stopIds.length} />
+      )}
       contentContainerStyle={styles.listContent}
     />
   );

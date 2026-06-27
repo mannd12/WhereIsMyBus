@@ -98,9 +98,10 @@ export function searchStops(query: string): Stop[] {
   const isNumeric = /^\d+$/.test(q);
 
   if (isNumeric) {
-    const exact = stopsRaw.filter((s) => s.stop_id === q);
-    const prefix = stopsRaw.filter((s) => s.stop_id !== q && s.stop_id.startsWith(q));
-    const contains = stopsRaw.filter((s) => !s.stop_id.startsWith(q) && s.stop_id.includes(q));
+    // Riders search by the number on the sign (stop_code), not the internal stop_id.
+    const exact = stopsRaw.filter((s) => s.stop_code === q);
+    const prefix = stopsRaw.filter((s) => s.stop_code !== q && s.stop_code.startsWith(q));
+    const contains = stopsRaw.filter((s) => !s.stop_code.startsWith(q) && s.stop_code.includes(q));
     return [...exact, ...prefix, ...contains].slice(0, 30);
   }
 

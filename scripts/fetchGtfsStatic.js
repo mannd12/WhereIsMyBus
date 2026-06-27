@@ -68,6 +68,9 @@ async function main() {
     .filter((r) => !r.location_type || r.location_type === '0')
     .map((r) => ({
       stop_id: r.stop_id,
+      // Public-facing number printed on the bus-stop sign (riders search by this).
+      // Falls back to stop_id if the feed omits stop_code.
+      stop_code: r.stop_code || r.stop_id,
       stop_name: r.stop_name,
       stop_lat: parseFloat(r.stop_lat),
       stop_lon: parseFloat(r.stop_lon),

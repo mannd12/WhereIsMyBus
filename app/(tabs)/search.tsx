@@ -93,7 +93,7 @@ function StopRow({ item }: { item: Stop }) {
       <View style={[styles.typeDot, { backgroundColor: getRouteColor(item.route_types[0] ?? 3) }]} />
       <View style={styles.rowText}>
         <Text style={styles.stopName}>{item.stop_name}</Text>
-        <Text style={styles.stopMeta}>#{item.stop_id} · {item.route_types.map(getRouteTypeLabel).join(', ')}</Text>
+        <Text style={styles.stopMeta}>#{item.stop_code} · {item.route_types.map(getRouteTypeLabel).join(', ')}</Text>
       </View>
       <TouchableOpacity onPress={() => toggleFav(item.stop_id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
         <Ionicons name={isFav ? 'star' : 'star-outline'} size={18} color={isFav ? '#FFB800' : c.textSecondary} />

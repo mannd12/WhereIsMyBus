@@ -1,5 +1,7 @@
 export interface Stop {
   stop_id: string;
+  /** Public number printed on the bus-stop sign (what riders search by). */
+  stop_code: string;
   stop_name: string;
   stop_lat: number;
   stop_lon: number;
