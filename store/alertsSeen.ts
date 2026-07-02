@@ -2,11 +2,15 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/** A transit "day" string that rolls over at 3am, so the alerts badge
- * auto-clears each day at 3am rather than accumulating. */
+/** A transit "day" string that rolls over at 3am LOCAL time, so the alerts badge
+ * auto-clears each morning at 3am (rider's timezone) rather than accumulating.
+ * Uses local date parts — NOT toISOString(), which would roll at 3am UTC. */
 export function transitDay(date = new Date()): string {
   const shifted = new Date(date.getTime() - 3 * 60 * 60 * 1000);
-  return shifted.toISOString().slice(0, 10);
+  const y = shifted.getFullYear();
+  const m = String(shifted.getMonth() + 1).padStart(2, '0');
+  const d = String(shifted.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 interface AlertsSeenState {

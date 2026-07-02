@@ -1,0 +1,6 @@
+node_modules/
+.env
+.env.local
+*.log
+# Built at deploy time by `npm run build-schedule` — not committed (31 MB).
+data/

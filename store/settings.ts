@@ -33,6 +33,14 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: 'whereismybus-settings',
       storage: createJSONStorage(() => AsyncStorage),
+      // The API key is baked into each build from EXPO_PUBLIC_TRANSLINK_API_KEY.
+      // Always prefer that env key so a rotated/higher-quota key in a new build
+      // takes effect for existing users — only fall back to a persisted
+      // user-entered key (BYO) when the build has no env key.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<SettingsState>;
+        return { ...current, ...p, apiKey: ENV_API_KEY || p.apiKey || '' };
+      },
     },
   ),
 );

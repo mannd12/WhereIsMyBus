@@ -20,7 +20,7 @@ try {
 
 const scheduled = new Set<number>();
 
-export async function requestNotificationPermissions(): Promise<boolean> {
+async function requestNotificationPermissions(): Promise<boolean> {
   if (!Notifications) return false;
   const { status: existing } = await Notifications.getPermissionsAsync();
   if (existing === 'granted') return true;
@@ -54,6 +54,9 @@ export async function scheduleArrivalNotification(
   };
 
   await Notifications.scheduleNotificationAsync({
+    // Stable id per route+stop: re-tapping the bell (even after a restart, once
+    // predictions change) replaces the pending reminder instead of stacking a duplicate.
+    identifier: `buspulse-${arrival.routeId}-${stopName}`,
     content,
     trigger:
       secondsFromNow <= 0
@@ -63,8 +66,4 @@ export async function scheduleArrivalNotification(
 
   scheduled.add(arrival.arrivalTime);
   return true;
-}
-
-export function cancelScheduled(arrivalTime: number): void {
-  scheduled.delete(arrivalTime);
 }

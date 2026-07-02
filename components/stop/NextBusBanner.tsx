@@ -7,6 +7,7 @@ import { CountdownBadge } from '../ui/CountdownBadge';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { isScheduled } from '../../services/notifications';
 import { useArrivalReminder } from '../../hooks/useArrivalReminder';
+import { useSettingsStore } from '../../store/settings';
 
 interface Props {
   arrival: Arrival;
@@ -40,11 +41,12 @@ export function NextBusBanner({ arrival, stopName }: Props) {
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
   const [scheduled, setScheduled] = useState(() => isScheduled(arrival.arrivalTime));
+  const lead = useSettingsStore((s) => s.notifyLeadMinutes);
   const remind = useArrivalReminder();
 
   const handleNotify = () => {
     if (scheduled) return;
-    remind(arrival, stopName ?? 'this stop', () => setScheduled(true));
+    void remind(arrival, stopName ?? 'this stop', () => setScheduled(true));
   };
 
   return (
@@ -64,7 +66,7 @@ export function NextBusBanner({ arrival, stopName }: Props) {
           style={styles.bell}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           accessibilityRole="button"
-          accessibilityLabel={scheduled ? 'Reminder set' : 'Set a reminder before this bus'}
+          accessibilityLabel={scheduled ? 'Reminder set' : `Remind me ${lead} minutes before this bus`}
         >
           <Ionicons
             name={scheduled ? 'notifications' : 'notifications-outline'}

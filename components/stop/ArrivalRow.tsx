@@ -8,6 +8,7 @@ import { CountdownBadge } from '../ui/CountdownBadge';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { isScheduled } from '../../services/notifications';
 import { useArrivalReminder } from '../../hooks/useArrivalReminder';
+import { useSettingsStore } from '../../store/settings';
 
 interface Props {
   arrival: Arrival;
@@ -17,12 +18,13 @@ interface Props {
 
 function NotifyButton({ arrival, stopName }: { arrival: Arrival; stopName?: string }) {
   const [scheduled, setScheduled] = useState(() => isScheduled(arrival.arrivalTime));
+  const lead = useSettingsStore((s) => s.notifyLeadMinutes);
   const c = useThemeColors();
   const remind = useArrivalReminder();
 
   const handlePress = () => {
     if (scheduled) return;
-    remind(arrival, stopName ?? 'this stop', () => setScheduled(true));
+    void remind(arrival, stopName ?? 'this stop', () => setScheduled(true));
   };
 
   return (
@@ -34,7 +36,7 @@ function NotifyButton({ arrival, stopName }: { arrival: Arrival; stopName?: stri
       accessibilityLabel={
         scheduled
           ? `Reminder set for route ${arrival.routeShortName}`
-          : `Set a reminder before route ${arrival.routeShortName}`
+          : `Remind me ${lead} minutes before route ${arrival.routeShortName}`
       }
     >
       <Ionicons

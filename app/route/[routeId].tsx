@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { getRoute, getStopsForRoute } from '../../services/gtfsStatic';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
@@ -129,8 +130,13 @@ export default function RouteDetailScreen() {
               <Text style={styles.stopId}>#{item.stop_code}</Text>
             </View>
             <TouchableOpacity
-              onPress={() => toggleFav(item.stop_id)}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                toggleFav(item.stop_id);
+              }}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityRole="button"
+              accessibilityLabel={isFav(item.stop_id) ? 'Remove from favourites' : 'Add to favourites'}
             >
               <Ionicons
                 name={isFav(item.stop_id) ? 'star' : 'star-outline'}

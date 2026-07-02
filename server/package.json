@@ -1,0 +1,21 @@
+{
+  "name": "buspulse-proxy",
+  "version": "1.0.0",
+  "description": "Caching proxy for TransLink GTFS-RT. All BusPulse clients read from this server's short-lived cache, so TransLink sees ~1 request per feed per cache window regardless of how many users the app has — keeping it under the 1,000/day key cap. Also keeps the API key server-side.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build-schedule": "node buildSchedule.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "adm-zip": "^0.5.10",
+    "csv-parse": "^5.5.6"
+  }
+}

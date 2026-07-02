@@ -10,6 +10,13 @@ for (const route of routesRaw) {
   routesMap.set(route.route_id, route);
 }
 
+// BusPulse is bus-only — TransLink publishes no real-time for SkyTrain/SeaBus/WCE,
+// so those stops (route_type 1/2/4) are permanent dead-ends. Exclude them from every
+// user-facing list (search, nearby, map) so riders never tap a stop with no arrivals.
+// route_type 3 = bus. Station bus BAYS are separate route_type-3 stops and are kept.
+const BUS_ROUTE_TYPE = 3;
+const busStops = stopsRaw.filter((s) => s.route_types.includes(BUS_ROUTE_TYPE));
+
 // Lazily loaded large datasets
 let tripsMap: Map<string, Trip> | null = null;
 let stopRoutesData: Record<string, string[]> | null = null;
@@ -55,6 +62,11 @@ export function getAllStops(): Stop[] {
   return stopsRaw;
 }
 
+/** Bus-only stops (route_type 3). Use this for anything the rider browses. */
+export function getBusStops(): Stop[] {
+  return busStops;
+}
+
 export function getAllRoutes(): Route[] {
   return routesRaw;
 }
@@ -65,6 +77,15 @@ export function getStop(stopId: string): Stop | undefined {
 
 export function getRoute(routeId: string): Route | undefined {
   return routesMap.get(routeId);
+}
+
+const routesByShortName = new Map<string, Route>();
+for (const route of routesRaw) {
+  if (!routesByShortName.has(route.route_short_name)) routesByShortName.set(route.route_short_name, route);
+}
+/** Look up a route by its short name (e.g. "099", "R4") — for scheduled rows. */
+export function getRouteByShortName(shortName: string): Route | undefined {
+  return routesByShortName.get(shortName);
 }
 
 export function getTrip(tripId: string): Trip | undefined {
@@ -99,14 +120,14 @@ export function searchStops(query: string): Stop[] {
 
   if (isNumeric) {
     // Riders search by the number on the sign (stop_code), not the internal stop_id.
-    const exact = stopsRaw.filter((s) => s.stop_code === q);
-    const prefix = stopsRaw.filter((s) => s.stop_code !== q && s.stop_code.startsWith(q));
-    const contains = stopsRaw.filter((s) => !s.stop_code.startsWith(q) && s.stop_code.includes(q));
+    const exact = busStops.filter((s) => s.stop_code === q);
+    const prefix = busStops.filter((s) => s.stop_code !== q && s.stop_code.startsWith(q));
+    const contains = busStops.filter((s) => !s.stop_code.startsWith(q) && s.stop_code.includes(q));
     return [...exact, ...prefix, ...contains].slice(0, 30);
   }
 
-  const startsWith = stopsRaw.filter((s) => s.stop_name.toLowerCase().startsWith(q));
-  const contains = stopsRaw.filter(
+  const startsWith = busStops.filter((s) => s.stop_name.toLowerCase().startsWith(q));
+  const contains = busStops.filter(
     (s) => !s.stop_name.toLowerCase().startsWith(q) && s.stop_name.toLowerCase().includes(q),
   );
   return [...startsWith, ...contains].slice(0, 30);

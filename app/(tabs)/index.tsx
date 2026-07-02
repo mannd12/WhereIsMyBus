@@ -16,17 +16,21 @@ import { Colors } from '../../constants/colors';
 import { getRouteColor } from '../../constants/routeTypes';
 import { getStopsInRegion } from '../../services/translink';
 import { VANCOUVER_REGION } from '../../constants/config';
+import { formatDistance, walkMinutes } from '../../constants/format';
 import { getStopRoutes, getRoute, getRouteShape } from '../../services/gtfsStatic';
 import { useSettingsStore } from '../../store/settings';
 import { OnboardingCard } from '../../components/OnboardingCard';
+import { useReduceMotion } from '../../hooks/useReduceMotion';
+import { useUpcomingArrivals } from '../../hooks/useUpcomingArrivals';
+import { CountdownBadge } from '../../components/ui/CountdownBadge';
+import * as Haptics from 'expo-haptics';
 
 const STOP_VISIBILITY_DELTA = 0.012;
 
 function matchesFilter(stop: NearbyStop, filter: RouteFilter): boolean {
   if (filter === 'all') return true;
-  const types = stop.route_types;
   switch (filter) {
-    case 'bus':      return types.includes(3) && !isBLine(stop) && !isRapidBus(stop) && !isNightBus(stop);
+    case 'bus':      return isRegularBus(stop); // local buses, excluding B-Line/RapidBus/Night
     case 'bline':    return isBLine(stop);
     case 'rapidbus': return isRapidBus(stop);
     case 'night':    return isNightBus(stop);
@@ -34,19 +38,37 @@ function matchesFilter(stop: NearbyStop, filter: RouteFilter): boolean {
   }
 }
 
-function isBLine(s: NearbyStop)    { return /\bB-Line\b/i.test(s.stop_name); }
-function isRapidBus(s: NearbyStop) { return /\bRapidBus\b/i.test(s.stop_name); }
-function isNightBus(s: NearbyStop) { return /\bNight\b/i.test(s.stop_name); }
+// B-Line / RapidBus / NightBus are properties of the ROUTES serving a stop
+// (e.g. "099 Broadway B-Line", "R4 41st Avenue", "N9"), NOT the stop name.
+// Look at each stop's routes to classify it.
+function stopServesRoute(s: NearbyStop, test: (short: string, long: string) => boolean): boolean {
+  for (const rid of getStopRoutes(s.stop_id)) {
+    const r = getRoute(rid);
+    if (r && test(r.route_short_name ?? '', r.route_long_name ?? '')) return true;
+  }
+  return false;
+}
+
+function isBLine(s: NearbyStop)    { return stopServesRoute(s, (short, long) => /B-Line/i.test(long) || /B-Line/i.test(short)); }
+function isRapidBus(s: NearbyStop) { return stopServesRoute(s, (short) => /^R\d/.test(short)); }
+function isNightBus(s: NearbyStop) { return stopServesRoute(s, (short) => /^N\d/.test(short)); }
+// "Regular" bus = served by at least one route that isn't a premium/night service.
+function isRegularBus(s: NearbyStop) {
+  return stopServesRoute(
+    s,
+    (short, long) =>
+      !(/B-Line/i.test(long) || /B-Line/i.test(short) || /^R\d/.test(short) || /^N\d/.test(short)),
+  );
+}
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: c.background },
     mapWrap: { flex: 1 },
     map: { flex: 1 },
-    myLocBtn: {
+    fab: {
       position: 'absolute',
       right: 16,
-      bottom: 16,
       width: 46,
       height: 46,
       borderRadius: 23,
@@ -139,9 +161,12 @@ const makeStyles = (c: ThemeColors) =>
     stopDot: { width: 8, height: 8, borderRadius: 4 },
     stopName: { fontSize: 13, fontWeight: '600', color: c.text, lineHeight: 17 },
     stopDist: { fontSize: 11, color: c.textSecondary },
+    nextRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 2 },
+    nextLabel: { fontSize: 11, fontWeight: '600', color: c.textSecondary },
     arrivalsBtn: { marginTop: 4 },
     arrivalsBtnText: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
     emptyText: { fontSize: 13, color: c.textSecondary, padding: 16, lineHeight: 20 },
+    filterEmptyText: { fontSize: 13, color: c.textSecondary, paddingVertical: 20, paddingHorizontal: 16, width: 300, lineHeight: 20 },
     code: { fontFamily: 'monospace', backgroundColor: c.border, color: c.text },
   });
 
@@ -155,6 +180,7 @@ export default function NearbyScreen() {
   const [blinkOn, setBlinkOn] = useState(true);
   const hasOnboarded = useSettingsStore((s) => s.hasOnboarded);
   const setHasOnboarded = useSettingsStore((s) => s.setHasOnboarded);
+  const reduceMotion = useReduceMotion();
   const mapRef = useRef<MapView>(null);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
@@ -165,16 +191,21 @@ export default function NearbyScreen() {
     return () => setTabFocused(false);
   }, []));
 
-  // Blink the selected route's live buses on/off while a route is selected.
+  // Blink the selected route's live buses on/off while a route is selected
+  // (steady, no blink, when Reduce Motion is on).
   useEffect(() => {
     if (!selectedRouteId) return;
     setBlinkOn(true);
+    if (reduceMotion) return;
     const id = setInterval(() => setBlinkOn((b) => !b), 550);
     return () => clearInterval(id);
-  }, [selectedRouteId]);
+  }, [selectedRouteId, reduceMotion]);
 
   const nearbyStops = useNearbyStops(location);
-  const { data: vehicles } = useVehiclePositions();
+  // Both live feeds poll only while this tab is actually on screen — keeps the
+  // shared request cap in check when the user is on another tab.
+  const { data: vehicles } = useVehiclePositions(tabFocused);
+  const { data: upcoming } = useUpcomingArrivals(tabFocused);
 
   const initialRegion: Region = location
     ? { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }
@@ -257,6 +288,7 @@ export default function NearbyScreen() {
 
   const goToMyLocation = useCallback(() => {
     if (!location) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     mapRef.current?.animateToRegion(
       {
         latitude: location.coords.latitude,
@@ -267,6 +299,16 @@ export default function NearbyScreen() {
       450,
     );
   }, [location]);
+
+  // Zoom to a level where stop markers appear, centred on the user (or current view).
+  const showNearbyStops = useCallback(() => {
+    const latitude = location?.coords.latitude ?? currentRegion.latitude;
+    const longitude = location?.coords.longitude ?? currentRegion.longitude;
+    mapRef.current?.animateToRegion(
+      { latitude, longitude, latitudeDelta: 0.008, longitudeDelta: 0.008 },
+      400,
+    );
+  }, [location, currentRegion]);
 
   const handleViewArrivals = useCallback((stop: NearbyStop) => {
     router.push(`/stop/${stop.stop_id}`);
@@ -333,9 +375,20 @@ export default function NearbyScreen() {
         })}
       </MapView>}
 
+        <TouchableOpacity
+          style={[styles.fab, { bottom: 72 }]}
+          onPress={() => router.push('/settings')}
+          activeOpacity={0.85}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          accessibilityRole="button"
+          accessibilityLabel="Open settings"
+        >
+          <Ionicons name="settings-outline" size={20} color={Colors.primary} />
+        </TouchableOpacity>
+
         {location && (
           <TouchableOpacity
-            style={styles.myLocBtn}
+            style={[styles.fab, { bottom: 16 }]}
             onPress={goToMyLocation}
             activeOpacity={0.85}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -350,9 +403,15 @@ export default function NearbyScreen() {
       <RouteFilterBar active={activeFilter} onChange={setActiveFilter} />
 
       {!stopsZoomedIn && (
-        <View style={[styles.zoomHint, { top: safeTop + 54 }]}>
-          <Text style={styles.zoomHintText}>Zoom in to see stops</Text>
-        </View>
+        <TouchableOpacity
+          style={[styles.zoomHint, { top: safeTop + 54 }]}
+          onPress={showNearbyStops}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Show nearby stops on the map"
+        >
+          <Text style={styles.zoomHintText}>Tap to show nearby stops</Text>
+        </TouchableOpacity>
       )}
 
       {locError ? (
@@ -406,6 +465,11 @@ export default function NearbyScreen() {
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.listPadding}
+            ListEmptyComponent={
+              <Text style={styles.filterEmptyText}>
+                No {activeFilter === 'all' ? '' : `${activeFilter === 'bline' ? 'B-Line' : activeFilter === 'rapidbus' ? 'RapidBus' : activeFilter} `}stops in view. Try another filter or zoom out.
+              </Text>
+            }
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={[styles.stopCard, selectedStop?.stop_id === item.stop_id && styles.stopCardSelected]}
@@ -416,8 +480,14 @@ export default function NearbyScreen() {
                 <View style={[styles.stopDot, { backgroundColor: getRouteColor(item.route_types[0] ?? 3) }]} />
                 <Text style={styles.stopName} numberOfLines={2}>{item.stop_name}</Text>
                 <Text style={styles.stopDist}>
-                  {Math.round(item.distance)}m · ~{Math.max(1, Math.round(item.distance / 80))} min walk
+                  {formatDistance(item.distance)} · ~{walkMinutes(item.distance)} min walk
                 </Text>
+                {upcoming?.[item.stop_id] ? (
+                  <View style={styles.nextRow}>
+                    <Text style={styles.nextLabel}>Next bus</Text>
+                    <CountdownBadge arrivalTime={upcoming[item.stop_id]} />
+                  </View>
+                ) : null}
                 <TouchableOpacity style={styles.arrivalsBtn} onPress={() => handleViewArrivals(item)}>
                   <Text style={styles.arrivalsBtnText}>Arrivals →</Text>
                 </TouchableOpacity>

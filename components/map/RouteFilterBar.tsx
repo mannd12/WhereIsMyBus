@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { ScrollView, TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
 
@@ -37,7 +38,10 @@ export function RouteFilterBar({ active, onChange }: Props) {
             <TouchableOpacity
               key={f.id}
               style={[styles.chip, isActive ? { backgroundColor: f.color, borderColor: f.color } : inactiveChipStyle]}
-              onPress={() => onChange(f.id)}
+              onPress={() => {
+                Haptics.selectionAsync().catch(() => {});
+                onChange(f.id);
+              }}
               activeOpacity={0.75}
               accessibilityRole="button"
               accessibilityState={{ selected: isActive }}

@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { ServiceAlert } from '../../types/translink';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
+import { timeAgo } from '../../constants/format';
+import { getRoute } from '../../services/gtfsStatic';
 
 interface Props {
   alert: ServiceAlert;
@@ -27,12 +29,27 @@ const makeStyles = (c: ThemeColors) =>
     desc: { fontSize: 12, color: c.textSecondary, marginTop: 2, lineHeight: 17 },
     routes: { fontSize: 11, color: c.textSecondary, marginTop: 6, fontWeight: '600' },
     more: { fontSize: 12, color: '#005CA9', fontWeight: '600', marginTop: 6 },
+    time: { fontSize: 11, color: c.textSecondary, marginTop: 4 },
   });
 
 export function AlertBanner({ alert }: Props) {
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
   const [expanded, setExpanded] = useState(false);
+
+  // Affected routes come through as internal route IDs (e.g. "6630"); show riders
+  // the route numbers they actually know (e.g. "28"). Dedupe + drop unknowns.
+  const affectedNames = useMemo(() => {
+    const names = alert.affectedRoutes
+      .map((id) => getRoute(id)?.route_short_name)
+      .filter((n): n is string => !!n);
+    return Array.from(new Set(names));
+  }, [alert.affectedRoutes]);
+
+  // Show "posted Xh ago" only when the alert started within the last day —
+  // older timestamps aren't useful and stale/zero values look wrong.
+  const ageSeconds = alert.timestamp ? Math.floor(Date.now() / 1000) - alert.timestamp : 0;
+  const showTime = alert.timestamp > 0 && ageSeconds >= 0 && ageSeconds < 86400;
 
   // Only offer expand/collapse when there's plausibly more to read.
   const canExpand =
@@ -56,10 +73,13 @@ export function AlertBanner({ alert }: Props) {
             {alert.descriptionText}
           </Text>
         ) : null}
-        {expanded && alert.affectedRoutes.length > 0 ? (
+        {expanded && affectedNames.length > 0 ? (
           <Text style={styles.routes}>
-            Affected routes: {alert.affectedRoutes.join(', ')}
+            Affected routes: {affectedNames.join(', ')}
           </Text>
+        ) : null}
+        {showTime ? (
+          <Text style={styles.time}>Posted {timeAgo(alert.timestamp)}</Text>
         ) : null}
         {canExpand ? (
           <Text style={styles.more}>{expanded ? 'Show less' : 'Read more'}</Text>

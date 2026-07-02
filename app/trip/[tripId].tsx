@@ -4,8 +4,11 @@ import MapView, { Polyline, Marker, type Region } from 'react-native-maps';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { useVehiclePositions } from '../../hooks/useVehiclePositions';
+import { useReduceMotion } from '../../hooks/useReduceMotion';
 import { getRouteShape, getStop } from '../../services/gtfsStatic';
+import { timeAgo } from '../../constants/format';
 import { CountdownBadge } from '../../components/ui/CountdownBadge';
 import { RouteChip } from '../../components/ui/RouteChip';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
@@ -14,10 +17,15 @@ import { Colors } from '../../constants/colors';
 /** Bright yellow blinking beacon so the live bus is instantly findable on the map. */
 function BlinkingBeacon() {
   const [on, setOn] = useState(true);
+  const reduceMotion = useReduceMotion();
   useEffect(() => {
+    if (reduceMotion) {
+      setOn(true);
+      return;
+    }
     const id = setInterval(() => setOn((o) => !o), 500);
     return () => clearInterval(id);
-  }, []);
+  }, [reduceMotion]);
   return (
     <View style={beaconStyles.wrap}>
       <View
@@ -161,6 +169,7 @@ export default function TripDetailScreen() {
 
   const recenter = () => {
     if (!vehicle) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     mapRef.current?.animateToRegion(
       {
         latitude: vehicle.latitude,
@@ -267,9 +276,7 @@ export default function TripDetailScreen() {
           <Text style={styles.meta}>Arriving at {decodeURIComponent(stopName)}</Text>
         )}
         {vehicle && (
-          <Text style={styles.meta}>
-            Vehicle last updated {Math.round((Date.now() / 1000 - vehicle.timestamp) / 60)} min ago
-          </Text>
+          <Text style={styles.meta}>Vehicle updated {timeAgo(vehicle.timestamp)}</Text>
         )}
       </View>
     </View>

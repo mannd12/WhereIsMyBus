@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useThemeColors } from '../../hooks/useThemeColors';
+import { useReduceMotion } from '../../hooks/useReduceMotion';
 
 interface Props {
   arrivalTime: number; // epoch seconds
@@ -25,6 +26,8 @@ export function CountdownBadge({ arrivalTime, size = 'normal' }: Props) {
   );
   const hasPulsed = useRef(false);
   const c = useThemeColors();
+  const reduceMotion = useReduceMotion();
+  const opacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     const tick = () => {
@@ -41,13 +44,34 @@ export function CountdownBadge({ arrivalTime, size = 'normal' }: Props) {
     return () => clearInterval(id);
   }, [arrivalTime]);
 
+  const isDue = seconds <= 30;
+
+  // Gentle opacity pulse while "Due" so it draws the eye — skipped under Reduce Motion.
+  useEffect(() => {
+    if (!isDue || reduceMotion) {
+      opacity.setValue(1);
+      return;
+    }
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, { toValue: 0.35, duration: 550, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 1, duration: 550, useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => {
+      loop.stop();
+      opacity.setValue(1);
+    };
+  }, [isDue, reduceMotion, opacity]);
+
   const color =
     seconds <= 60 ? c.due : seconds <= 300 ? c.arriving : c.scheduled;
 
   return (
-    <Text style={[size === 'large' ? styles.large : styles.text, { color }]}>
+    <Animated.Text style={[size === 'large' ? styles.large : styles.text, { color, opacity }]}>
       {formatCountdown(seconds)}
-    </Text>
+    </Animated.Text>
   );
 }
 

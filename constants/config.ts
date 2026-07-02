@@ -1,4 +1,18 @@
-export const GTFS_RT_BASE = 'https://gtfsapi.translink.ca/v3';
+// Point at the BusPulse caching proxy by setting EXPO_PUBLIC_API_BASE at build
+// time (e.g. https://buspulse-proxy.onrender.com/v3). Unset → talk to TransLink
+// directly (current behaviour), so nothing breaks before the proxy is deployed.
+export const GTFS_RT_BASE =
+  process.env.EXPO_PUBLIC_API_BASE || 'https://gtfsapi.translink.ca/v3';
+
+// Optional shared secret sent as x-app-token when using the proxy.
+export const APP_TOKEN = process.env.EXPO_PUBLIC_APP_TOKEN || '';
+
+// The scheduled-time fallback lives only on the proxy (`/v3/schedule`). It's
+// enabled only when the app is pointed at a proxy; direct-to-TransLink has no
+// such endpoint, so the feature stays dormant until the backend is deployed.
+export const SCHEDULE_ENABLED = Boolean(process.env.EXPO_PUBLIC_API_BASE);
+export const SCHEDULE_URL = (stopId: string) =>
+  `${GTFS_RT_BASE}/schedule?stopId=${encodeURIComponent(stopId)}`;
 
 export const TRIP_UPDATES_URL = (key: string) =>
   `${GTFS_RT_BASE}/gtfsrealtime?apikey=${key}`;

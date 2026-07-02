@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import type { ColorValue } from 'react-native';
@@ -18,11 +18,18 @@ function tabIcon(name: IoniconName, outlineName: IoniconName) {
 export default function TabLayout() {
   const { alerts } = useRelevantAlerts();
   const lastSeenDay = useAlertsSeenStore((s) => s.lastSeenDay);
+
+  // Wait for the persisted seen-state to load before showing the badge, so a
+  // returning user who already checked alerts today doesn't see it flash "99+"
+  // for a frame on cold start (before AsyncStorage rehydrates).
+  const [hydrated, setHydrated] = useState(() => useAlertsSeenStore.persist.hasHydrated());
+  useEffect(() => useAlertsSeenStore.persist.onFinishHydration(() => setHydrated(true)), []);
+
   // Badge only shows nearby alerts the user hasn't checked yet today; it clears
   // when they open the tab and reappears for new alerts after 3am.
   const unseen = lastSeenDay !== transitDay();
   const count = alerts.length;
-  const alertBadge = unseen && count > 0 ? (count > 99 ? '99+' : count) : undefined;
+  const alertBadge = hydrated && unseen && count > 0 ? (count > 99 ? '99+' : count) : undefined;
   const c = useThemeColors();
 
   return (
@@ -34,6 +41,8 @@ export default function TabLayout() {
         headerStyle: { backgroundColor: Colors.primary },
         headerTintColor: '#fff',
         headerTitleStyle: { fontWeight: '700' },
+        // Smaller badge text + room so "99+" fits instead of clipping to "9…".
+        tabBarBadgeStyle: { fontSize: 10, lineHeight: 14, minWidth: 20, paddingHorizontal: 3 },
       }), [c])}
     >
       <Tabs.Screen

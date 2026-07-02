@@ -1,13 +1,20 @@
 import { useMemo } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useFavoritesStore } from '../../store/favorites';
 import { getStop } from '../../services/gtfsStatic';
-import { useStopArrivals } from '../../hooks/useStopArrivals';
+import { haversineDistance } from '../../services/translink';
+import { useFavoriteArrivals } from '../../hooks/useFavoriteArrivals';
+import { useLocation } from '../../hooks/useLocation';
 import { ArrivalRow } from '../../components/stop/ArrivalRow';
+import { ArrivalListSkeleton } from '../../components/ui/Skeleton';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
+import { Colors } from '../../constants/colors';
+import { formatDistance, walkMinutes } from '../../constants/format';
 import type { Arrival } from '../../types/translink';
+
+interface Coords { latitude: number; longitude: number }
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -35,6 +42,7 @@ const makeStyles = (c: ThemeColors) =>
     reorder: { alignItems: 'center', justifyContent: 'center' },
     stopName: { fontSize: 15, fontWeight: '700', color: c.text },
     stopId: { fontSize: 12, color: c.textSecondary, marginTop: 1 },
+    walk: { fontSize: 12, color: c.textSecondary, marginTop: 2 },
     loading: { fontSize: 13, color: c.textSecondary, padding: 12 },
     noArrivals: { fontSize: 13, color: c.textSecondary, padding: 12 },
     empty: {
@@ -45,18 +53,55 @@ const makeStyles = (c: ThemeColors) =>
       gap: 12,
       padding: 32,
     },
+    emptyIconWrap: {
+      width: 88,
+      height: 88,
+      borderRadius: 44,
+      backgroundColor: 'rgba(0,92,169,0.10)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     emptyTitle: { fontSize: 18, fontWeight: '700', color: c.text },
     emptySubtitle: { fontSize: 14, color: c.textSecondary, textAlign: 'center', lineHeight: 20 },
+    emptyCta: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      backgroundColor: Colors.primary,
+      borderRadius: 12,
+      paddingVertical: 12,
+      paddingHorizontal: 22,
+      marginTop: 8,
+    },
+    emptyCtaText: { color: '#fff', fontWeight: '700', fontSize: 15 },
   });
 
-function FavoriteStopCard({ stopId, index, total }: { stopId: string; index: number; total: number }) {
+function FavoriteStopCard({
+  stopId,
+  index,
+  total,
+  origin,
+  arrivals,
+  isLoading,
+}: {
+  stopId: string;
+  index: number;
+  total: number;
+  origin: Coords | null;
+  arrivals: Arrival[] | undefined;
+  isLoading: boolean;
+}) {
   const stop = getStop(stopId);
-  const { data: arrivals, isLoading } = useStopArrivals(stopId);
   const removeFavorite = useFavoritesStore((s) => s.removeFavorite);
   const moveFavorite = useFavoritesStore((s) => s.moveFavorite);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
-  const next = (arrivals ?? []).slice(0, 2) as Arrival[];
+  const next = (arrivals ?? []).slice(0, 2);
+
+  const distance = useMemo(() => {
+    if (!origin || !stop) return null;
+    return haversineDistance(origin.latitude, origin.longitude, stop.stop_lat, stop.stop_lon);
+  }, [origin, stop]);
 
   return (
     <View style={styles.card}>
@@ -70,6 +115,13 @@ function FavoriteStopCard({ stopId, index, total }: { stopId: string; index: num
         >
           <Text style={styles.stopName} numberOfLines={2}>{stop?.stop_name ?? `Stop #${stopId}`}</Text>
           <Text style={styles.stopId}>#{stop?.stop_code ?? stopId}</Text>
+          {distance !== null && (
+            <Text style={styles.walk}>
+              {formatDistance(distance)}
+              {/* Walk time only when it's plausibly walkable — a "211 min walk" is noise. */}
+              {distance < 3000 ? ` · ~${walkMinutes(distance)} min walk` : ''}
+            </Text>
+          )}
         </TouchableOpacity>
         {total > 1 && (
           <View style={styles.reorder}>
@@ -104,7 +156,7 @@ function FavoriteStopCard({ stopId, index, total }: { stopId: string; index: num
       </View>
 
       {isLoading ? (
-        <Text style={styles.loading}>Loading arrivals…</Text>
+        <ArrivalListSkeleton rows={2} />
       ) : next.length === 0 ? (
         <Text style={styles.noArrivals}>No upcoming arrivals</Text>
       ) : (
@@ -118,15 +170,34 @@ function FavoriteStopCard({ stopId, index, total }: { stopId: string; index: num
 
 export default function FavoritesScreen() {
   const stopIds = useFavoritesStore((s) => s.stopIds);
+  const { location } = useLocation();
+  const origin = location
+    ? { latitude: location.coords.latitude, longitude: location.coords.longitude }
+    : null;
+  const { data: arrivalsByStop, isLoading, isFetching, refetch } = useFavoriteArrivals(stopIds);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
 
   if (stopIds.length === 0) {
     return (
       <View style={styles.empty}>
-        <Ionicons name="star-outline" size={52} color={c.border} />
+        <View style={styles.emptyIconWrap}>
+          <Ionicons name="star" size={40} color={Colors.primary} />
+        </View>
         <Text style={styles.emptyTitle}>No favourites yet</Text>
-        <Text style={styles.emptySubtitle}>Open any stop and tap the star to add it here.</Text>
+        <Text style={styles.emptySubtitle}>
+          Star a stop and it'll show up here with live arrivals at a glance.
+        </Text>
+        <TouchableOpacity
+          style={styles.emptyCta}
+          onPress={() => router.push('/search')}
+          activeOpacity={0.85}
+          accessibilityRole="button"
+          accessibilityLabel="Find a stop to add"
+        >
+          <Ionicons name="search" size={16} color="#fff" />
+          <Text style={styles.emptyCtaText}>Find a stop</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -136,8 +207,18 @@ export default function FavoritesScreen() {
       style={styles.list}
       data={stopIds}
       keyExtractor={(id) => id}
+      refreshControl={
+        <RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor={Colors.primary} />
+      }
       renderItem={({ item, index }) => (
-        <FavoriteStopCard stopId={item} index={index} total={stopIds.length} />
+        <FavoriteStopCard
+          stopId={item}
+          index={index}
+          total={stopIds.length}
+          origin={origin}
+          arrivals={arrivalsByStop?.[item]}
+          isLoading={isLoading}
+        />
       )}
       contentContainerStyle={styles.listContent}
     />

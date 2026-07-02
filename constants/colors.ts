@@ -18,14 +18,6 @@ export const DarkColors = {
   due: '#FF453A',
   arriving: '#FF9F0A',
   scheduled: '#4A9EDF',
-
-  dark: {
-    background: '#121212',
-    surface: '#1E1E1E',
-    text: '#FFFFFF',
-    textSecondary: '#AAAAAA',
-    border: '#333333',
-  },
 };
 
 export const Colors = {
@@ -48,12 +40,4 @@ export const Colors = {
   due: '#E4002B',
   arriving: '#FF8C00',
   scheduled: '#005CA9',
-
-  dark: {
-    background: '#121212',
-    surface: '#1E1E1E',
-    text: '#FFFFFF',
-    textSecondary: '#AAAAAA',
-    border: '#333333',
-  },
 };

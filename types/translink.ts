@@ -58,3 +58,10 @@ export interface VehiclePosition {
 export interface NearbyStop extends Stop {
   distance: number;
 }
+
+/** A timetable departure (no live tracking) — the scheduled-time fallback. */
+export interface ScheduledArrival {
+  routeShortName: string;
+  headsign: string;
+  arrivalTime: number; // epoch seconds
+}

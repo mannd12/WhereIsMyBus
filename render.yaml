@@ -1,0 +1,19 @@
+# One-click deploy for the BusPulse caching proxy (server/).
+# On Render: New → Blueprint → pick this repo. Then set TRANSLINK_API_KEY
+# (and optionally APP_TOKEN) in the dashboard. Nothing else to configure.
+services:
+  - type: web
+    name: buspulse-proxy
+    runtime: node
+    plan: free
+    rootDir: server
+    # Installs deps and builds the schedule artifact (data/) from TransLink GTFS
+    # so the timetable fallback works. Rebuild on GTFS updates via a manual deploy.
+    buildCommand: npm install && npm run build-schedule
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: TRANSLINK_API_KEY
+        sync: false   # set in dashboard — never committed
+      - key: APP_TOKEN
+        sync: false   # optional shared secret

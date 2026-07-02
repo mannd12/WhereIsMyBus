@@ -18,10 +18,6 @@
       "buildNumber": "1",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "BusPulse uses your location to show nearby bus stops and real-time arrivals.",
-        "NSLocationAlwaysUsageDescription": "BusPulse uses your location to show nearby stops.",
-        "UIBackgroundModes": [
-          "remote-notification"
-        ],
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -50,7 +46,7 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "BusPulse uses your location to show nearby stops and real-time arrivals."
+          "locationWhenInUsePermission": "BusPulse uses your location to show nearby stops and real-time arrivals."
         }
       ],
       [

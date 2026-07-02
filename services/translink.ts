@@ -1,5 +1,5 @@
 import type { NearbyStop, Stop } from '../types/translink';
-import { getAllStops, getStopRoutes } from './gtfsStatic';
+import { getBusStops, getStopRoutes } from './gtfsStatic';
 import { NEARBY_RADIUS_M, MAX_NEARBY_STOPS } from '../constants/config';
 
 export function haversineDistance(
@@ -23,7 +23,7 @@ export function getNearbyStops(
   lon: number,
   radius = NEARBY_RADIUS_M,
 ): NearbyStop[] {
-  return getAllStops()
+  return getBusStops()
     .map((stop: Stop) => ({
       ...stop,
       distance: haversineDistance(lat, lon, stop.stop_lat, stop.stop_lon),
@@ -36,7 +36,7 @@ export function getNearbyStops(
 /** Set of route IDs that serve any stop within `radius` metres of a point. */
 export function getRoutesNear(lat: number, lon: number, radius: number): Set<string> {
   const set = new Set<string>();
-  for (const stop of getAllStops()) {
+  for (const stop of getBusStops()) {
     if (haversineDistance(lat, lon, stop.stop_lat, stop.stop_lon) <= radius) {
       for (const routeId of getStopRoutes(stop.stop_id)) set.add(routeId);
     }
@@ -56,7 +56,7 @@ export function getStopsInRegion(
   userLon?: number,
 ): NearbyStop[] {
   const out: NearbyStop[] = [];
-  for (const stop of getAllStops()) {
+  for (const stop of getBusStops()) {
     if (
       stop.stop_lat < minLat ||
       stop.stop_lat > maxLat ||

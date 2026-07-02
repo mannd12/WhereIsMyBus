@@ -15,21 +15,3 @@ export function getRouteColor(routeType: number, routeColor?: string): string {
     default: return Colors.bus;
   }
 }
-
-export function getRouteTypeLabel(routeType: number): string {
-  switch (routeType) {
-    case ROUTE_TYPE_SUBWAY: return 'SkyTrain';
-    case ROUTE_TYPE_RAIL: return 'WCE';
-    case ROUTE_TYPE_FERRY: return 'SeaBus';
-    default: return 'Bus';
-  }
-}
-
-export function getRouteTypeIcon(routeType: number): 'subway' | 'train' | 'boat' | 'bus' {
-  switch (routeType) {
-    case ROUTE_TYPE_SUBWAY: return 'subway';
-    case ROUTE_TYPE_RAIL: return 'train';
-    case ROUTE_TYPE_FERRY: return 'boat';
-    default: return 'bus';
-  }
-}

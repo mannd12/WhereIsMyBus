@@ -2,14 +2,20 @@ import { useState, useMemo } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { searchStops, searchRoutes, getStop } from '../../services/gtfsStatic';
+import * as Haptics from 'expo-haptics';
+import { searchStops, searchRoutes, getStop, getRoute } from '../../services/gtfsStatic';
+import { haversineDistance } from '../../services/translink';
 import { useRecentStopsStore } from '../../store/recentStops';
+import { useRecentRoutesStore } from '../../store/recentRoutes';
 import { useFavoritesStore } from '../../store/favorites';
+import { useLocation } from '../../hooks/useLocation';
 import type { Stop, Route } from '../../types/translink';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
-import { getRouteColor, getRouteTypeLabel } from '../../constants/routeTypes';
+import { getRouteColor } from '../../constants/routeTypes';
+import { formatDistance } from '../../constants/format';
 
 type SearchMode = 'stops' | 'routes';
+interface Coords { latitude: number; longitude: number }
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -82,20 +88,40 @@ const makeStyles = (c: ThemeColors) =>
     hint: { textAlign: 'center', color: c.textSecondary, margin: 32, fontSize: 14, lineHeight: 22 },
   });
 
-function StopRow({ item }: { item: Stop }) {
+function StopRow({ item, origin }: { item: Stop; origin: Coords | null }) {
   const isFav = useFavoritesStore((s) => s.isFavorite(item.stop_id));
   const toggleFav = useFavoritesStore((s) => s.toggleFavorite);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+  const distance = origin
+    ? haversineDistance(origin.latitude, origin.longitude, item.stop_lat, item.stop_lon)
+    : null;
 
   return (
-    <TouchableOpacity style={styles.row} onPress={() => router.push(`/stop/${item.stop_id}`)} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={styles.row}
+      onPress={() => router.push(`/stop/${item.stop_id}`)}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={`${item.stop_name}, stop ${item.stop_code}, open arrivals`}
+    >
       <View style={[styles.typeDot, { backgroundColor: getRouteColor(item.route_types[0] ?? 3) }]} />
       <View style={styles.rowText}>
         <Text style={styles.stopName}>{item.stop_name}</Text>
-        <Text style={styles.stopMeta}>#{item.stop_code} · {item.route_types.map(getRouteTypeLabel).join(', ')}</Text>
+        <Text style={styles.stopMeta}>
+          #{item.stop_code}
+          {distance !== null ? ` · ${formatDistance(distance)}` : ''}
+        </Text>
       </View>
-      <TouchableOpacity onPress={() => toggleFav(item.stop_id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+      <TouchableOpacity
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+          toggleFav(item.stop_id);
+        }}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        accessibilityRole="button"
+        accessibilityLabel={isFav ? 'Remove from favourites' : 'Add to favourites'}
+      >
         <Ionicons name={isFav ? 'star' : 'star-outline'} size={18} color={isFav ? '#FFB800' : c.textSecondary} />
       </TouchableOpacity>
       <Ionicons name="chevron-forward" size={16} color={c.textSecondary} />
@@ -106,10 +132,20 @@ function StopRow({ item }: { item: Stop }) {
 function RouteRow({ item }: { item: Route }) {
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+  const addRecentRoute = useRecentRoutesStore((s) => s.addRecentRoute);
   const color = item.route_color ? `#${item.route_color}` : '#005CA9';
 
   return (
-    <TouchableOpacity style={styles.row} onPress={() => router.push(`/route/${item.route_id}`)} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={styles.row}
+      onPress={() => {
+        addRecentRoute(item.route_id);
+        router.push(`/route/${item.route_id}`);
+      }}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={`Route ${item.route_short_name}, ${item.route_long_name}, view stops`}
+    >
       <View style={[styles.typeDot, { backgroundColor: color }]} />
       <View style={styles.rowText}>
         <Text style={styles.stopName}>{item.route_short_name} — {item.route_long_name}</Text>
@@ -123,15 +159,34 @@ function RouteRow({ item }: { item: Route }) {
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
   const [mode, setMode] = useState<SearchMode>('stops');
+  const { location } = useLocation();
+  const origin = location
+    ? { latitude: location.coords.latitude, longitude: location.coords.longitude }
+    : null;
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
 
   const { stopIds: recentIds, clearRecent } = useRecentStopsStore();
+  const { routeIds: recentRouteIds, clearRecent: clearRecentRoutes } = useRecentRoutesStore();
   const showRecent = mode === 'stops' && query.length < 2 && recentIds.length > 0;
+  const showRecentRoutes = mode === 'routes' && query.length < 1 && recentRouteIds.length > 0;
 
-  const recentStops = recentIds.map((id) => getStop(id)).filter((s): s is Stop => s !== undefined);
-  const stopResults: Stop[] = mode === 'stops' && query.length >= 2 ? searchStops(query) : [];
-  const routeResults: Route[] = mode === 'routes' && query.length >= 1 ? searchRoutes(query) : [];
+  const recentStops = useMemo(
+    () => recentIds.map((id) => getStop(id)).filter((s): s is Stop => s !== undefined),
+    [recentIds],
+  );
+  const recentRoutes = useMemo(
+    () => recentRouteIds.map((id) => getRoute(id)).filter((r): r is Route => r !== undefined),
+    [recentRouteIds],
+  );
+  const stopResults = useMemo<Stop[]>(
+    () => (mode === 'stops' && query.length >= 2 ? searchStops(query) : []),
+    [mode, query],
+  );
+  const routeResults = useMemo<Route[]>(
+    () => (mode === 'routes' && query.length >= 1 ? searchRoutes(query) : []),
+    [mode, query],
+  );
 
   const showEmpty =
     query.length >= (mode === 'routes' ? 1 : 2) &&
@@ -171,10 +226,10 @@ export default function SearchScreen() {
         <Text style={styles.empty}>No {mode} found for "{query}"</Text>
       )}
 
-      {showRecent && (
+      {(showRecent || showRecentRoutes) && (
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Recent</Text>
-          <TouchableOpacity onPress={clearRecent}>
+          <TouchableOpacity onPress={showRecentRoutes ? clearRecentRoutes : clearRecent}>
             <Text style={styles.clearText}>Clear</Text>
           </TouchableOpacity>
         </View>
@@ -185,7 +240,7 @@ export default function SearchScreen() {
           data={showRecent ? recentStops : stopResults}
           keyExtractor={(s) => s.stop_id}
           keyboardShouldPersistTaps="handled"
-          renderItem={({ item }) => <StopRow item={item} />}
+          renderItem={({ item }) => <StopRow item={item} origin={origin} />}
           ItemSeparatorComponent={() => <View style={styles.sep} />}
           ListFooterComponent={
             !query && !showRecent ? <Text style={styles.hint}>Search by stop name or 5-digit stop number.{'\n'}Tap any result to see live arrivals.</Text> : null
@@ -193,13 +248,13 @@ export default function SearchScreen() {
         />
       ) : (
         <FlatList
-          data={routeResults}
+          data={showRecentRoutes ? recentRoutes : routeResults}
           keyExtractor={(r) => r.route_id}
           keyboardShouldPersistTaps="handled"
           renderItem={({ item }) => <RouteRow item={item} />}
           ItemSeparatorComponent={() => <View style={styles.sep} />}
           ListFooterComponent={
-            !query ? <Text style={styles.hint}>Search by route number (99, 49) or name (B-Line, SkyTrain).</Text> : null
+            !query && !showRecentRoutes ? <Text style={styles.hint}>Search by route number (99, 49) or name (B-Line, RapidBus).</Text> : null
           }
         />
       )}

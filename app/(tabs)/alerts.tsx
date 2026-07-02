@@ -2,8 +2,10 @@ import { useMemo, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import type { ServiceAlert } from '../../types/translink';
 import { useRelevantAlerts } from '../../hooks/useRelevantAlerts';
+import { isRateLimited } from '../../services/gtfsRealtime';
 import { useAlertsSeenStore } from '../../store/alertsSeen';
 import { AlertBanner } from '../../components/stop/AlertBanner';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
@@ -64,7 +66,7 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 export default function AlertsScreen() {
-  const { alerts, isLoading, isError, refetch, isFetching } = useRelevantAlerts();
+  const { alerts, isLoading, isError, error, refetch, isFetching } = useRelevantAlerts();
   const markSeen = useAlertsSeenStore((s) => s.markSeen);
   const dismissAll = useAlertsSeenStore((s) => s.dismissAll);
   const c = useThemeColors();
@@ -82,6 +84,7 @@ export default function AlertsScreen() {
   useFocusEffect(useCallback(() => { markSeen(); }, [markSeen]));
 
   const handleClearAll = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     dismissAll(alerts.map((a) => a.id));
   }, [dismissAll, alerts]);
 
@@ -95,11 +98,16 @@ export default function AlertsScreen() {
   }
 
   if (isError) {
+    const rl = isRateLimited(error);
     return (
       <View style={[{ flex: 1, backgroundColor: c.background }, styles.center]}>
-        <Ionicons name="cloud-offline-outline" size={48} color={c.border} />
-        <Text style={styles.errorTitle}>Could not load alerts</Text>
-        <Text style={styles.errorSub}>Check your connection and API key in settings.</Text>
+        <Ionicons name={rl ? 'time-outline' : 'cloud-offline-outline'} size={48} color={c.border} />
+        <Text style={styles.errorTitle}>{rl ? 'Live data is busy' : 'Could not load alerts'}</Text>
+        <Text style={styles.errorSub}>
+          {rl
+            ? 'The real-time feed has hit its limit. Try again shortly.'
+            : 'Check your connection and try again.'}
+        </Text>
       </View>
     );
   }
