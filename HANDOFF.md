@@ -35,7 +35,23 @@ Build → TestFlight → App Store. (App display name **BusPulse**; internal slu
 - Reminders: one-tap (uses saved lead time) local notifications. Dark mode via `useThemeColors`.
   Reduce-motion aware. Battery/quota: polling pauses when app is backgrounded / tab off-screen.
 
-## Backend (server/) — built + tested locally, NOT deployed
+## Backend — LIVE on EAS Hosting (2026-07-02)
+- **Deployed:** the caching proxy runs as an Expo Router API route (`app/api/[feed]+api.ts`)
+  on **EAS Hosting** → **https://whereismybus.expo.app** (`/api/gtfsrealtime|gtfsposition|gtfsalerts`).
+  Verified live (real protobuf, server-side key, 404 on unknown). Deploy: `eas deploy --prod`
+  (no login — uses the authed EAS account). Redeploy after code changes with the same command.
+- **Env:** server key = EAS var `TRANSLINK_API_KEY` (production, non-public). App will use the proxy
+  once built with `EXPO_PUBLIC_API_BASE=https://whereismybus.expo.app/api` — **already set in EAS
+  production env**, so the next EAS build wires it automatically.
+- **Web build note:** `web.output:"server"` + `react-dom`/`react-native-web` added so EAS Hosting can
+  build. `react-native-maps` is stubbed for WEB ONLY (`web-stubs/` + `metro.config.js` resolver) —
+  native/iOS untouched. iOS export verified clean after these changes.
+- **Serverless caveat:** module-level cache dedupes under sustained traffic (warm workers); low-traffic
+  cold starts ≈ direct-to-TransLink (never worse). **Timetable fallback is NOT served here** — `/api/schedule`
+  returns empty (31 MB won't fit serverless), so the app shows "no real-time arrivals" instead. The
+  client scheduled-fallback code stays dormant, ready if you later host `server/` (below) on a persistent host.
+
+## Alternative backend (server/) — schedule-capable, NOT deployed
 Caching proxy for the GTFS-RT feeds. Fixes the **shared 1,000/day cap** (every device hits
 TransLink with the same key today → can't scale). Server fetches each feed once per TTL and
 serves all clients from cache → ~1 upstream request/window regardless of user count; key stays
