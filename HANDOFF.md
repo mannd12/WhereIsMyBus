@@ -8,12 +8,12 @@ Build → TestFlight → App Store. (App display name **BusPulse**; internal slu
 `whereismybus` / `com.whereismybus.app` — do NOT change them.)
 
 ## Now
-- Branch **`master`**. **Large uncommitted batch in the working tree** (NOT committed/pushed by
-  request). `npx tsc --noEmit` clean · `npx expo export --platform ios` bundles clean.
-- **Nothing has been built or deployed** this effort — holding on the EAS build credit until the
-  user explicitly says go (they will give specific instructions; do NOT spend a credit before that).
+- Branch **`master`** @ `5b70643` — the big batch is **committed + pushed** (2026-07-02).
+  `npx tsc --noEmit` clean · `npx expo export --platform ios` bundles clean.
+- **Not yet built or deployed.** Holding on the EAS build credit until the user explicitly says go.
+  Backend deploy is authorized but needs the user's host account (see Backend section).
 - Last build on TestFlight is still the earlier UAT build (id `3e2a508b`).
-- **Backend proxy now exists** in `server/` (built + tested locally, not deployed) — see below.
+- **Backend proxy + scheduled fallback** live in `server/` (built + tested locally) — see below.
 
 ## Features (full app surface)
 4 tabs + modals, all working in Expo Go (except map/notifications — see `VERIFY_ON_BUILD.md`):
