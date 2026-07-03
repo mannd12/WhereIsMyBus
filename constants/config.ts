@@ -1,25 +1,28 @@
 // Point at the BusPulse caching proxy by setting EXPO_PUBLIC_API_BASE at build
-// time (e.g. https://buspulse-proxy.onrender.com/v3). Unset → talk to TransLink
-// directly (current behaviour), so nothing breaks before the proxy is deployed.
+// time (e.g. https://whereismybus.expo.app/api). Unset → talk to TransLink
+// directly, so nothing breaks without the proxy.
+export const USE_PROXY = Boolean(process.env.EXPO_PUBLIC_API_BASE);
 export const GTFS_RT_BASE =
   process.env.EXPO_PUBLIC_API_BASE || 'https://gtfsapi.translink.ca/v3';
 
 // Optional shared secret sent as x-app-token when using the proxy.
 export const APP_TOKEN = process.env.EXPO_PUBLIC_APP_TOKEN || '';
 
-// The scheduled-time fallback lives only on the proxy (`/v3/schedule`). It's
-// enabled only when the app is pointed at a proxy; direct-to-TransLink has no
-// such endpoint, so the feature stays dormant until the backend is deployed.
-export const SCHEDULE_ENABLED = Boolean(process.env.EXPO_PUBLIC_API_BASE);
+// The scheduled-time fallback needs a schedule-CAPABLE host (the Express
+// server/, not EAS Hosting, whose /api/schedule returns empty). Off unless
+// explicitly enabled at build time, so proxied builds don't poll a stub.
+export const SCHEDULE_ENABLED =
+  USE_PROXY && process.env.EXPO_PUBLIC_SCHEDULE_ENABLED === '1';
 export const SCHEDULE_URL = (stopId: string) =>
   `${GTFS_RT_BASE}/schedule?stopId=${encodeURIComponent(stopId)}`;
 
-export const TRIP_UPDATES_URL = (key: string) =>
-  `${GTFS_RT_BASE}/gtfsrealtime?apikey=${key}`;
-export const VEHICLE_POSITIONS_URL = (key: string) =>
-  `${GTFS_RT_BASE}/gtfsposition?apikey=${key}`;
-export const SERVICE_ALERTS_URL = (key: string) =>
-  `${GTFS_RT_BASE}/gtfsalerts?apikey=${key}`;
+// When proxying, the TransLink key stays SERVER-side: no ?apikey= on the URL
+// (it would leak into hosting access logs) and none is needed in the bundle.
+const feedUrl = (feed: string, key: string) =>
+  USE_PROXY ? `${GTFS_RT_BASE}/${feed}` : `${GTFS_RT_BASE}/${feed}?apikey=${key}`;
+export const TRIP_UPDATES_URL = (key: string) => feedUrl('gtfsrealtime', key);
+export const VEHICLE_POSITIONS_URL = (key: string) => feedUrl('gtfsposition', key);
+export const SERVICE_ALERTS_URL = (key: string) => feedUrl('gtfsalerts', key);
 
 export const ARRIVALS_REFRESH_MS = 60_000;  // 60s — was 30s
 export const VEHICLES_REFRESH_MS = 60_000;  // 60s — was 15s

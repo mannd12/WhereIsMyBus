@@ -62,8 +62,11 @@ export default function RouteDetailScreen() {
 
   const route = getRoute(routeId ?? '');
   const stops = useMemo(() => getStopsForRoute(routeId ?? ''), [routeId]);
-  const isFav = useFavoritesStore((s) => s.isFavorite);
+  // Subscribe to the ids themselves (selecting the isFavorite FUNCTION would
+  // never re-render — its reference is stable across store updates).
+  const favIds = useFavoritesStore((s) => s.stopIds);
   const toggleFav = useFavoritesStore((s) => s.toggleFavorite);
+  const isFav = (stopId: string) => favIds.includes(stopId);
 
   const routeColor = route?.route_color ? `#${route.route_color}` : Colors.primary;
 

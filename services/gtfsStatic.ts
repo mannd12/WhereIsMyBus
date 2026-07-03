@@ -58,17 +58,9 @@ function getShapesData(): Record<string, [number, number][]> {
   return shapesData;
 }
 
-export function getAllStops(): Stop[] {
-  return stopsRaw;
-}
-
 /** Bus-only stops (route_type 3). Use this for anything the rider browses. */
 export function getBusStops(): Stop[] {
   return busStops;
-}
-
-export function getAllRoutes(): Route[] {
-  return routesRaw;
 }
 
 export function getStop(stopId: string): Stop | undefined {

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getVehiclePositions } from '../services/gtfsRealtime';
 import { useSettingsStore } from '../store/settings';
-import { VEHICLES_REFRESH_MS } from '../constants/config';
+import { VEHICLES_REFRESH_MS, USE_PROXY } from '../constants/config';
 
 /**
  * Live bus positions. `enabled` lets callers pause polling when their screen
@@ -15,7 +15,7 @@ export function useVehiclePositions(enabled = true) {
   return useQuery({
     queryKey: ['vehicles', apiKey],
     queryFn: () => getVehiclePositions(apiKey),
-    enabled: enabled && Boolean(apiKey),
+    enabled: enabled && (Boolean(apiKey) || USE_PROXY),
     refetchInterval: VEHICLES_REFRESH_MS,
     staleTime: 10_000,
   });

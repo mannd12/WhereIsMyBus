@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect } from 'react';
+import { useMemo, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MapView, { Polyline, type Region } from 'react-native-maps';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -80,8 +80,10 @@ export default function RouteMapScreen() {
         }
       : VANCOUVER_REGION;
 
-  // Fit the whole route into view once.
-  useEffect(() => {
+  // Fit the whole route into view once the native map is laid out. (Shape data
+  // is synchronous, so calling this from an effect on first render would fire
+  // before layout — a silent no-op on iOS.)
+  const fitRoute = () => {
     if (!fitted.current && coords.length > 1) {
       fitted.current = true;
       mapRef.current?.fitToCoordinates(coords, {
@@ -89,7 +91,7 @@ export default function RouteMapScreen() {
         animated: false,
       });
     }
-  }, [coords]);
+  };
 
   const close = () => {
     if (router.canGoBack()) router.back();
@@ -98,7 +100,7 @@ export default function RouteMapScreen() {
 
   return (
     <View style={styles.container}>
-      <MapView ref={mapRef} style={styles.map} initialRegion={initialRegion} showsUserLocation>
+      <MapView ref={mapRef} style={styles.map} initialRegion={initialRegion} showsUserLocation onMapReady={fitRoute}>
         {coords.length > 0 && <Polyline coordinates={coords} strokeColor={color} strokeWidth={4} />}
         {routeVehicles.map((v) => (
           <VehicleMarker key={v.vehicleId} vehicle={v} />

@@ -24,9 +24,14 @@ export function useLocation() {
 
   useEffect(() => {
     let sub: LocationSubscription | null = null;
+    // If the screen unmounts while the async chain below is still running
+    // (permission prompt / GPS fix), the watcher would be created AFTER cleanup
+    // and leak for the app's lifetime. Track cancellation explicitly.
+    let cancelled = false;
 
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
+      if (cancelled) return;
       if (status !== 'granted') {
         setError('Location permission denied — showing Vancouver centre.');
         setLocation(VANCOUVER_FALLBACK);
@@ -35,6 +40,7 @@ export function useLocation() {
       }
       // Instant: show stops immediately from the last-known position if we have one
       const lastKnown = await Location.getLastKnownPositionAsync();
+      if (cancelled) return;
       if (lastKnown) {
         setLocation(lastKnown);
         setLoading(false);
@@ -44,19 +50,30 @@ export function useLocation() {
         Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }),
         new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
       ]);
+      if (cancelled) return;
       setLocation(loc ?? lastKnown ?? VANCOUVER_FALLBACK);
       setLoading(false);
 
-      sub = await Location.watchPositionAsync(
+      const watcher = await Location.watchPositionAsync(
         { accuracy: Location.Accuracy.Balanced, timeInterval: 15_000, distanceInterval: 50 },
         (updated) => setLocation(updated),
       );
+      if (cancelled) {
+        watcher.remove();
+        return;
+      }
+      sub = watcher;
     })().catch((e) => {
-      setError(String(e));
-      setLoading(false);
+      if (!cancelled) {
+        setError(String(e));
+        setLoading(false);
+      }
     });
 
-    return () => { sub?.remove(); };
+    return () => {
+      cancelled = true;
+      sub?.remove();
+    };
   }, []);
 
   return { location, loading, error };

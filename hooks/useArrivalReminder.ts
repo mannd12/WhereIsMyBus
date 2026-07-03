@@ -14,8 +14,8 @@ export function useArrivalReminder() {
   const lead = useSettingsStore((s) => s.notifyLeadMinutes);
 
   return useCallback(
-    async (arrival: Arrival, stopName: string, onScheduled?: () => void) => {
-      const ok = await scheduleArrivalNotification(arrival, stopName, lead);
+    async (arrival: Arrival, stopName: string, stopId: string, onScheduled?: () => void) => {
+      const ok = await scheduleArrivalNotification(arrival, stopName, stopId, lead);
       if (ok) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         onScheduled?.();

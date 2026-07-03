@@ -17,7 +17,13 @@ const cache: Record<string, Entry> = {};
 
 async function fetchUpstream(feed: string): Promise<ArrayBuffer> {
   const res = await fetch(`${UPSTREAM}/${feed}?apikey=${API_KEY}`);
-  if (!res.ok) throw new Error(`upstream ${res.status}`);
+  if (!res.ok) {
+    // Preserve the status so rate-limit signals (429/403) reach the client,
+    // which has dedicated "live data is busy" UI for them.
+    const e = new Error(`upstream ${res.status}`) as Error & { status?: number };
+    e.status = res.status;
+    throw e;
+  }
   return res.arrayBuffer();
 }
 
@@ -49,7 +55,9 @@ export async function GET(request: Request, { feed }: Record<string, string>) {
   // The 31 MB timetable can't ride along in a serverless function, so /schedule
   // returns empty here — the app cleanly falls back to "no real-time arrivals".
   if (feed === 'schedule') return Response.json({ scheduled: [] });
-  if (!(feed in TTL)) return new Response('unknown feed', { status: 404 });
+  // Object.hasOwn (not `in`): `in` accepts prototype keys like "toString",
+  // each of which would bypass the cache and burn an upstream request.
+  if (!Object.hasOwn(TTL, feed)) return new Response('unknown feed', { status: 404 });
   if (APP_TOKEN && request.headers.get('x-app-token') !== APP_TOKEN) {
     return new Response('unauthorized', { status: 401 });
   }
@@ -58,7 +66,10 @@ export async function GET(request: Request, { feed }: Record<string, string>) {
     return new Response(bytes, {
       headers: { 'Content-Type': 'application/x-protobuf', 'Cache-Control': 'no-store' },
     });
-  } catch {
+  } catch (err) {
+    // Forward upstream rate-limit signals; everything else is a 502.
+    const status = (err as { status?: number }).status;
+    if (status === 429 || status === 403) return new Response('rate limited', { status });
     return new Response('upstream unavailable', { status: 502 });
   }
 }

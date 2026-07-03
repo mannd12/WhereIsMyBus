@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUpcomingByStop } from '../services/gtfsRealtime';
 import { useSettingsStore } from '../store/settings';
-import { ARRIVALS_REFRESH_MS } from '../constants/config';
+import { ARRIVALS_REFRESH_MS, USE_PROXY } from '../constants/config';
 
 /**
  * Map of stopId → next upcoming arrival (epoch seconds), from a single shared
@@ -14,7 +14,7 @@ export function useUpcomingArrivals(enabled: boolean) {
   return useQuery({
     queryKey: ['upcomingByStop', apiKey],
     queryFn: () => getUpcomingByStop(apiKey),
-    enabled: enabled && Boolean(apiKey),
+    enabled: enabled && (Boolean(apiKey) || USE_PROXY),
     refetchInterval: ARRIVALS_REFRESH_MS,
     staleTime: 30_000,
   });

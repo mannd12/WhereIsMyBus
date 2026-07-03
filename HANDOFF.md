@@ -8,12 +8,15 @@ Build → TestFlight → App Store. (App display name **BusPulse**; internal slu
 `whereismybus` / `com.whereismybus.app` — do NOT change them.)
 
 ## Now
-- Branch **`master`** @ `5b70643` — the big batch is **committed + pushed** (2026-07-02).
-  `npx tsc --noEmit` clean · `npx expo export --platform ios` bundles clean.
-- **Not yet built or deployed.** Holding on the EAS build credit until the user explicitly says go.
-  Backend deploy is authorized but needs the user's host account (see Backend section).
-- Last build on TestFlight is still the earlier UAT build (id `3e2a508b`).
-- **Backend proxy + scheduled fallback** live in `server/` (built + tested locally) — see below.
+- **Build 21 (1.0.0) is on TestFlight** (2026-07-02, build id `f647de4e`) — first build wired to the
+  live backend. Backend proxy is **LIVE on EAS Hosting** (see Backend section).
+- A **Fable-audit fix batch** landed after build 21 (proxy-only key mode, star fix, viewport
+  vehicle filter, stable reminder keys, SKIPPED/CANCELED filtering, GPS-leak fix, + cleanup) —
+  these ship in the NEXT build (22). The proxy-side fixes (`Object.hasOwn`, 429/403 forwarding)
+  need an `eas deploy --prod` redeploy (hosting only, NO build credit).
+- KEY NOTE: build 21 still embeds the TransLink key (audit finding). Build 22 (proxy-only mode)
+  won't need it — after build 22 is verified, remove `EXPO_PUBLIC_TRANSLINK_API_KEY` from EAS prod
+  env and rotate the key at developer.translink.ca.
 
 ## Features (full app surface)
 4 tabs + modals, all working in Expo Go (except map/notifications — see `VERIFY_ON_BUILD.md`):

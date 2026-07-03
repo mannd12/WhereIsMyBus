@@ -18,7 +18,10 @@ try {
   // Running in Expo Go — notifications silently disabled
 }
 
-const scheduled = new Set<number>();
+// Keyed by route+stop (stable across refreshes) — predicted arrivalTime drifts
+// on every refetch, so keying by time would "forget" reminders after 60s.
+const scheduled = new Set<string>();
+const reminderKey = (routeId: string, stopId: string) => `buspulse-${routeId}-${stopId}`;
 
 async function requestNotificationPermissions(): Promise<boolean> {
   if (!Notifications) return false;
@@ -28,13 +31,14 @@ async function requestNotificationPermissions(): Promise<boolean> {
   return status === 'granted';
 }
 
-export function isScheduled(arrivalTime: number): boolean {
-  return scheduled.has(arrivalTime);
+export function isScheduled(routeId: string, stopId: string): boolean {
+  return scheduled.has(reminderKey(routeId, stopId));
 }
 
 export async function scheduleArrivalNotification(
   arrival: Arrival,
   stopName: string,
+  stopId: string,
   leadMinutes = 5,
 ): Promise<boolean> {
   if (!Notifications) return false;
@@ -55,8 +59,9 @@ export async function scheduleArrivalNotification(
 
   await Notifications.scheduleNotificationAsync({
     // Stable id per route+stop: re-tapping the bell (even after a restart, once
-    // predictions change) replaces the pending reminder instead of stacking a duplicate.
-    identifier: `buspulse-${arrival.routeId}-${stopName}`,
+    // predictions change) replaces the pending reminder instead of stacking a
+    // duplicate. stopId, not stopName — paired stops across the street share names.
+    identifier: reminderKey(arrival.routeId, stopId),
     content,
     trigger:
       secondsFromNow <= 0
@@ -64,6 +69,6 @@ export async function scheduleArrivalNotification(
         : { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: secondsFromNow },
   });
 
-  scheduled.add(arrival.arrivalTime);
+  scheduled.add(reminderKey(arrival.routeId, stopId));
   return true;
 }

@@ -32,19 +32,18 @@ Everything here is coded and typechecks/bundles clean; this is runtime confirmat
 - [ ] **ErrorBoundary** — (hard to trigger deliberately) if any screen ever errors,
       it should show "Something went wrong · Try again", not a white screen.
 
-## Needs the backend deployed (server/)
-- [ ] Deploy `server/` (Render blueprint runs `npm run build-schedule`), set
-      `TRANSLINK_API_KEY`. First build downloads GTFS + builds the 31 MB schedule.
-- [ ] Set `EXPO_PUBLIC_API_BASE=<url>/v3` in the app build env; confirm all feeds
-      (arrivals, vehicles, alerts) load through the proxy.
-- [ ] `/health` shows feeds going "cached" — confirm multiple app instances share
-      one upstream fetch (watch upstream call count stay flat as users increase).
-- [ ] **Scheduled fallback**: open a stop whose routes aren't running right now
-      (e.g. a daytime route late at night) → should show "SCHEDULED DEPARTURES"
-      with the timetable. (E2E-verified locally; confirm on the deployed proxy.)
-- [ ] If you also drop the client key (`EXPO_PUBLIC_TRANSLINK_API_KEY` empty):
-      the app's `AuthGuard` currently requires a non-empty key → adjust it, or set
-      `APP_TOKEN` and keep a dummy client value.
+## Backend (EAS Hosting is LIVE at whereismybus.expo.app)
+- [x] Proxy deployed (EAS Hosting, `/api/*`) — verified serving real protobuf.
+- [ ] On build 21+: confirm arrivals/vehicles/alerts load on-device through the
+      proxy (the end-to-end proof).
+- [ ] After the audit-fix batch: redeploy hosting (`eas deploy --prod`) so the
+      `Object.hasOwn` whitelist + 429/403 forwarding go live.
+- [ ] After build 22 (proxy-only key mode) is verified on TestFlight: remove
+      `EXPO_PUBLIC_TRANSLINK_API_KEY` from EAS prod env and ROTATE the TransLink
+      key (build 21 and earlier embedded it in the binary).
+- [ ] (Optional, later) Deploy `server/` to Render for the scheduled-timetable
+      fallback; then set `EXPO_PUBLIC_API_BASE=<render-url>/v3` and
+      `EXPO_PUBLIC_SCHEDULE_ENABLED=1` in the build env.
 
 ## App Store Connect (submission time)
 - [ ] Fill the App Privacy "nutrition label" — app collects **Location** (used for

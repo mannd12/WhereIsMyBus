@@ -61,12 +61,14 @@ export async function getArrivalsAtStop(
   for (const entity of feed.entity as unknown[]) {
     const e = entity as {
       tripUpdate?: {
-        trip?: { tripId?: string; routeId?: string; directionId?: number };
+        trip?: { tripId?: string; routeId?: string; directionId?: number; scheduleRelationship?: number };
         stopTimeUpdate?: unknown[];
       };
     };
     const tu = e.tripUpdate;
     if (!tu) continue;
+    // trip-level 3 = CANCELED — never show a bus that won't come
+    if (tu.trip?.scheduleRelationship === 3) continue;
 
     const tripId = tu.trip?.tripId ?? '';
     const routeId = tu.trip?.routeId ?? '';
@@ -79,8 +81,8 @@ export async function getArrivalsAtStop(
       departure?: { time?: unknown };
     }>) {
       if (stu.stopId !== stopId) continue;
-      // scheduleRelationship 2 = NO_DATA — no real-time prediction, skip
-      if (stu.scheduleRelationship === 2) continue;
+      // 1 = SKIPPED (detour passes this stop), 2 = NO_DATA — skip both
+      if (stu.scheduleRelationship === 1 || stu.scheduleRelationship === 2) continue;
       const arrivalTime = toLong(stu.arrival?.time ?? stu.departure?.time);
       if (arrivalTime === 0 || arrivalTime < now || arrivalTime > cutoff) continue;
 
@@ -132,12 +134,13 @@ export async function getArrivalsForStops(
   for (const entity of feed.entity as unknown[]) {
     const e = entity as {
       tripUpdate?: {
-        trip?: { tripId?: string; routeId?: string };
+        trip?: { tripId?: string; routeId?: string; scheduleRelationship?: number };
         stopTimeUpdate?: unknown[];
       };
     };
     const tu = e.tripUpdate;
     if (!tu) continue;
+    if (tu.trip?.scheduleRelationship === 3) continue; // CANCELED
     const tripId = tu.trip?.tripId ?? '';
     const routeId = tu.trip?.routeId ?? '';
     if (!routeId) continue;
@@ -149,7 +152,7 @@ export async function getArrivalsForStops(
       departure?: { time?: unknown };
     }>) {
       if (!stu.stopId || !wanted.has(stu.stopId)) continue;
-      if (stu.scheduleRelationship === 2) continue;
+      if (stu.scheduleRelationship === 1 || stu.scheduleRelationship === 2) continue;
       const arrivalTime = toLong(stu.arrival?.time ?? stu.departure?.time);
       if (arrivalTime === 0 || arrivalTime < now || arrivalTime > cutoff) continue;
 
@@ -186,13 +189,17 @@ export async function getUpcomingByStop(apiKey: string): Promise<Record<string, 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const feed = await fetchFeed(TRIP_UPDATES_URL(apiKey));
   const now = Math.floor(Date.now() / 1000);
+  const cutoff = now + ARRIVALS_LOOKAHEAD_S; // don't show "next bus: 223 min"
   const out: Record<string, number> = {};
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   for (const entity of feed.entity as unknown[]) {
-    const e = entity as { tripUpdate?: { stopTimeUpdate?: unknown[] } };
+    const e = entity as {
+      tripUpdate?: { trip?: { scheduleRelationship?: number }; stopTimeUpdate?: unknown[] };
+    };
     const tu = e.tripUpdate;
     if (!tu) continue;
+    if (tu.trip?.scheduleRelationship === 3) continue; // CANCELED
     for (const stu of (tu.stopTimeUpdate ?? []) as Array<{
       stopId?: string;
       scheduleRelationship?: number;
@@ -200,9 +207,9 @@ export async function getUpcomingByStop(apiKey: string): Promise<Record<string, 
       departure?: { time?: unknown };
     }>) {
       const stopId = stu.stopId;
-      if (!stopId || stu.scheduleRelationship === 2) continue;
+      if (!stopId || stu.scheduleRelationship === 1 || stu.scheduleRelationship === 2) continue;
       const t = toLong(stu.arrival?.time ?? stu.departure?.time);
-      if (t < now) continue;
+      if (t < now || t > cutoff) continue;
       if (out[stopId] === undefined || t < out[stopId]) out[stopId] = t;
     }
   }

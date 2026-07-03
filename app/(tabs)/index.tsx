@@ -167,7 +167,6 @@ const makeStyles = (c: ThemeColors) =>
     arrivalsBtnText: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
     emptyText: { fontSize: 13, color: c.textSecondary, padding: 16, lineHeight: 20 },
     filterEmptyText: { fontSize: 13, color: c.textSecondary, paddingVertical: 20, paddingHorizontal: 16, width: 300, lineHeight: 20 },
-    code: { fontFamily: 'monospace', backgroundColor: c.border, color: c.text },
   });
 
 export default function NearbyScreen() {
@@ -266,6 +265,20 @@ export default function NearbyScreen() {
     [vehicles, selectedRouteId],
   );
 
+  // Only render buses inside the visible region (+50% margin) — Metro Vancouver
+  // runs 1,000+ buses at peak and a Marker per bus janks the map. Buses on the
+  // selected route are always kept so the highlight never disappears mid-follow.
+  const visibleVehicles = useMemo(() => {
+    const all = vehicles ?? [];
+    const latPad = currentRegion.latitudeDelta * 0.75;
+    const lonPad = currentRegion.longitudeDelta * 0.75;
+    const inView = (v: VehiclePosition) =>
+      Math.abs(v.latitude - currentRegion.latitude) <= latPad &&
+      Math.abs(v.longitude - currentRegion.longitude) <= lonPad;
+    const kept = all.filter((v) => v.routeId === selectedRouteId || inView(v));
+    return kept.length > 200 ? kept.slice(0, 200) : kept;
+  }, [vehicles, currentRegion, selectedRouteId]);
+
   const handleStopPress = useCallback((stop: NearbyStop) => {
     setSelectedRouteId(null);
     setSelectedStop(stop);
@@ -360,7 +373,7 @@ export default function NearbyScreen() {
             />
           ))}
 
-        {(vehicles ?? []).map((v) => {
+        {visibleVehicles.map((v) => {
           const isOnRoute = selectedRouteId === v.routeId;
           return (
             <VehicleMarker
@@ -456,7 +469,7 @@ export default function NearbyScreen() {
           <ActivityIndicator color={Colors.primary} style={{ margin: 16 }} />
         ) : nearbyStops.length === 0 ? (
           <Text style={styles.emptyText}>
-            No stops found. Run <Text style={styles.code}>node scripts/fetchGtfsStatic.js</Text> to load stops.
+            No bus stops within 500 m of you. Try the map or search for a stop by name or number.
           </Text>
         ) : (
           <FlatList

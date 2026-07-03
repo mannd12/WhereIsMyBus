@@ -6,6 +6,7 @@ import { AppState, type AppStateStatus, View, Text, TouchableOpacity, StyleSheet
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useSettingsStore } from '../store/settings';
+import { USE_PROXY } from '../constants/config';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,10 +52,13 @@ function AuthGuard() {
   const segments = useSegments();
 
   useEffect(() => {
+    // Behind the proxy the key lives server-side — riders never need one, so
+    // the BYO-key setup screen must be unreachable (App Review would flag it).
+    const hasAccess = Boolean(apiKey) || USE_PROXY;
     const inSetup = segments[0] === 'setup';
-    if (!apiKey && !inSetup) {
+    if (!hasAccess && !inSetup) {
       router.replace('/setup');
-    } else if (apiKey && inSetup) {
+    } else if (hasAccess && inSetup) {
       router.replace('/(tabs)');
     }
   }, [apiKey, segments]);

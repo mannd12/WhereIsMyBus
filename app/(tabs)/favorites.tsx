@@ -161,7 +161,8 @@ function FavoriteStopCard({
         <Text style={styles.noArrivals}>No upcoming arrivals</Text>
       ) : (
         next.map((a) => (
-          <ArrivalRow key={a.tripId + a.arrivalTime} arrival={a} stopName={stop?.stop_name} stopId={stopId} />
+          // tripId alone — arrivalTime drifts each refetch and would remount rows.
+          <ArrivalRow key={a.tripId} arrival={a} stopName={stop?.stop_name} stopId={stopId} />
         ))
       )}
     </View>

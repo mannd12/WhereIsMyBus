@@ -12,6 +12,7 @@ import { useSettingsStore } from '../../store/settings';
 interface Props {
   arrival: Arrival;
   stopName?: string;
+  stopId?: string;
 }
 
 const makeStyles = (c: ThemeColors) =>
@@ -37,16 +38,17 @@ const makeStyles = (c: ThemeColors) =>
     bell: { padding: 4 },
   });
 
-export function NextBusBanner({ arrival, stopName }: Props) {
+export function NextBusBanner({ arrival, stopName, stopId }: Props) {
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
-  const [scheduled, setScheduled] = useState(() => isScheduled(arrival.arrivalTime));
+  const sid = stopId ?? '';
+  const [scheduled, setScheduled] = useState(() => isScheduled(arrival.routeId, sid));
   const lead = useSettingsStore((s) => s.notifyLeadMinutes);
   const remind = useArrivalReminder();
 
   const handleNotify = () => {
     if (scheduled) return;
-    void remind(arrival, stopName ?? 'this stop', () => setScheduled(true));
+    void remind(arrival, stopName ?? 'this stop', sid, () => setScheduled(true));
   };
 
   return (

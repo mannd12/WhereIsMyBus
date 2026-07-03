@@ -16,15 +16,16 @@ interface Props {
   stopId?: string;
 }
 
-function NotifyButton({ arrival, stopName }: { arrival: Arrival; stopName?: string }) {
-  const [scheduled, setScheduled] = useState(() => isScheduled(arrival.arrivalTime));
+function NotifyButton({ arrival, stopName, stopId }: { arrival: Arrival; stopName?: string; stopId?: string }) {
+  const sid = stopId ?? '';
+  const [scheduled, setScheduled] = useState(() => isScheduled(arrival.routeId, sid));
   const lead = useSettingsStore((s) => s.notifyLeadMinutes);
   const c = useThemeColors();
   const remind = useArrivalReminder();
 
   const handlePress = () => {
     if (scheduled) return;
-    void remind(arrival, stopName ?? 'this stop', () => setScheduled(true));
+    void remind(arrival, stopName ?? 'this stop', sid, () => setScheduled(true));
   };
 
   return (
@@ -98,7 +99,7 @@ export function ArrivalRow({ arrival, stopName, stopId }: Props) {
       <Text style={styles.headsign} numberOfLines={2}>
         {arrival.headsign || 'In service'}
       </Text>
-      <NotifyButton arrival={arrival} stopName={stopName} />
+      <NotifyButton arrival={arrival} stopName={stopName} stopId={stopId} />
       <CountdownBadge arrivalTime={arrival.arrivalTime} />
     </TouchableOpacity>
   );

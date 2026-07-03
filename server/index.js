@@ -124,14 +124,16 @@ function nextDepartures(stopId, max) {
   const yest = activeServices(t.prevDateStr, t.prevWd);
   const out = [];
   for (const [secs, rsI, hsI, svcI] of rows) {
+    // A row can be upcoming under two readings:
+    //  - as TODAY's service: departs at `secs` after today's midnight (this
+    //    includes >24h rows, e.g. 25:30 tonight = 1:30 AM tomorrow — still
+    //    today's service and must be visible BEFORE midnight);
+    //  - as YESTERDAY's service (only >24h rows): departs `secs - 86400`
+    //    after today's midnight (the tail of last night's service).
     let eff = null;
-    if (secs < 86400) {
-      if (secs >= t.nowSecs && today.has(svcI)) eff = secs; // later today
-    } else {
-      // Trip listed past 24h = after-midnight; belongs to a service that started
-      // the previous day (still "tonight" for the rider).
-      const e = secs - 86400;
-      if (e >= t.nowSecs && (yest.has(svcI) || today.has(svcI))) eff = e;
+    if (today.has(svcI) && secs >= t.nowSecs) eff = secs;
+    if (eff == null && secs >= 86400 && yest.has(svcI) && secs - 86400 >= t.nowSecs) {
+      eff = secs - 86400;
     }
     if (eff == null) continue;
     out.push({ arrivalTime: t.midnightEpoch + eff, routeShortName: SCHED.rs[rsI], headsign: SCHED.hs[hsI] });
@@ -165,7 +167,9 @@ app.get('/health', (_req, res) => {
 // Any ?apikey= the client sends is ignored — the key lives here.
 app.get('/v3/:feed', async (req, res) => {
   const name = req.params.feed;
-  if (!(name in FEEDS)) return res.status(404).json({ error: 'unknown feed' });
+  // Object.hasOwn (not `in`): `in` accepts prototype keys like "toString",
+  // each of which would bypass the cache and burn an upstream request.
+  if (!Object.hasOwn(FEEDS, name)) return res.status(404).json({ error: 'unknown feed' });
   if (APP_TOKEN && req.get('x-app-token') !== APP_TOKEN) {
     return res.status(401).json({ error: 'unauthorized' });
   }
@@ -174,7 +178,11 @@ app.get('/v3/:feed', async (req, res) => {
     res.set('Content-Type', 'application/x-protobuf');
     res.set('Cache-Control', 'no-store');
     res.send(bytes);
-  } catch {
+  } catch (err) {
+    // Forward rate-limit signals so the app's "live data is busy" UI works.
+    if (err?.status === 429 || err?.status === 403) {
+      return res.status(err.status).json({ error: 'rate limited' });
+    }
     res.status(502).json({ error: 'upstream unavailable' });
   }
 });

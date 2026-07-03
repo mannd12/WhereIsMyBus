@@ -221,7 +221,7 @@ export default function StopDetailScreen() {
       )}
 
       {arrivals && arrivals.length > 0 && (
-        <NextBusBanner arrival={arrivals[0]} stopName={stop?.stop_name} />
+        <NextBusBanner arrival={arrivals[0]} stopName={stop?.stop_name} stopId={stopId} />
       )}
 
       {makeIt && (
@@ -273,7 +273,9 @@ export default function StopDetailScreen() {
       ) : (
         <FlatList
           data={arrivals ?? []}
-          keyExtractor={(a) => `${a.tripId}-${a.arrivalTime}`}
+          // tripId alone: arrivalTime drifts on refetch, which would remount
+          // rows (resetting the bell + re-firing the "Due" haptic every 60s).
+          keyExtractor={(a) => a.tripId}
           refreshControl={
             <RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor={Colors.primary} />
           }

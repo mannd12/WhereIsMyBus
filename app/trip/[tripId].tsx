@@ -273,7 +273,9 @@ export default function TripDetailScreen() {
           {eta && <CountdownBadge arrivalTime={eta} />}
         </View>
         {stopName && (
-          <Text style={styles.meta}>Arriving at {decodeURIComponent(stopName)}</Text>
+          // Router params arrive already decoded — decoding again would throw
+          // URIError on any stop name containing '%'.
+          <Text style={styles.meta}>Arriving at {stopName}</Text>
         )}
         {vehicle && (
           <Text style={styles.meta}>Vehicle updated {timeAgo(vehicle.timestamp)}</Text>
