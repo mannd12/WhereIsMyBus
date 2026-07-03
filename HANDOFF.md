@@ -16,16 +16,18 @@ AsyncStorage `whereismybus-*` keys wipes users' favourites.)
 - **Backend proxy is LIVE** on EAS Hosting → https://whereismybus.expo.app (see Backend).
 - A **Fable-audit fix batch** is pushed but **not yet in a build** — it ships in **build 22**.
 
-## ⚠️ Two open actions (read before finalizing)
-1. **Redeploy the proxy** — the audit found an unauthenticated quota-burn hole (`feed in TTL`
-   accepted `/api/toString` etc., each burning an upstream request). **Fixed in code, not yet
-   live.** Run `npx eas deploy --prod --environment production` (hosting only — **NO build credit**)
-   from repo root after `npx expo export --platform web --output-dir dist`. Until then the live
-   endpoint is still vulnerable.
-2. **Key rotation** — builds ≤21 embed the TransLink key in the binary. Build 22 uses proxy-only
-   mode (no key in bundle, no `?apikey=` on URLs). **After build 22 verifies on TestFlight:**
-   remove `EXPO_PUBLIC_TRANSLINK_API_KEY` from EAS prod env, then rotate the key at
-   developer.translink.ca. (Rotation is safe for build 21 too — the proxy ignores the client key.)
+## ⚠️ Open actions (read before finalizing — ORDER MATTERS)
+1. **Redeploy the proxy FIRST** (hosting only — **NO build credit**). This does two things: closes
+   the quota-burn hole (`Object.hasOwn` fix, live endpoint still vulnerable until then) AND adds the
+   new `/api/arrivals` endpoint. **Build 22's client calls `/api/arrivals`, so the proxy must be
+   redeployed BEFORE build 22 is used** (else arrivals break; build 21 is unaffected — it uses the
+   old full-feed path). Cmd: `npx expo export --platform web --output-dir dist` then
+   `npx eas deploy --prod --environment production`. (Optional: `npm run build-schedule-web` first
+   to also enable the timetable fallback — see #2 above.)
+2. **Then build 22** (spends a credit) — see Finalization path.
+3. **Key rotation** — builds ≤21 embed the TransLink key. Build 22 uses proxy-only mode (no key in
+   bundle). **After build 22 verifies:** remove `EXPO_PUBLIC_TRANSLINK_API_KEY` from EAS prod env,
+   rotate at developer.translink.ca. (Safe for build 21 too — the proxy ignores the client key.)
 
 ## Finalization path (to App Store)
 1. **Build 22** (spends 1 credit — only on explicit user OK):
@@ -103,16 +105,23 @@ AsyncStorage `whereismybus-*` keys wipes users' favourites.)
 - Emulator: Android map blank (no Google key) — iOS uses Apple Maps. Deep-link to navigate:
   `exp://127.0.0.1:8081/--/<route>` (tab taps get hijacked by system UI; emulator sleeps — cold-boot).
 
-## Improvement backlog (from Fable audit — NOT started, good next-session work)
-- **Share one trip-updates decode** across `useStopArrivals`/`useFavoriteArrivals`/`useUpcomingArrivals`
-  (up to 3 multi-MB protobuf decodes/min on the JS thread with a stop open over the map). Or add a
-  **per-stop JSON endpoint** on the proxy so clients stop downloading the whole feed (bigger win).
-- **Multi-shape per route** — `fetchGtfsStatic.js` keeps the first `shape_id`, so route maps show one
-  direction/variant. Pick longest per direction (data-script change only).
-- **Persist reminders** across restarts (rebuild the `scheduled` set from
-  `getAllScheduledNotificationsAsync`), cancel/reschedule when a prediction moves materially.
+## Improvements 1–4 — DONE (commit a311f8e), activation steps below
+- **#1 Per-stop arrivals endpoint** (`app/api/arrivals+api.ts`): server decodes trip-updates and
+  returns only requested stops as tiny JSON (~300 B/stop vs ~700 KB feed). The 3 arrival hooks use it
+  when `USE_PROXY`. **Activate: `eas deploy --prod`** (the endpoint must be live before build 22 uses it).
+- **#2 Scheduled fallback on EAS Hosting** (`app/api/schedule+api.ts`): lazy-loads static
+  `public/schedule/*.json`. Fail-safe (empty on error). **Activate: `npm run build-schedule-web`
+  (builds ~31 MB into public/schedule/, gitignored) → `eas deploy --prod` → set
+  `EXPO_PUBLIC_SCHEDULE_ENABLED=1` in EAS prod env for the next build.** (Serverless memory profile of
+  loading 31 MB is unverified — worst case it fails safe to empty.)
+- **#3 Persisted reminders**: `syncScheduledFromOS()` at startup — ships in build 22.
+- **#4 Multi-shape routes**: `shapes.json` is now polylines-per-direction; 241/246 routes show both
+  directions. GTFS data regenerated (8731 stops). Ships in build 22.
+
+## Remaining backlog (NOT started)
 - Deps flagged possibly-unused but NOT removed (expo-router runtime risk): `react-native-reanimated`,
   `react-native-worklets`, direct `protobufjs`. Verify before touching.
+- Cancel/reschedule a reminder when its prediction moves materially (minor).
 
 ## Run (dev / preview)
 ```powershell
