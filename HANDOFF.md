@@ -16,15 +16,13 @@ AsyncStorage `whereismybus-*` keys wipes users' favourites.)
 - **Backend proxy is LIVE** on EAS Hosting → https://whereismybus.expo.app (see Backend).
 - A **Fable-audit fix batch** is pushed but **not yet in a build** — it ships in **build 22**.
 
-## ⚠️ Open actions (read before finalizing — ORDER MATTERS)
-1. **Redeploy the proxy FIRST** (hosting only — **NO build credit**). This does two things: closes
-   the quota-burn hole (`Object.hasOwn` fix, live endpoint still vulnerable until then) AND adds the
-   new `/api/arrivals` endpoint. **Build 22's client calls `/api/arrivals`, so the proxy must be
-   redeployed BEFORE build 22 is used** (else arrivals break; build 21 is unaffected — it uses the
-   old full-feed path). Cmd: `npx expo export --platform web --output-dir dist` then
-   `npx eas deploy --prod --environment production`. (Optional: `npm run build-schedule-web` first
-   to also enable the timetable fallback — see #2 above.)
-2. **Then build 22** (spends a credit) — see Finalization path.
+## Open actions (redeploy is DONE — only build + submit remain)
+1. ~~Redeploy the proxy~~ **DONE 2026-07-03.** Live + verified: security fix (`/api/toString`→404),
+   `/api/arrivals` (per-stop JSON), `/api/schedule` (real departures — 31 MB loaded fine, no OOM).
+   `EXPO_PUBLIC_SCHEDULE_ENABLED=1` set in EAS prod → timetable fallback activates in build 22.
+   To redeploy again: `npm run build-schedule-web` → `npx expo export --platform web --output-dir dist`
+   → `npx eas deploy --prod --environment production`.
+2. **Build 22** (spends a credit) — see Finalization path. Safe to build now (endpoints are live).
 3. **Key rotation** — builds ≤21 embed the TransLink key. Build 22 uses proxy-only mode (no key in
    bundle). **After build 22 verifies:** remove `EXPO_PUBLIC_TRANSLINK_API_KEY` from EAS prod env,
    rotate at developer.translink.ca. (Safe for build 21 too — the proxy ignores the client key.)
@@ -119,8 +117,10 @@ AsyncStorage `whereismybus-*` keys wipes users' favourites.)
   directions. GTFS data regenerated (8731 stops). Ships in build 22.
 
 ## Remaining backlog (NOT started)
-- Deps flagged possibly-unused but NOT removed (expo-router runtime risk): `react-native-reanimated`,
-  `react-native-worklets`, direct `protobufjs`. Verify before touching.
+- ~~Verify possibly-unused deps~~ **VERIFIED 2026-07-03 — KEEP all three.** `react-native-reanimated`
+  is required by expo-router / gesture-handler / react-native-screens; `react-native-worklets` by
+  expo-modules-core + reanimated; `protobufjs` by gtfs-realtime-bindings. Removing any would break
+  the app. Do not re-investigate.
 - Cancel/reschedule a reminder when its prediction moves materially (minor).
 
 ## Run (dev / preview)
