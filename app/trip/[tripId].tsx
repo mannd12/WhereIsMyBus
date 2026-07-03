@@ -127,8 +127,11 @@ export default function TripDetailScreen() {
   const { data: vehicles, isLoading } = useVehiclePositions();
   const vehicle = vehicles?.find((v) => v.tripId === tripId) ?? null;
 
-  const shape = useMemo(() => getRouteShape(routeId ?? ''), [routeId]);
-  const shapeCoords = shape.map(([latitude, longitude]) => ({ latitude, longitude }));
+  const lines = useMemo(
+    () => getRouteShape(routeId ?? '').map((pts) => pts.map(([latitude, longitude]) => ({ latitude, longitude }))),
+    [routeId],
+  );
+  const shapeCoords = useMemo(() => lines.flat(), [lines]);
 
   const stop = stopId ? getStop(stopId) : undefined;
 
@@ -203,9 +206,9 @@ export default function TripDetailScreen() {
       />
 
       <MapView ref={mapRef} style={styles.map} initialRegion={initialRegion} showsUserLocation>
-        {shapeCoords.length > 0 && (
-          <Polyline coordinates={shapeCoords} strokeColor={routeColor} strokeWidth={3} />
-        )}
+        {lines.map((coords, i) => (
+          <Polyline key={i} coordinates={coords} strokeColor={routeColor} strokeWidth={3} />
+        ))}
 
         {/* The stop you're tracking */}
         {stop && (

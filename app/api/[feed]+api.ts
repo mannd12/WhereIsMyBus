@@ -54,7 +54,7 @@ async function getFeed(feed: string): Promise<ArrayBuffer> {
 export async function GET(request: Request, { feed }: Record<string, string>) {
   // The 31 MB timetable can't ride along in a serverless function, so /schedule
   // returns empty here — the app cleanly falls back to "no real-time arrivals".
-  if (feed === 'schedule') return Response.json({ scheduled: [] });
+  // /api/schedule and /api/arrivals have dedicated route files.
   // Object.hasOwn (not `in`): `in` accepts prototype keys like "toString",
   // each of which would bypass the cache and burn an upstream request.
   if (!Object.hasOwn(TTL, feed)) return new Response('unknown feed', { status: 404 });

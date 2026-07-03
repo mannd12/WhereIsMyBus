@@ -24,6 +24,11 @@ export const TRIP_UPDATES_URL = (key: string) => feedUrl('gtfsrealtime', key);
 export const VEHICLE_POSITIONS_URL = (key: string) => feedUrl('gtfsposition', key);
 export const SERVICE_ALERTS_URL = (key: string) => feedUrl('gtfsalerts', key);
 
+// Proxy-only: the server decodes trip-updates and returns just the requested
+// stops' arrivals as small JSON — the phone no longer downloads the whole feed.
+export const ARRIVALS_URL = (stopIds: string[]) =>
+  `${GTFS_RT_BASE}/arrivals?stops=${stopIds.map(encodeURIComponent).join(',')}`;
+
 export const ARRIVALS_REFRESH_MS = 60_000;  // 60s — was 30s
 export const VEHICLES_REFRESH_MS = 60_000;  // 60s — was 15s
 export const ALERTS_REFRESH_MS = 120_000;   // 2min — was 60s

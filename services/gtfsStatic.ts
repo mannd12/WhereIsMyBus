@@ -20,7 +20,8 @@ const busStops = stopsRaw.filter((s) => s.route_types.includes(BUS_ROUTE_TYPE));
 // Lazily loaded large datasets
 let tripsMap: Map<string, Trip> | null = null;
 let stopRoutesData: Record<string, string[]> | null = null;
-let shapesData: Record<string, [number, number][]> | null = null;
+// Each route → one polyline per direction: [ [[lat,lon],...], ... ].
+let shapesData: Record<string, [number, number][][]> | null = null;
 
 function getTripsMap(): Map<string, Trip> {
   if (!tripsMap) {
@@ -46,11 +47,11 @@ function getStopRoutesData(): Record<string, string[]> {
   return stopRoutesData;
 }
 
-function getShapesData(): Record<string, [number, number][]> {
+function getShapesData(): Record<string, [number, number][][]> {
   if (!shapesData) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      shapesData = require('../data/shapes.json') as Record<string, [number, number][]>;
+      shapesData = require('../data/shapes.json') as Record<string, [number, number][][]>;
     } catch {
       shapesData = {};
     }
@@ -94,8 +95,8 @@ export function getStopRoutes(stopId: string): string[] {
   return getStopRoutesData()[stopId] ?? [];
 }
 
-/** Lat/lon points for a route shape. Returns [] if shapes.json not yet built. */
-export function getRouteShape(routeId: string): [number, number][] {
+/** One polyline (lat/lon points) per direction of a route. [] if not built. */
+export function getRouteShape(routeId: string): [number, number][][] {
   return getShapesData()[routeId] ?? [];
 }
 

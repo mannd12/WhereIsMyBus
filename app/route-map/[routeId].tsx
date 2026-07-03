@@ -63,18 +63,19 @@ export default function RouteMapScreen() {
     [vehicles, routeId],
   );
 
-  const shape = useMemo(() => getRouteShape(routeId ?? ''), [routeId]);
-  const coords = useMemo(
-    () => shape.map(([latitude, longitude]) => ({ latitude, longitude })),
-    [shape],
+  // One polyline per direction; `allCoords` is the flat list for fit/region.
+  const lines = useMemo(
+    () => getRouteShape(routeId ?? '').map((pts) => pts.map(([latitude, longitude]) => ({ latitude, longitude }))),
+    [routeId],
   );
+  const allCoords = useMemo(() => lines.flat(), [lines]);
   const color = route?.route_color ? `#${route.route_color}` : Colors.primary;
 
   const initialRegion: Region =
-    coords.length > 0
+    allCoords.length > 0
       ? {
-          latitude: coords[Math.floor(coords.length / 2)].latitude,
-          longitude: coords[Math.floor(coords.length / 2)].longitude,
+          latitude: allCoords[Math.floor(allCoords.length / 2)].latitude,
+          longitude: allCoords[Math.floor(allCoords.length / 2)].longitude,
           latitudeDelta: 0.08,
           longitudeDelta: 0.08,
         }
@@ -84,9 +85,9 @@ export default function RouteMapScreen() {
   // is synchronous, so calling this from an effect on first render would fire
   // before layout — a silent no-op on iOS.)
   const fitRoute = () => {
-    if (!fitted.current && coords.length > 1) {
+    if (!fitted.current && allCoords.length > 1) {
       fitted.current = true;
-      mapRef.current?.fitToCoordinates(coords, {
+      mapRef.current?.fitToCoordinates(allCoords, {
         edgePadding: { top: 90, right: 60, bottom: 120, left: 60 },
         animated: false,
       });
@@ -101,7 +102,9 @@ export default function RouteMapScreen() {
   return (
     <View style={styles.container}>
       <MapView ref={mapRef} style={styles.map} initialRegion={initialRegion} showsUserLocation onMapReady={fitRoute}>
-        {coords.length > 0 && <Polyline coordinates={coords} strokeColor={color} strokeWidth={4} />}
+        {lines.map((coords, i) => (
+          <Polyline key={i} coordinates={coords} strokeColor={color} strokeWidth={4} />
+        ))}
         {routeVehicles.map((v) => (
           <VehicleMarker key={v.vehicleId} vehicle={v} />
         ))}

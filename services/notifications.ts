@@ -35,6 +35,27 @@ export function isScheduled(routeId: string, stopId: string): boolean {
   return scheduled.has(reminderKey(routeId, stopId));
 }
 
+/**
+ * Rebuild the in-memory set from the OS's still-pending notifications, so the
+ * filled-bell state survives app restarts (the OS keeps the scheduled reminder;
+ * our Set didn't). Call once at startup. Notifications keep our `buspulse-*`
+ * identifiers, so we just collect the ones that are still ours.
+ */
+export async function syncScheduledFromOS(): Promise<void> {
+  if (!Notifications) return;
+  try {
+    const pending = await Notifications.getAllScheduledNotificationsAsync();
+    scheduled.clear();
+    for (const n of pending) {
+      if (typeof n.identifier === 'string' && n.identifier.startsWith('buspulse-')) {
+        scheduled.add(n.identifier);
+      }
+    }
+  } catch {
+    // best effort — leave the set as-is
+  }
+}
+
 export async function scheduleArrivalNotification(
   arrival: Arrival,
   stopName: string,

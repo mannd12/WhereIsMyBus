@@ -204,7 +204,10 @@ export default function NearbyScreen() {
   // Both live feeds poll only while this tab is actually on screen — keeps the
   // shared request cap in check when the user is on another tab.
   const { data: vehicles } = useVehiclePositions(tabFocused);
-  const { data: upcoming } = useUpcomingArrivals(tabFocused);
+  // "Next bus" is only shown on the nearby-stop cards, so behind the proxy we
+  // ask only for those stops (small JSON) instead of the whole feed.
+  const nearbyStopIds = useMemo(() => nearbyStops.map((s) => s.stop_id), [nearbyStops]);
+  const { data: upcoming } = useUpcomingArrivals(nearbyStopIds, tabFocused);
 
   const initialRegion: Region = location
     ? { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }
@@ -238,16 +241,19 @@ export default function NearbyScreen() {
     location?.coords.longitude,
   ]);
 
-  // Route shapes for selected stop
+  const toLines = (routeId: string) =>
+    getRouteShape(routeId).map((pts) => pts.map(([lat, lon]) => ({ latitude: lat, longitude: lon })));
+
+  // Route shapes for selected stop (one polyline per direction).
   const selectedShapes = useMemo(() => {
     if (!selectedStop) return [];
-    const routeIds = getStopRoutes(selectedStop.stop_id);
-    return routeIds.map((rId) => {
-      const route = getRoute(rId);
-      const shape = getRouteShape(rId);
-      const color = route?.route_color ? `#${route.route_color}` : Colors.primary;
-      return { routeId: rId, color, coords: shape.map(([lat, lon]) => ({ latitude: lat, longitude: lon })) };
-    }).filter((s) => s.coords.length > 0);
+    return getStopRoutes(selectedStop.stop_id)
+      .map((rId) => {
+        const route = getRoute(rId);
+        const color = route?.route_color ? `#${route.route_color}` : Colors.primary;
+        return { routeId: rId, color, lines: toLines(rId) };
+      })
+      .filter((s) => s.lines.length > 0);
   }, [selectedStop]);
 
   // Selected route: full shape + how many of its buses are live right now.
@@ -256,8 +262,7 @@ export default function NearbyScreen() {
     if (!selectedRouteId) return null;
     const route = getRoute(selectedRouteId);
     const color = route?.route_color ? `#${route.route_color}` : Colors.primary;
-    const shape = getRouteShape(selectedRouteId);
-    return { color, coords: shape.map(([lat, lon]) => ({ latitude: lat, longitude: lon })) };
+    return { color, lines: toLines(selectedRouteId) };
   }, [selectedRouteId]);
   const routeColor = selectedRouteShape?.color ?? Colors.primary;
   const routeVehicleCount = useMemo(
@@ -342,25 +347,23 @@ export default function NearbyScreen() {
         onRegionChangeComplete={setCurrentRegion}
         onPress={clearSelection}
       >
-        {/* Route shapes for selected stop */}
-        {selectedShapes.map((s) => (
-          <Polyline
-            key={s.routeId}
-            coordinates={s.coords}
-            strokeColor={s.color}
-            strokeWidth={3}
-          />
-        ))}
+        {/* Route shapes for selected stop (one polyline per direction) */}
+        {selectedShapes.map((s) =>
+          s.lines.map((coords, i) => (
+            <Polyline key={`${s.routeId}-${i}`} coordinates={coords} strokeColor={s.color} strokeWidth={3} />
+          )),
+        )}
 
         {/* Highlighted full path for a tapped bus's route */}
-        {selectedRouteShape && selectedRouteShape.coords.length > 0 && (
+        {selectedRouteShape?.lines.map((coords, i) => (
           <Polyline
-            coordinates={selectedRouteShape.coords}
+            key={`sel-${i}`}
+            coordinates={coords}
             strokeColor={selectedRouteShape.color}
             strokeWidth={5}
             zIndex={2}
           />
-        )}
+        ))}
 
         {stopsZoomedIn &&
           mapStops.map((stop) => (

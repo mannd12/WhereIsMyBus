@@ -34,6 +34,10 @@ yarn-error.*
 # local env files
 .env*.local
 
+# schedule static asset — 31 MB, built by `npm run build-schedule-web` before an
+# EAS Hosting deploy (do not commit)
+public/schedule/
+
 # personal reference notes (kept off the public repo)
 PROJECT_IDS.txt
 

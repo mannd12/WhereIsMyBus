@@ -8,6 +8,7 @@ import {
   MAX_ARRIVALS,
   APP_TOKEN,
   SCHEDULE_URL,
+  ARRIVALS_URL,
 } from '../constants/config';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -45,6 +46,68 @@ async function fetchFeed(url: string) {
   const buf = await res.arrayBuffer();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   return transit_realtime.FeedMessage.decode(new Uint8Array(buf));
+}
+
+// ── Proxy per-stop arrivals (small JSON) ───────────────────────────────────
+// The proxy sends raw {tripId, routeId, arrival, departure}; we enrich route
+// colour/headsign here from the bundled GTFS, so the server stays light.
+interface RawArrival { t: string; r: string; a: number; d: number }
+
+function enrichRaw(raw: RawArrival, now: number): Arrival {
+  const route = getRoute(raw.r) ?? getRouteForTrip(raw.t);
+  const trip = getTrip(raw.t);
+  return {
+    tripId: raw.t,
+    routeId: raw.r,
+    routeShortName: route?.route_short_name ?? raw.r,
+    headsign: trip?.trip_headsign ?? route?.route_long_name ?? '',
+    arrivalTime: raw.a,
+    departureTime: raw.d,
+    routeColor: route?.route_color ?? '005CA9',
+    routeTextColor: route?.route_text_color ?? 'FFFFFF',
+    routeType: route?.route_type ?? 3,
+    countdown: raw.a - now,
+    isRealtime: true,
+  };
+}
+
+async function fetchArrivalsJson(stopIds: string[]): Promise<Record<string, RawArrival[]>> {
+  const res = await fetch(ARRIVALS_URL(stopIds), APP_TOKEN ? { headers: { 'x-app-token': APP_TOKEN } } : undefined);
+  if (res.status === 429 || res.status === 403) {
+    const e = new Error(`arrivals rate limited (${res.status})`) as Error & { rateLimited: boolean };
+    e.rateLimited = true;
+    throw e;
+  }
+  if (!res.ok) throw new Error(`arrivals ${res.status}`);
+  return (await res.json()) as Record<string, RawArrival[]>;
+}
+
+/** Full arrivals for many stops via the proxy (one small request). */
+export async function getArrivalsForStopsViaProxy(stopIds: string[]): Promise<Record<string, Arrival[]>> {
+  if (stopIds.length === 0) return {};
+  const map = await fetchArrivalsJson(stopIds);
+  const now = Math.floor(Date.now() / 1000);
+  const out: Record<string, Arrival[]> = {};
+  for (const [stopId, raws] of Object.entries(map)) {
+    out[stopId] = raws.map((r) => enrichRaw(r, now)).slice(0, MAX_ARRIVALS);
+  }
+  return out;
+}
+
+export async function getArrivalsAtStopViaProxy(stopId: string): Promise<Arrival[]> {
+  const map = await getArrivalsForStopsViaProxy([stopId]);
+  return map[stopId] ?? [];
+}
+
+/** Next arrival (epoch sec) per requested stop, via the proxy. */
+export async function getUpcomingViaProxy(stopIds: string[]): Promise<Record<string, number>> {
+  if (stopIds.length === 0) return {};
+  const map = await fetchArrivalsJson(stopIds);
+  const out: Record<string, number> = {};
+  for (const [stopId, raws] of Object.entries(map)) {
+    if (raws[0]) out[stopId] = raws[0].a;
+  }
+  return out;
 }
 
 export async function getArrivalsAtStop(

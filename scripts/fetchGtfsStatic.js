@@ -94,7 +94,9 @@ async function main() {
   console.log('Processing trips.txt …');
   const tripsRaw = parseCsv(zip.readAsText('trips.txt'));
   const tripsOut = {};
-  const routeShapeMap = new Map(); // route_id → first shape_id encountered
+  // route_id → Map<direction_id, Set<shape_id>> — so we can draw BOTH directions
+  // of a route (the longest shape per direction), not just one arbitrary variant.
+  const routeDirShapes = new Map();
 
   const tripRouteMap = new Map(); // trip_id → route_id
 
@@ -106,9 +108,12 @@ async function main() {
       trip_headsign: t.trip_headsign || '',
     };
     tripRouteMap.set(t.trip_id, t.route_id);
-    // Capture one shape_id per route (first encountered)
-    if (t.shape_id && !routeShapeMap.has(t.route_id)) {
-      routeShapeMap.set(t.route_id, t.shape_id);
+    if (t.shape_id) {
+      const dir = t.direction_id || '0';
+      if (!routeDirShapes.has(t.route_id)) routeDirShapes.set(t.route_id, new Map());
+      const dm = routeDirShapes.get(t.route_id);
+      if (!dm.has(dir)) dm.set(dir, new Set());
+      dm.get(dir).add(t.shape_id);
     }
   }
 
@@ -141,7 +146,7 @@ async function main() {
     stopRoutesOut[stopId] = [...routeSet];
   }
 
-  // ── shapes.txt — one canonical shape per route ──────────────────────────
+  // ── shapes.txt — longest shape per route DIRECTION ──────────────────────
   console.log('Processing shapes.txt …');
   const shapesRaw = parseCsv(zip.readAsText('shapes.txt'));
 
@@ -159,13 +164,20 @@ async function main() {
     pts.sort((a, b) => a.seq - b.seq);
   }
 
-  // Build shapes.json: { routeId → [[lat, lon], ...] }
+  // Build shapes.json: { routeId → [ [[lat,lon],...], ... ] } (one polyline per
+  // direction — the longest shape variant for each). Route maps draw both.
   const shapesOut = {};
-  for (const [routeId, shapeId] of routeShapeMap) {
-    const pts = shapePoints.get(shapeId);
-    if (!pts) continue;
-    const sampled = downsample(pts, MAX_SHAPE_PTS);
-    shapesOut[routeId] = sampled.map((p) => [p.lat, p.lon]);
+  for (const [routeId, dirMap] of routeDirShapes) {
+    const polylines = [];
+    for (const shapeIdSet of dirMap.values()) {
+      let best = null;
+      for (const sid of shapeIdSet) {
+        const pts = shapePoints.get(sid);
+        if (pts && (!best || pts.length > best.length)) best = pts;
+      }
+      if (best) polylines.push(downsample(best, MAX_SHAPE_PTS).map((p) => [p.lat, p.lon]));
+    }
+    if (polylines.length) shapesOut[routeId] = polylines;
   }
 
   // ── write output ────────────────────────────────────────────────────────

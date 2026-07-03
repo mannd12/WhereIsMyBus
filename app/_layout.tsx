@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useSettingsStore } from '../store/settings';
 import { USE_PROXY } from '../constants/config';
+import { syncScheduledFromOS } from '../services/notifications';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,6 +71,8 @@ export default function RootLayout() {
   // Ask for location permission up front, as soon as the app launches.
   useEffect(() => {
     Location.requestForegroundPermissionsAsync().catch(() => {});
+    // Restore reminder-bell state from the OS's still-pending notifications.
+    void syncScheduledFromOS();
   }, []);
 
   // Pause/resume polling with app foreground state (battery + request-cap saver).
