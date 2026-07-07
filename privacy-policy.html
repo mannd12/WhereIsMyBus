@@ -14,7 +14,7 @@
 </head>
 <body>
   <h1>BusPulse — Privacy Policy</h1>
-  <p><strong>Last updated: June 2026</strong></p>
+  <p><strong>Last updated: July 2026</strong></p>
 
   <p>BusPulse ("the app") is a real-time TransLink transit app for Metro Vancouver.
   This policy explains what information the app accesses and how it is used.</p>
@@ -26,9 +26,15 @@
   All location processing happens on your device.</p>
 
   <h2>Transit Data</h2>
-  <p>The app fetches real-time arrival and vehicle data from TransLink's public GTFS-RT feed.
-  These requests do not include any personal information. No user data is sent to TransLink or
-  any other party.</p>
+  <p>Real-time arrival, vehicle, and service-alert data comes from TransLink's public GTFS-RT
+  feed. To keep this fast and reliable, the app makes these requests through BusPulse's own
+  caching server (hosted on Expo Application Services) rather than contacting TransLink directly
+  from your phone.</p>
+  <p>These requests contain only the bus-stop identifiers you are viewing or near — so the server
+  can return that stop's arrivals — together with your device's IP address, which is part of any
+  internet request. This information is used only to serve your request. It is <strong>not stored,
+  logged for analysis, linked to your identity, or used to track you</strong>, and it is never
+  shared with third parties. No account, name, email, or device identifier is ever collected.</p>
 
   <h2>Notifications</h2>
   <p>If you choose to enable departure notifications, the app schedules local notifications
