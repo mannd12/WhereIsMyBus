@@ -22,10 +22,17 @@ AsyncStorage `whereismybus-*` keys wipes users' favourites.)
    `EXPO_PUBLIC_SCHEDULE_ENABLED=1` set in EAS prod → timetable fallback activates in build 22.
    To redeploy again: `npm run build-schedule-web` → `npx expo export --platform web --output-dir dist`
    → `npx eas deploy --prod --environment production`.
-2. **Build 22** (spends a credit) — see Finalization path. Safe to build now (endpoints are live).
-3. **Key rotation** — builds ≤21 embed the TransLink key. Build 22 uses proxy-only mode (no key in
-   bundle). **After build 22 verifies:** remove `EXPO_PUBLIC_TRANSLINK_API_KEY` from EAS prod env,
-   rotate at developer.translink.ca. (Safe for build 21 too — the proxy ignores the client key.)
+2. **Remove `EXPO_PUBLIC_TRANSLINK_API_KEY` from EAS prod env BEFORE build 22.** `EXPO_PUBLIC_` vars
+   are always inlined into the bundle, so build 22 would still embed (and leak) the key otherwise.
+   Removed → build 22 is keyless and works via the proxy (`USE_PROXY` gates every arrival hook +
+   AuthGuard on `apiKey || USE_PROXY`; feedUrl omits `?apikey=` when proxying — verified in code).
+   Cmd: `npx eas env:delete --variable-name EXPO_PUBLIC_TRANSLINK_API_KEY --variable-environment
+   production --non-interactive`. (Was permission-blocked 2026-07-07 — needs explicit user OK; it's
+   a prod env change. Leave the SERVER var `TRANSLINK_API_KEY` in place — the proxy needs it.)
+3. **Build 22** (spends a credit) — see Finalization path. Endpoints are live; build after step 2.
+4. **Rotate the TransLink key** — builds ≤21 embedded it (extractable). Get a new key at
+   developer.translink.ca, set it as EAS server var `TRANSLINK_API_KEY`, revoke the old one.
+   Build 21 (proxy mode) keeps working via the new server key. Do after build 22 or anytime.
 
 ## Finalization path (to App Store)
 1. **Build 22** (spends 1 credit — only on explicit user OK):
