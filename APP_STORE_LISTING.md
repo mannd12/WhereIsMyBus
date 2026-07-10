@@ -1,6 +1,7 @@
 # BusPulse — App Store Listing Copy
 
-Paste these directly into App Store Connect.
+Paste these directly into App Store Connect. (Everything here is final — URLs are live,
+IDs are filled in eas.json.)
 
 ---
 
@@ -15,7 +16,10 @@ Primary: Navigation
 Secondary: Travel
 
 ## Age Rating
-4+
+4+ (answer "None" to all content questions)
+
+## Pricing
+Free
 
 ---
 
@@ -25,11 +29,14 @@ BusPulse is the fastest way to catch your bus across Metro Vancouver — live, G
 
 No account. No sign-up. Open the app and see what's coming.
 
-**LIVE ARRIVALS ONLY**
-Unlike other apps, BusPulse shows only GPS-tracked real-time arrivals — no scheduled guesses. Every countdown ticks live to the second and turns red when your bus is due.
+**LIVE, GPS-TRACKED ARRIVALS**
+Every countdown ticks live to the second and turns red when your bus is due. When a route isn't transmitting yet — early mornings, peak-only expresses — BusPulse shows the scheduled timetable instead, so you're never left staring at an empty screen.
 
 **NEARBY MAP**
-See live positions for every bus on the map. Zoom in to reveal stop markers. Filter by route type — Bus, B-Line, RapidBus, or Night Bus — with one tap.
+See live positions for buses on the map. Zoom in to reveal stop markers. Filter by route type — Bus, B-Line, RapidBus, or Night Bus — with one tap.
+
+**ROUTE ON THE MAP**
+Tap any bus to highlight its full route and follow it live with a bright tracking beacon. See exactly where your bus is and where it's headed.
 
 **WALK TIME VS. NEXT BUS**
 Open any stop to instantly see your walk time compared to the next arrival. Know in seconds whether to walk or run.
@@ -37,11 +44,8 @@ Open any stop to instantly see your walk time compared to the next arrival. Know
 **SMART STOP SEARCH**
 Search by the 5-digit stop number posted on every sign, by stop name, or by route number. Covers all 8,700+ stops across Metro Vancouver.
 
-**ROUTE SHAPES**
-Tap any stop to draw every route that serves it directly on the map, so you can see exactly where each bus goes.
-
 **DEPARTURE ALERTS**
-Tap the bell on any arrival to get a notification 5 minutes before your bus arrives — even with the app closed.
+Tap the bell on any arrival to get a notification before your bus arrives — choose 2, 5, or 10 minutes' warning. Works even with the app closed.
 
 **FAVOURITES**
 Star your regular stops. Favourite stops show live arrivals at a glance without tapping in.
@@ -59,10 +63,29 @@ translink,bus,vancouver,transit,arrivals,stops,realtime,bline,rapidbus,nightbus,
 ---
 
 ## Support URL
-(needs a URL — simplest option: your GitHub repo URL, or a basic webpage)
+https://mannd12.github.io/WhereIsMyBus/support.html
 
 ## Privacy Policy URL
-(host privacy-policy.html at a public URL — see hosting options below)
+https://mannd12.github.io/WhereIsMyBus/privacy-policy.html
+
+---
+
+## App Privacy (the questionnaire)
+Answer: **"No, we do not collect data from this app" (Data Not Collected).**
+Rationale: location is processed entirely on-device (never transmitted — not
+"collection" per Apple's definition); the caching proxy stores/logs nothing;
+no analytics, accounts, or identifiers. Matches the published privacy policy.
+
+## App Review Information
+- Contact: your name + phone + mann.prabhdeep12@gmail.com
+- Notes: "No login required. The app uses TransLink's public GTFS real-time
+  feed via our own caching server. Location is optional and used only to show
+  nearby stops."
+
+## Screenshots
+3–5 required, iPhone 6.7" slot (1290×2796 — shots from an iPhone 14/15/16 Pro Max
+upload as-is). Best order: Nearby map with live buses → stop arrivals with
+countdown → bus tracking beacon → Search → Alerts.
 
 ---
 
@@ -71,22 +94,7 @@ Initial release.
 
 ---
 
-## Hosting the Privacy Policy
-
-Easiest free options:
-1. **GitHub Pages** — push the repo to GitHub, enable Pages, URL will be:
-   https://YOUR_USERNAME.github.io/WhereIsMyBus/privacy-policy.html
-2. **Netlify Drop** — drag the privacy-policy.html file to netlify.com/drop, get instant URL
-3. **Notion** — paste the text into a public Notion page
-
----
-
-## eas.json placeholders to fill in after Apple Developer activates
-
-Once your Apple Developer account is active:
-1. Log into developer.apple.com → your Team ID is in the top right (10-char string like A1B2C3D4E5)
-2. Create the app in App Store Connect → the numeric App ID appears in the URL
-3. Fill in eas.json:
-   - appleId: your Apple ID email
-   - ascAppId: the numeric App Store Connect app ID
-   - appleTeamId: your 10-char team ID
+## If Apple pushes back on trademarks
+"TransLink" appears in the keywords and description as a factual data-source
+reference. If review objects, reword to "Metro Vancouver transit" and resubmit —
+metadata-only changes don't need a new build.
