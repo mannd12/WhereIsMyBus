@@ -3,6 +3,7 @@ import { Animated, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
+import { t } from '../../locales/i18n';
 
 interface Props {
   arrivalTime: number; // epoch seconds
@@ -11,13 +12,13 @@ interface Props {
 
 /** Live label: "Due" ≤30s, m:ss under 10 min (winds down by the second), else "N min". */
 function formatCountdown(seconds: number): string {
-  if (seconds <= 30) return 'Due';
+  if (seconds <= 30) return t('common.due');
   if (seconds < 600) {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m}:${s.toString().padStart(2, '0')}`;
   }
-  return `${Math.round(seconds / 60)} min`;
+  return t('common.nMin', { n: Math.round(seconds / 60) });
 }
 
 export function CountdownBadge({ arrivalTime, size = 'normal' }: Props) {

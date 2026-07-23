@@ -13,6 +13,7 @@ import type { Stop, Route } from '../../types/translink';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { getRouteColor } from '../../constants/routeTypes';
 import { formatDistance } from '../../constants/format';
+import { useT } from '../../locales/i18n';
 
 type SearchMode = 'stops' | 'routes';
 interface Coords { latitude: number; longitude: number }
@@ -91,6 +92,7 @@ const makeStyles = (c: ThemeColors) =>
 function StopRow({ item, origin }: { item: Stop; origin: Coords | null }) {
   const isFav = useFavoritesStore((s) => s.isFavorite(item.stop_id));
   const toggleFav = useFavoritesStore((s) => s.toggleFavorite);
+  const tf = useT();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
   const distance = origin
@@ -103,7 +105,7 @@ function StopRow({ item, origin }: { item: Stop; origin: Coords | null }) {
       onPress={() => router.push(`/stop/${item.stop_id}`)}
       activeOpacity={0.7}
       accessibilityRole="button"
-      accessibilityLabel={`${item.stop_name}, stop ${item.stop_code}, open arrivals`}
+      accessibilityLabel={tf('search.stopA11y', { name: item.stop_name, code: item.stop_code })}
     >
       <View style={[styles.typeDot, { backgroundColor: getRouteColor(item.route_types[0] ?? 3) }]} />
       <View style={styles.rowText}>
@@ -120,7 +122,7 @@ function StopRow({ item, origin }: { item: Stop; origin: Coords | null }) {
         }}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         accessibilityRole="button"
-        accessibilityLabel={isFav ? 'Remove from favourites' : 'Add to favourites'}
+        accessibilityLabel={isFav ? tf('fav.remove') : tf('fav.add')}
       >
         <Ionicons name={isFav ? 'star' : 'star-outline'} size={18} color={isFav ? '#FFB800' : c.textSecondary} />
       </TouchableOpacity>
@@ -130,6 +132,7 @@ function StopRow({ item, origin }: { item: Stop; origin: Coords | null }) {
 }
 
 function RouteRow({ item }: { item: Route }) {
+  const tf = useT();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
   const addRecentRoute = useRecentRoutesStore((s) => s.addRecentRoute);
@@ -144,12 +147,12 @@ function RouteRow({ item }: { item: Route }) {
       }}
       activeOpacity={0.7}
       accessibilityRole="button"
-      accessibilityLabel={`Route ${item.route_short_name}, ${item.route_long_name}, view stops`}
+      accessibilityLabel={tf('search.routeA11y', { short: item.route_short_name, long: item.route_long_name })}
     >
       <View style={[styles.typeDot, { backgroundColor: color }]} />
       <View style={styles.rowText}>
         <Text style={styles.stopName}>{item.route_short_name} — {item.route_long_name}</Text>
-        <Text style={styles.stopMeta}>Route · tap to see all stops</Text>
+        <Text style={styles.stopMeta}>{tf('search.routeTapHint')}</Text>
       </View>
       <Ionicons name="chevron-forward" size={16} color={c.textSecondary} />
     </TouchableOpacity>
@@ -165,6 +168,7 @@ export default function SearchScreen() {
     : null;
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+  const tf = useT();
 
   const { stopIds: recentIds, clearRecent } = useRecentStopsStore();
   const { routeIds: recentRouteIds, clearRecent: clearRecentRoutes } = useRecentRoutesStore();
@@ -198,7 +202,7 @@ export default function SearchScreen() {
         <Ionicons name="search" size={18} color={c.textSecondary} />
         <TextInput
           style={styles.input}
-          placeholder={mode === 'stops' ? 'Stop name or number (e.g. 57123)' : 'Route number or name (e.g. 99)'}
+          placeholder={mode === 'stops' ? tf('search.placeholderStops') : tf('search.placeholderRoutes')}
           placeholderTextColor={c.textSecondary}
           value={query}
           onChangeText={setQuery}
@@ -216,21 +220,25 @@ export default function SearchScreen() {
             onPress={() => { setMode(m); setQuery(''); }}
           >
             <Text style={[styles.modeChipText, mode === m && styles.modeChipTextActive]}>
-              {m === 'stops' ? 'Stops' : 'Routes'}
+              {m === 'stops' ? tf('search.stops') : tf('search.routes')}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
       {showEmpty && (
-        <Text style={styles.empty}>No {mode} found for "{query}"</Text>
+        <Text style={styles.empty}>
+          {mode === 'stops'
+            ? tf('search.noStopsFound', { query })
+            : tf('search.noRoutesFound', { query })}
+        </Text>
       )}
 
       {(showRecent || showRecentRoutes) && (
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recent</Text>
+          <Text style={styles.sectionTitle}>{tf('search.recent')}</Text>
           <TouchableOpacity onPress={showRecentRoutes ? clearRecentRoutes : clearRecent}>
-            <Text style={styles.clearText}>Clear</Text>
+            <Text style={styles.clearText}>{tf('common.clear')}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -243,7 +251,7 @@ export default function SearchScreen() {
           renderItem={({ item }) => <StopRow item={item} origin={origin} />}
           ItemSeparatorComponent={() => <View style={styles.sep} />}
           ListFooterComponent={
-            !query && !showRecent ? <Text style={styles.hint}>Search by stop name or 5-digit stop number.{'\n'}Tap any result to see live arrivals.</Text> : null
+            !query && !showRecent ? <Text style={styles.hint}>{tf('search.hintStops')}</Text> : null
           }
         />
       ) : (
@@ -254,7 +262,7 @@ export default function SearchScreen() {
           renderItem={({ item }) => <RouteRow item={item} />}
           ItemSeparatorComponent={() => <View style={styles.sep} />}
           ListFooterComponent={
-            !query && !showRecentRoutes ? <Text style={styles.hint}>Search by route number (99, 49) or name (B-Line, RapidBus).</Text> : null
+            !query && !showRecentRoutes ? <Text style={styles.hint}>{tf('search.hintRoutes')}</Text> : null
           }
         />
       )}

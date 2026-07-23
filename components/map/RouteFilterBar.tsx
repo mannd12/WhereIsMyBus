@@ -4,24 +4,26 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
+import { useT, type TranslationKey } from '../../locales/i18n';
 
 export type RouteFilter = 'all' | 'bus' | 'bline' | 'rapidbus' | 'night';
 
-interface FilterOption { id: RouteFilter; label: string; color: string; }
+interface FilterOption { id: RouteFilter; labelKey: TranslationKey; color: string; }
 
 // TransLink's public real-time feed only covers buses — SkyTrain, SeaBus and
 // WCE have no live data, so they aren't offered as filters.
 const FILTERS: FilterOption[] = [
-  { id: 'all',      label: 'All',      color: Colors.primary },
-  { id: 'bus',      label: 'Bus',      color: Colors.bus },
-  { id: 'bline',    label: 'B-Line',   color: Colors.bLine },
-  { id: 'rapidbus', label: 'RapidBus', color: '#0085CA' },
-  { id: 'night',    label: 'Night',    color: '#1A1A3E' },
+  { id: 'all',      labelKey: 'filter.all',      color: Colors.primary },
+  { id: 'bus',      labelKey: 'filter.bus',      color: Colors.bus },
+  { id: 'bline',    labelKey: 'filter.bline',    color: Colors.bLine },
+  { id: 'rapidbus', labelKey: 'filter.rapidbus', color: '#0085CA' },
+  { id: 'night',    labelKey: 'filter.night',    color: '#1A1A3E' },
 ];
 
 interface Props { active: RouteFilter; onChange: (f: RouteFilter) => void; }
 
 export function RouteFilterBar({ active, onChange }: Props) {
+  const tf = useT();
   const c = useThemeColors();
   const { top } = useSafeAreaInsets();
   const inactiveChipStyle = useMemo(
@@ -45,9 +47,9 @@ export function RouteFilterBar({ active, onChange }: Props) {
               activeOpacity={0.75}
               accessibilityRole="button"
               accessibilityState={{ selected: isActive }}
-              accessibilityLabel={`Filter: ${f.label}`}
+              accessibilityLabel={tf('filter.a11y', { label: tf(f.labelKey) })}
             >
-              <Text style={[styles.label, { color: isActive ? '#fff' : c.text }]}>{f.label}</Text>
+              <Text style={[styles.label, { color: isActive ? '#fff' : c.text }]}>{tf(f.labelKey)}</Text>
             </TouchableOpacity>
           );
         })}

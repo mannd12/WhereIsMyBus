@@ -2,6 +2,7 @@ import { Marker, Callout } from 'react-native-maps';
 import { View, Text, StyleSheet } from 'react-native';
 import type { NearbyStop } from '../../types/translink';
 import { getRouteColor } from '../../constants/routeTypes';
+import { useT } from '../../locales/i18n';
 
 interface Props {
   stop: NearbyStop;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function StopMarker({ stop, selected, onPress, onViewArrivals }: Props) {
+  const tf = useT();
   const primaryType = stop.route_types[0] ?? 3;
   const color = getRouteColor(primaryType);
 
@@ -26,9 +28,9 @@ export function StopMarker({ stop, selected, onPress, onViewArrivals }: Props) {
       <Callout onPress={() => onViewArrivals?.(stop)}>
         <View style={styles.callout}>
           <Text style={styles.calloutText}>{stop.stop_name}</Text>
-          <Text style={styles.calloutSub}>Stop #{stop.stop_code}</Text>
+          <Text style={styles.calloutSub}>{tf('common.stopHash', { code: stop.stop_code })}</Text>
           <View style={styles.calloutBtn}>
-            <Text style={styles.calloutBtnText}>Track buses →</Text>
+            <Text style={styles.calloutBtnText}>{tf('marker.trackBuses')}</Text>
           </View>
         </View>
       </Callout>

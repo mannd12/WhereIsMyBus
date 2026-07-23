@@ -4,6 +4,7 @@ import * as Haptics from 'expo-haptics';
 import type { Arrival } from '../types/translink';
 import { scheduleArrivalNotification } from '../services/notifications';
 import { useSettingsStore } from '../store/settings';
+import { t } from '../locales/i18n';
 
 /**
  * One-tap reminder: schedules a heads-up at the user's saved lead time
@@ -20,10 +21,7 @@ export function useArrivalReminder() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         onScheduled?.();
       } else {
-        Alert.alert(
-          'Notifications disabled',
-          'Enable notifications in Settings to get a heads-up before your bus arrives.',
-        );
+        Alert.alert(t('notif.disabledTitle'), t('notif.disabledBody'));
       }
     },
     [lead],

@@ -6,6 +6,7 @@ import { Colors } from '../../constants/colors';
 import { useRelevantAlerts } from '../../hooks/useRelevantAlerts';
 import { useAlertsSeenStore, transitDay } from '../../store/alertsSeen';
 import { useThemeColors } from '../../hooks/useThemeColors';
+import { useT } from '../../locales/i18n';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -31,6 +32,7 @@ export default function TabLayout() {
   const count = alerts.length;
   const alertBadge = hydrated && unseen && count > 0 ? (count > 99 ? '99+' : count) : undefined;
   const c = useThemeColors();
+  const tf = useT();
 
   return (
     <Tabs
@@ -47,20 +49,20 @@ export default function TabLayout() {
     >
       <Tabs.Screen
         name="index"
-        options={{ title: 'Nearby', tabBarIcon: tabIcon('location', 'location-outline'), headerShown: false }}
+        options={{ title: tf('tabs.nearby'), tabBarIcon: tabIcon('location', 'location-outline'), headerShown: false }}
       />
       <Tabs.Screen
         name="search"
-        options={{ title: 'Search', tabBarIcon: tabIcon('search', 'search-outline'), headerShown: true }}
+        options={{ title: tf('tabs.search'), tabBarIcon: tabIcon('search', 'search-outline'), headerShown: true }}
       />
       <Tabs.Screen
         name="favorites"
-        options={{ title: 'Favourites', tabBarIcon: tabIcon('star', 'star-outline'), headerShown: true }}
+        options={{ title: tf('tabs.favourites'), tabBarIcon: tabIcon('star', 'star-outline'), headerShown: true }}
       />
       <Tabs.Screen
         name="alerts"
         options={{
-          title: 'Alerts',
+          title: tf('tabs.alerts'),
           tabBarIcon: tabIcon('warning', 'warning-outline'),
           tabBarBadge: alertBadge,
           headerShown: true,

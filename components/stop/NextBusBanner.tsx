@@ -8,6 +8,7 @@ import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { isScheduled } from '../../services/notifications';
 import { useArrivalReminder } from '../../hooks/useArrivalReminder';
 import { useSettingsStore } from '../../store/settings';
+import { useT } from '../../locales/i18n';
 
 interface Props {
   arrival: Arrival;
@@ -39,6 +40,7 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 export function NextBusBanner({ arrival, stopName, stopId }: Props) {
+  const tf = useT();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
   const sid = stopId ?? '';
@@ -48,12 +50,12 @@ export function NextBusBanner({ arrival, stopName, stopId }: Props) {
 
   const handleNotify = () => {
     if (scheduled) return;
-    void remind(arrival, stopName ?? 'this stop', sid, () => setScheduled(true));
+    void remind(arrival, stopName ?? tf('common.thisStop'), sid, () => setScheduled(true));
   };
 
   return (
     <View style={styles.banner}>
-      <Text style={styles.label}>Next bus</Text>
+      <Text style={styles.label}>{tf('nearby.nextBus')}</Text>
       <View style={styles.row}>
         <RouteChip
           shortName={arrival.routeShortName}
@@ -61,14 +63,14 @@ export function NextBusBanner({ arrival, stopName, stopId }: Props) {
           textColor={arrival.routeTextColor}
         />
         <Text style={styles.headsign} numberOfLines={2}>
-          {arrival.headsign || 'In service'}
+          {arrival.headsign || tf('arrival.inService')}
         </Text>
         <TouchableOpacity
           onPress={handleNotify}
           style={styles.bell}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           accessibilityRole="button"
-          accessibilityLabel={scheduled ? 'Reminder set' : `Remind me ${lead} minutes before this bus`}
+          accessibilityLabel={scheduled ? tf('arrival.reminderSet') : tf('arrival.remindBefore', { lead })}
         >
           <Ionicons
             name={scheduled ? 'notifications' : 'notifications-outline'}

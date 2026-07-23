@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, View, StyleSheet, type DimensionValue } from 'react-native';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
+import { useT } from '../../locales/i18n';
 
 interface BlockProps {
   width?: DimensionValue;
@@ -41,8 +42,9 @@ export function SkeletonBlock({ width = '100%', height = 12, radius = 6, style }
 /** Placeholder rows shaped like the arrivals list. */
 export function ArrivalListSkeleton({ rows = 4 }: { rows?: number }) {
   const c = useThemeColors();
+  const tf = useT();
   return (
-    <View accessibilityLabel="Loading arrivals">
+    <View accessibilityLabel={tf('common.loadingArrivals')}>
       {Array.from({ length: rows }).map((_, i) => (
         <View
           key={i}

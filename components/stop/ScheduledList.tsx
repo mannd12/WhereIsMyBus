@@ -5,12 +5,14 @@ import type { ScheduledArrival } from '../../types/translink';
 import { RouteChip } from '../ui/RouteChip';
 import { getRouteByShortName } from '../../services/gtfsStatic';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
+import { useT } from '../../locales/i18n';
 
 const clockTime = (epoch: number) =>
   new Date(epoch * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 
 /** Timetable fallback shown when a stop has no live bus. Clearly not real-time. */
 export function ScheduledList({ items }: { items: ScheduledArrival[] }) {
+  const tf = useT();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
 
@@ -18,9 +20,9 @@ export function ScheduledList({ items }: { items: ScheduledArrival[] }) {
     <View style={styles.wrap}>
       <View style={styles.header}>
         <Ionicons name="calendar-outline" size={15} color={c.textSecondary} />
-        <Text style={styles.headerText}>Scheduled departures</Text>
+        <Text style={styles.headerText}>{tf('sched.header')}</Text>
       </View>
-      <Text style={styles.note}>Timetable — no live tracking for this stop right now.</Text>
+      <Text style={styles.note}>{tf('sched.note')}</Text>
       {items.map((a, i) => {
         const r = getRouteByShortName(a.routeShortName);
         const time = clockTime(a.arrivalTime);
@@ -28,7 +30,7 @@ export function ScheduledList({ items }: { items: ScheduledArrival[] }) {
           <View
             key={`${a.routeShortName}-${a.arrivalTime}-${i}`}
             style={styles.row}
-            accessibilityLabel={`Route ${a.routeShortName} to ${a.headsign || 'destination'}, scheduled ${time}`}
+            accessibilityLabel={tf('sched.rowA11y', { route: a.routeShortName, dest: a.headsign || tf('common.destination'), time })}
           >
             <RouteChip
               shortName={a.routeShortName}
@@ -36,7 +38,7 @@ export function ScheduledList({ items }: { items: ScheduledArrival[] }) {
               textColor={r?.route_text_color ?? 'FFFFFF'}
             />
             <Text style={styles.headsign} numberOfLines={2}>
-              {a.headsign || 'Scheduled'}
+              {a.headsign || tf('sched.scheduled')}
             </Text>
             <Text style={styles.time}>{time}</Text>
           </View>

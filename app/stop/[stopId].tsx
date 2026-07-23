@@ -20,6 +20,7 @@ import { ArrivalListSkeleton } from '../../components/ui/Skeleton';
 import { SCHEDULE_ENABLED } from '../../constants/config';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
+import { useT } from '../../locales/i18n';
 
 const WALK_SPEED_M_PER_MIN = 80;
 
@@ -98,6 +99,7 @@ export default function StopDetailScreen() {
   const { location } = useLocation();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+  const tf = useT();
 
   useEffect(() => {
     if (stopId) addRecentStop(stopId);
@@ -105,7 +107,7 @@ export default function StopDetailScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      title: 'Arrivals',
+      title: tf('title.stopArrivals'),
       headerBackVisible: false,
       // Bookmark (star) on the LEFT
       headerLeft: () => (
@@ -131,7 +133,7 @@ export default function StopDetailScreen() {
         </TouchableOpacity>
       ),
     });
-  }, [stop, isFav, stopId]);
+  }, [stop, isFav, stopId, tf]);
 
   const walkMinutes = useMemo(() => {
     if (!location || !stop) return null;
@@ -146,7 +148,7 @@ export default function StopDetailScreen() {
     if (!stop) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     Share.share({
-      message: `${stop.stop_name} — Stop #${stop.stop_code}. Check live bus arrivals on BusPulse.`,
+      message: tf('stop.shareMessage', { name: stop.stop_name, code: stop.stop_code }),
     }).catch(() => {});
   };
 
@@ -171,9 +173,9 @@ export default function StopDetailScreen() {
   const staleError = isError && hasArrivals;
   const updatedSecondsAgo = dataUpdatedAt ? Math.round((Date.now() - dataUpdatedAt) / 1000) : null;
   const lastUpdated = staleError
-    ? "Couldn't refresh — showing last known times"
+    ? tf('stop.stale')
     : updatedSecondsAgo !== null
-      ? `Updated ${updatedSecondsAgo}s ago · auto-refreshes every 60s`
+      ? tf('stop.updatedAgo', { s: updatedSecondsAgo })
       : '';
   // Green while fresh; amber once older than a refresh cycle; red if the last refresh failed.
   const freshColor = staleError
@@ -186,8 +188,8 @@ export default function StopDetailScreen() {
     <View style={styles.container}>
       <View style={styles.stopInfo}>
         <View style={styles.stopInfoText}>
-          <Text style={styles.stopName}>{stop?.stop_name ?? `Stop #${stop?.stop_code ?? stopId}`}</Text>
-          <Text style={styles.stopId}>Stop #{stop?.stop_code ?? stopId}</Text>
+          <Text style={styles.stopName}>{stop?.stop_name ?? tf('common.stopHash', { code: stop?.stop_code ?? stopId })}</Text>
+          <Text style={styles.stopId}>{tf('common.stopHash', { code: stop?.stop_code ?? stopId })}</Text>
         </View>
         {stop && (
           <TouchableOpacity
@@ -195,7 +197,7 @@ export default function StopDetailScreen() {
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             style={styles.shareBtn}
             accessibilityRole="button"
-            accessibilityLabel="Share this stop"
+            accessibilityLabel={tf('stop.share')}
           >
             <Ionicons name="share-outline" size={20} color={c.textSecondary} />
           </TouchableOpacity>
@@ -230,9 +232,11 @@ export default function StopDetailScreen() {
             styles.walkBanner,
             makeIt === 'make' ? styles.walkMake : makeIt === 'hurry' ? styles.walkHurry : styles.walkMiss,
           ]}
-          accessibilityLabel={`${walkMinutes} minute walk, next bus in ${nextBusMinutes} minutes. ${
-            makeIt === 'make' ? 'You can make it.' : makeIt === 'hurry' ? 'Better hurry.' : 'You might miss it.'
-          }`}
+          accessibilityLabel={tf('stop.walkA11y', {
+            walk: walkMinutes ?? 0,
+            next: nextBusMinutes ?? 0,
+            verdict: makeIt === 'make' ? tf('stop.makeItFull') : makeIt === 'hurry' ? tf('stop.hurryFull') : tf('stop.missItFull'),
+          })}
         >
           <Ionicons
             name={makeIt === 'make' ? 'walk' : makeIt === 'hurry' ? 'flash' : 'close-circle'}
@@ -245,8 +249,8 @@ export default function StopDetailScreen() {
               { color: makeIt === 'make' ? '#00A650' : makeIt === 'hurry' ? '#C77700' : Colors.due },
             ]}
           >
-            ~{walkMinutes} min walk · next bus in {nextBusMinutes} min
-            {makeIt === 'make' ? ' — you can make it' : makeIt === 'hurry' ? ' — better hurry' : ' — you might miss it'}
+            {tf('stop.walkSummary', { walk: walkMinutes ?? 0, next: nextBusMinutes ?? 0 })}
+            {makeIt === 'make' ? tf('stop.makeIt') : makeIt === 'hurry' ? tf('stop.hurry') : tf('stop.missIt')}
           </Text>
         </View>
       )}
@@ -261,13 +265,13 @@ export default function StopDetailScreen() {
             color={c.border}
           />
           <Text style={styles.errorText}>
-            {isRateLimited(error) ? 'Live data is busy right now' : 'Could not load arrivals.'}
+            {isRateLimited(error) ? tf('stop.busyNow') : tf('stop.loadFailed')}
           </Text>
           {isRateLimited(error) && (
-            <Text style={styles.emptyText}>The real-time feed has hit its limit — try again in a bit.</Text>
+            <Text style={styles.emptyText}>{tf('stop.feedLimitBit')}</Text>
           )}
           <TouchableOpacity onPress={() => refetch()} style={styles.retryBtn}>
-            <Text style={styles.retryText}>Retry</Text>
+            <Text style={styles.retryText}>{tf('common.retry')}</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -293,10 +297,8 @@ export default function StopDetailScreen() {
             ) : (
               <View style={styles.center}>
                 <Ionicons name="time-outline" size={44} color={c.border} />
-                <Text style={styles.errorText}>No real-time arrivals</Text>
-                <Text style={styles.emptyText}>
-                  No live bus arrivals for this stop right now. Pull down to refresh.
-                </Text>
+                <Text style={styles.errorText}>{tf('stop.noRealtime')}</Text>
+                <Text style={styles.emptyText}>{tf('stop.noLivePull')}</Text>
               </View>
             )
           }

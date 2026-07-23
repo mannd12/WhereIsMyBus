@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert } 
 import { Stack, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
-import { useSettingsStore } from '../store/settings';
+import { useSettingsStore, type LanguagePref } from '../store/settings';
+import { useT } from '../locales/i18n';
 import { useRecentStopsStore } from '../store/recentStops';
 import { useThemeColors, type ThemeColors } from '../hooks/useThemeColors';
 import { Colors } from '../constants/colors';
@@ -86,16 +87,27 @@ export default function SettingsScreen() {
   const styles = useMemo(() => makeStyles(c), [c]);
   const lead = useSettingsStore((s) => s.notifyLeadMinutes);
   const setLead = useSettingsStore((s) => s.setNotifyLeadMinutes);
+  const language = useSettingsStore((s) => s.language);
+  const setLanguage = useSettingsStore((s) => s.setLanguage);
   const clearRecent = useRecentStopsStore((s) => s.clearRecent);
+  const tf = useT();
 
   const version = Constants.expoConfig?.version ?? '1.0.0';
 
   const confirmClearRecent = () => {
-    Alert.alert('Clear recent searches?', 'This removes your recently viewed stops.', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Clear', style: 'destructive', onPress: () => clearRecent() },
+    Alert.alert(tf('settings.clearRecentTitle'), tf('settings.clearRecentBody'), [
+      { text: tf('common.cancel'), style: 'cancel' },
+      { text: tf('common.clear'), style: 'destructive', onPress: () => clearRecent() },
     ]);
   };
+
+  // English/Punjabi options label themselves in their own language so each is
+  // always readable no matter which language is active.
+  const LANGUAGE_OPTIONS: { value: LanguagePref; label: string }[] = [
+    { value: 'system', label: tf('settings.langSystem') },
+    { value: 'en', label: 'English' },
+    { value: 'pa', label: 'ਪੰਜਾਬੀ' },
+  ];
 
   return (
     <View style={styles.screen}>
@@ -106,7 +118,7 @@ export default function SettingsScreen() {
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               accessibilityRole="button"
-              accessibilityLabel="Close settings"
+              accessibilityLabel={tf('settings.close')}
             >
               <Ionicons name="close" size={24} color="#fff" />
             </TouchableOpacity>
@@ -116,10 +128,10 @@ export default function SettingsScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         {/* Notifications */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Notifications</Text>
+          <Text style={styles.sectionTitle}>{tf('settings.notifications')}</Text>
           <View style={[styles.card, styles.padRow]}>
-            <Text style={styles.rowLabel}>Remind me before the bus</Text>
-            <Text style={styles.rowSub}>Default lead time for departure reminders.</Text>
+            <Text style={styles.rowLabel}>{tf('settings.remindBefore')}</Text>
+            <Text style={styles.rowSub}>{tf('settings.leadTimeSub')}</Text>
             <View style={styles.pillRow}>
               {LEAD_OPTIONS.map((m) => {
                 const active = lead === m;
@@ -130,9 +142,34 @@ export default function SettingsScreen() {
                     onPress={() => setLead(m)}
                     accessibilityRole="button"
                     accessibilityState={{ selected: active }}
-                    accessibilityLabel={`${m} minutes before`}
+                    accessibilityLabel={tf('settings.minutesBefore', { m })}
                   >
-                    <Text style={[styles.pillText, active && styles.pillTextActive]}>{m} min</Text>
+                    <Text style={[styles.pillText, active && styles.pillTextActive]}>{tf('settings.minShort', { m })}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        </View>
+
+        {/* Language */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{tf('settings.language')}</Text>
+          <View style={[styles.card, styles.padRow]}>
+            <Text style={styles.rowSub}>{tf('settings.languageSub')}</Text>
+            <View style={styles.pillRow}>
+              {LANGUAGE_OPTIONS.map((opt) => {
+                const active = language === opt.value;
+                return (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[styles.pill, active && styles.pillActive]}
+                    onPress={() => setLanguage(opt.value)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: active }}
+                    accessibilityLabel={opt.label}
+                  >
+                    <Text style={[styles.pillText, active && styles.pillTextActive]}>{opt.label}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -142,29 +179,23 @@ export default function SettingsScreen() {
 
         {/* Data & privacy */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Data & privacy</Text>
+          <Text style={styles.sectionTitle}>{tf('settings.dataPrivacy')}</Text>
           <View style={styles.card}>
-            <LinkRow label="Privacy Policy" first onPress={() => Linking.openURL(PRIVACY_URL)} />
-            <LinkRow label="Support" onPress={() => Linking.openURL(SUPPORT_URL)} />
-            <LinkRow label="Clear recent searches" danger onPress={confirmClearRecent} />
+            <LinkRow label={tf('settings.privacyPolicy')} first onPress={() => Linking.openURL(PRIVACY_URL)} />
+            <LinkRow label={tf('settings.support')} onPress={() => Linking.openURL(SUPPORT_URL)} />
+            <LinkRow label={tf('settings.clearRecent')} danger onPress={confirmClearRecent} />
           </View>
         </View>
 
         {/* About */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
+          <Text style={styles.sectionTitle}>{tf('settings.about')}</Text>
           <View style={[styles.card, styles.padRow]}>
             <Text style={styles.aboutName}>BusPulse</Text>
-            <Text style={styles.aboutVersion}>Version {version}</Text>
-            <Text style={styles.aboutBody}>
-              Real-time bus arrivals and live tracking for Metro Vancouver, powered by TransLink's
-              public GTFS real-time feed. Arrivals update every 60 seconds.
-            </Text>
+            <Text style={styles.aboutVersion}>{tf('settings.version', { v: version })}</Text>
+            <Text style={styles.aboutBody}>{tf('settings.aboutBody')}</Text>
           </View>
-          <Text style={styles.attribution}>
-            Transit data © TransLink. BusPulse is an independent app and is not affiliated with or
-            endorsed by TransLink.
-          </Text>
+          <Text style={styles.attribution}>{tf('settings.attribution')}</Text>
         </View>
       </ScrollView>
     </View>

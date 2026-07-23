@@ -22,6 +22,7 @@ import { useSettingsStore } from '../../store/settings';
 import { OnboardingCard } from '../../components/OnboardingCard';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
 import { useUpcomingArrivals } from '../../hooks/useUpcomingArrivals';
+import { useT } from '../../locales/i18n';
 import { CountdownBadge } from '../../components/ui/CountdownBadge';
 import * as Haptics from 'expo-haptics';
 
@@ -183,6 +184,7 @@ export default function NearbyScreen() {
   const mapRef = useRef<MapView>(null);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+  const tf = useT();
   const { top: safeTop } = useSafeAreaInsets();
 
   useFocusEffect(useCallback(() => {
@@ -397,7 +399,7 @@ export default function NearbyScreen() {
           activeOpacity={0.85}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           accessibilityRole="button"
-          accessibilityLabel="Open settings"
+          accessibilityLabel={tf('nearby.openSettings')}
         >
           <Ionicons name="settings-outline" size={20} color={Colors.primary} />
         </TouchableOpacity>
@@ -409,7 +411,7 @@ export default function NearbyScreen() {
             activeOpacity={0.85}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             accessibilityRole="button"
-            accessibilityLabel="Center the map on my location"
+            accessibilityLabel={tf('nearby.centerOnMe')}
           >
             <Ionicons name="locate" size={22} color={Colors.primary} />
           </TouchableOpacity>
@@ -424,9 +426,9 @@ export default function NearbyScreen() {
           onPress={showNearbyStops}
           activeOpacity={0.8}
           accessibilityRole="button"
-          accessibilityLabel="Show nearby stops on the map"
+          accessibilityLabel={tf('nearby.showStopsOnMap')}
         >
-          <Text style={styles.zoomHintText}>Tap to show nearby stops</Text>
+          <Text style={styles.zoomHintText}>{tf('nearby.tapToShowStops')}</Text>
         </TouchableOpacity>
       )}
 
@@ -445,12 +447,12 @@ export default function NearbyScreen() {
           </View>
           <View style={styles.routeBannerBody}>
             <Text style={styles.routeBannerName} numberOfLines={1}>
-              {selectedRoute.route_long_name || 'Route'}
+              {selectedRoute.route_long_name || tf('common.route')}
             </Text>
             <Text style={styles.routeBannerSub}>
               {routeVehicleCount > 0
-                ? `${routeVehicleCount} live ${routeVehicleCount === 1 ? 'bus' : 'buses'} · blinking on map`
-                : 'No live buses right now'}
+                ? tf('nearby.liveBusBlinking', { count: routeVehicleCount })
+                : tf('nearby.noLiveBuses')}
             </Text>
           </View>
           <TouchableOpacity
@@ -465,15 +467,13 @@ export default function NearbyScreen() {
 
       <View style={styles.panel}>
         <Text style={styles.panelHeader}>
-          {locLoading ? 'Locating…' : `${filteredStops.length} stop${filteredStops.length !== 1 ? 's' : ''} nearby`}
+          {locLoading ? tf('nearby.locating') : tf('nearby.stopsNearby', { count: filteredStops.length })}
         </Text>
 
         {locLoading && nearbyStops.length === 0 ? (
           <ActivityIndicator color={Colors.primary} style={{ margin: 16 }} />
         ) : nearbyStops.length === 0 ? (
-          <Text style={styles.emptyText}>
-            No bus stops within 500 m of you. Try the map or search for a stop by name or number.
-          </Text>
+          <Text style={styles.emptyText}>{tf('nearby.noStops')}</Text>
         ) : (
           <FlatList
             data={filteredStops}
@@ -483,7 +483,9 @@ export default function NearbyScreen() {
             contentContainerStyle={styles.listPadding}
             ListEmptyComponent={
               <Text style={styles.filterEmptyText}>
-                No {activeFilter === 'all' ? '' : `${activeFilter === 'bline' ? 'B-Line' : activeFilter === 'rapidbus' ? 'RapidBus' : activeFilter} `}stops in view. Try another filter or zoom out.
+                {activeFilter === 'all'
+                  ? tf('nearby.noStopsInView')
+                  : tf('nearby.noFilterStops', { filter: tf(`filter.${activeFilter}`) })}
               </Text>
             }
             renderItem={({ item }) => (
@@ -496,16 +498,16 @@ export default function NearbyScreen() {
                 <View style={[styles.stopDot, { backgroundColor: getRouteColor(item.route_types[0] ?? 3) }]} />
                 <Text style={styles.stopName} numberOfLines={2}>{item.stop_name}</Text>
                 <Text style={styles.stopDist}>
-                  {formatDistance(item.distance)} · ~{walkMinutes(item.distance)} min walk
+                  {formatDistance(item.distance)} · {tf('dist.minWalk', { n: walkMinutes(item.distance) })}
                 </Text>
                 {upcoming?.[item.stop_id] ? (
                   <View style={styles.nextRow}>
-                    <Text style={styles.nextLabel}>Next bus</Text>
+                    <Text style={styles.nextLabel}>{tf('nearby.nextBus')}</Text>
                     <CountdownBadge arrivalTime={upcoming[item.stop_id]} />
                   </View>
                 ) : null}
                 <TouchableOpacity style={styles.arrivalsBtn} onPress={() => handleViewArrivals(item)}>
-                  <Text style={styles.arrivalsBtnText}>Arrivals →</Text>
+                  <Text style={styles.arrivalsBtnText}>{tf('nearby.arrivalsCta')}</Text>
                 </TouchableOpacity>
               </TouchableOpacity>
             )}

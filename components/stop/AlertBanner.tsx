@@ -5,6 +5,7 @@ import type { ServiceAlert } from '../../types/translink';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { timeAgo } from '../../constants/format';
 import { getRoute } from '../../services/gtfsStatic';
+import { useT } from '../../locales/i18n';
 
 interface Props {
   alert: ServiceAlert;
@@ -33,6 +34,7 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 export function AlertBanner({ alert }: Props) {
+  const tf = useT();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
   const [expanded, setExpanded] = useState(false);
@@ -75,14 +77,14 @@ export function AlertBanner({ alert }: Props) {
         ) : null}
         {expanded && affectedNames.length > 0 ? (
           <Text style={styles.routes}>
-            Affected routes: {affectedNames.join(', ')}
+            {tf('alerts.affectedRoutes', { routes: affectedNames.join(', ') })}
           </Text>
         ) : null}
         {showTime ? (
-          <Text style={styles.time}>Posted {timeAgo(alert.timestamp)}</Text>
+          <Text style={styles.time}>{tf('alerts.posted', { time: timeAgo(alert.timestamp) })}</Text>
         ) : null}
         {canExpand ? (
-          <Text style={styles.more}>{expanded ? 'Show less' : 'Read more'}</Text>
+          <Text style={styles.more}>{expanded ? tf('alerts.showLess') : tf('alerts.readMore')}</Text>
         ) : null}
       </View>
       {canExpand ? (

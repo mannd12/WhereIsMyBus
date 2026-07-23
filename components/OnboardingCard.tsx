@@ -1,6 +1,7 @@
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/colors';
+import { useT } from '../locales/i18n';
 
 interface Props {
   visible: boolean;
@@ -9,6 +10,7 @@ interface Props {
 
 /** First-run intro: sets expectations that BusPulse is a real-time *bus* app. */
 export function OnboardingCard({ visible, onDismiss }: Props) {
+  const tf = useT();
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onDismiss}>
       <View style={styles.backdrop}>
@@ -16,23 +18,17 @@ export function OnboardingCard({ visible, onDismiss }: Props) {
           <View style={styles.iconWrap}>
             <Ionicons name="bus" size={36} color="#fff" />
           </View>
-          <Text style={styles.title}>Welcome to BusPulse</Text>
-          <Text style={styles.body}>
-            Real-time bus tracking for Metro Vancouver. See live arrivals, tap a bus to follow it
-            on the map, and get a reminder before it comes.
-          </Text>
-          <Text style={styles.note}>
-            Live data covers buses. SkyTrain, SeaBus and West Coast Express aren't tracked in
-            TransLink's public feed.
-          </Text>
+          <Text style={styles.title}>{tf('onboard.title')}</Text>
+          <Text style={styles.body}>{tf('onboard.body')}</Text>
+          <Text style={styles.note}>{tf('onboard.note')}</Text>
           <TouchableOpacity
             style={styles.button}
             onPress={onDismiss}
             activeOpacity={0.85}
             accessibilityRole="button"
-            accessibilityLabel="Get started"
+            accessibilityLabel={tf('onboard.cta')}
           >
-            <Text style={styles.buttonText}>Get started</Text>
+            <Text style={styles.buttonText}>{tf('onboard.cta')}</Text>
           </TouchableOpacity>
         </View>
       </View>

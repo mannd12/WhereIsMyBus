@@ -7,6 +7,7 @@ import { getRoute, getStopsForRoute } from '../../services/gtfsStatic';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
 import { useFavoritesStore } from '../../store/favorites';
+import { useT } from '../../locales/i18n';
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -59,6 +60,7 @@ export default function RouteDetailScreen() {
   const { routeId } = useLocalSearchParams<{ routeId: string }>();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+  const tf = useT();
 
   const route = getRoute(routeId ?? '');
   const stops = useMemo(() => getStopsForRoute(routeId ?? ''), [routeId]);
@@ -74,7 +76,7 @@ export default function RouteDetailScreen() {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          title: route ? `Route ${route.route_short_name}` : 'Route',
+          title: route ? tf('title.routeN', { route: route.route_short_name }) : tf('title.route'),
           headerStyle: { backgroundColor: Colors.primary },
           headerTintColor: '#fff',
           headerTitleStyle: { fontWeight: '700' },
@@ -97,29 +99,27 @@ export default function RouteDetailScreen() {
         <Text style={styles.routeName}>
           {route?.route_short_name ?? routeId} — {route?.route_long_name ?? ''}
         </Text>
-        <Text style={styles.routeSub}>{stops.length} stops serve this route</Text>
+        <Text style={styles.routeSub}>{tf('route.stopsServe', { count: stops.length })}</Text>
         <TouchableOpacity
           style={styles.mapBtn}
           onPress={() => router.push(`/route-map/${routeId}`)}
           activeOpacity={0.85}
           accessibilityRole="button"
-          accessibilityLabel="Show live buses on this route on the map"
+          accessibilityLabel={tf('route.showLiveOnMapA11y')}
         >
           <Ionicons name="map" size={16} color="#fff" />
-          <Text style={styles.mapBtnText}>Show live buses on map</Text>
+          <Text style={styles.mapBtnText}>{tf('route.showLiveOnMap')}</Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.count}>{stops.length} stops</Text>
+      <Text style={styles.count}>{tf('route.stopsCount', { count: stops.length })}</Text>
 
       <FlatList
         data={stops}
         keyExtractor={(s) => s.stop_id}
         ItemSeparatorComponent={() => <View style={styles.sep} />}
         ListEmptyComponent={
-          <Text style={styles.empty}>
-            No stop data found. Run node scripts/fetchGtfsStatic.js to refresh.
-          </Text>
+          <Text style={styles.empty}>{tf('route.noStopData')}</Text>
         }
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -139,7 +139,7 @@ export default function RouteDetailScreen() {
               }}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               accessibilityRole="button"
-              accessibilityLabel={isFav(item.stop_id) ? 'Remove from favourites' : 'Add to favourites'}
+              accessibilityLabel={isFav(item.stop_id) ? tf('fav.remove') : tf('fav.add')}
             >
               <Ionicons
                 name={isFav(item.stop_id) ? 'star' : 'star-outline'}

@@ -1,4 +1,5 @@
 import type { Arrival } from '../types/translink';
+import { t } from '../locales/i18n';
 
 // expo-notifications crashes in Expo Go (SDK 53+) due to removed push token support.
 // Use require() in a try-catch so it fails silently when running in Expo Go.
@@ -70,11 +71,11 @@ export async function scheduleArrivalNotification(
   const secondsFromNow = Math.round((triggerMs - Date.now()) / 1000);
 
   const content: import('expo-notifications').NotificationContentInput = {
-    title: secondsFromNow <= 0 ? 'Bus arriving now' : 'Bus arriving soon',
+    title: secondsFromNow <= 0 ? t('notif.arrivingNow') : t('notif.arrivingSoon'),
     body:
       secondsFromNow <= 0
-        ? `Route ${arrival.routeShortName} is arriving at ${stopName}`
-        : `Route ${arrival.routeShortName} arrives in ${leadMinutes} min at ${stopName}`,
+        ? t('notif.bodyNow', { route: arrival.routeShortName, stop: stopName })
+        : t('notif.bodySoon', { route: arrival.routeShortName, lead: leadMinutes, stop: stopName }),
     sound: true,
   };
 

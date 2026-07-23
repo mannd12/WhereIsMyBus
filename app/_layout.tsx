@@ -8,6 +8,7 @@ import * as Location from 'expo-location';
 import { useSettingsStore } from '../store/settings';
 import { USE_PROXY } from '../constants/config';
 import { syncScheduledFromOS } from '../services/notifications';
+import { t, useT } from '../locales/i18n';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,11 +30,11 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   return (
     <View style={eb.container}>
       <Ionicons name="bus" size={48} color="#005CA9" />
-      <Text style={eb.title}>Something went wrong</Text>
-      <Text style={eb.body}>BusPulse hit an unexpected error. Try again — your favourites are safe.</Text>
+      <Text style={eb.title}>{t('error.somethingWrong')}</Text>
+      <Text style={eb.body}>{t('error.unexpected')}</Text>
       {__DEV__ ? <Text style={eb.detail}>{error.message}</Text> : null}
-      <TouchableOpacity style={eb.button} onPress={() => retry()} accessibilityRole="button" accessibilityLabel="Try again">
-        <Text style={eb.buttonText}>Try again</Text>
+      <TouchableOpacity style={eb.button} onPress={() => retry()} accessibilityRole="button" accessibilityLabel={t('error.tryAgain')}>
+        <Text style={eb.buttonText}>{t('error.tryAgain')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -68,6 +69,7 @@ function AuthGuard() {
 }
 
 export default function RootLayout() {
+  const tf = useT();
   // Ask for location permission up front, as soon as the app launches.
   useEffect(() => {
     Location.requestForegroundPermissionsAsync().catch(() => {});
@@ -92,7 +94,7 @@ export default function RootLayout() {
             options={{
               presentation: 'modal',
               headerShown: true,
-              title: 'Stop Arrivals',
+              title: tf('title.stopArrivals'),
               headerStyle: { backgroundColor: '#005CA9' },
               headerTintColor: '#fff',
               headerTitleStyle: { fontWeight: '700' },
@@ -103,7 +105,7 @@ export default function RootLayout() {
             options={{
               presentation: 'modal',
               headerShown: true,
-              title: 'Route',
+              title: tf('title.route'),
               headerStyle: { backgroundColor: '#005CA9' },
               headerTintColor: '#fff',
               headerTitleStyle: { fontWeight: '700' },
@@ -114,7 +116,7 @@ export default function RootLayout() {
             options={{
               presentation: 'modal',
               headerShown: true,
-              title: 'Settings',
+              title: tf('title.settings'),
               headerStyle: { backgroundColor: '#005CA9' },
               headerTintColor: '#fff',
               headerTitleStyle: { fontWeight: '700' },

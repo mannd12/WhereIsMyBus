@@ -10,6 +10,7 @@ import { useAlertsSeenStore } from '../../store/alertsSeen';
 import { AlertBanner } from '../../components/stop/AlertBanner';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
+import { useT } from '../../locales/i18n';
 
 // Major = real disruptions; everything else (stop moves, accessibility notes) is minor.
 const MAJOR_RE = /\b(close|cancel|detour|diversion|no service|not in service|suspend|reduc|delay|disrupt|reroute)/i;
@@ -71,6 +72,7 @@ export default function AlertsScreen() {
   const dismissAll = useAlertsSeenStore((s) => s.dismissAll);
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+  const tf = useT();
   const [showMinor, setShowMinor] = useState(false);
 
   const { major, minor } = useMemo(() => {
@@ -92,7 +94,7 @@ export default function AlertsScreen() {
     return (
       <View style={[{ flex: 1, backgroundColor: c.background }, styles.center]}>
         <ActivityIndicator size="large" color={Colors.primary} />
-        <Text style={styles.loadingText}>Loading alerts…</Text>
+        <Text style={styles.loadingText}>{tf('alerts.loading')}</Text>
       </View>
     );
   }
@@ -102,11 +104,9 @@ export default function AlertsScreen() {
     return (
       <View style={[{ flex: 1, backgroundColor: c.background }, styles.center]}>
         <Ionicons name={rl ? 'time-outline' : 'cloud-offline-outline'} size={48} color={c.border} />
-        <Text style={styles.errorTitle}>{rl ? 'Live data is busy' : 'Could not load alerts'}</Text>
+        <Text style={styles.errorTitle}>{rl ? tf('alerts.busy') : tf('alerts.loadFailed')}</Text>
         <Text style={styles.errorSub}>
-          {rl
-            ? 'The real-time feed has hit its limit. Try again shortly.'
-            : 'Check your connection and try again.'}
+          {rl ? tf('alerts.feedLimit') : tf('alerts.checkConnection')}
         </Text>
       </View>
     );
@@ -118,15 +118,15 @@ export default function AlertsScreen() {
       {alerts.length > 0 && (
         <View style={styles.headerRow}>
           <Text style={styles.header}>
-            {`${alerts.length} active alert${alerts.length !== 1 ? 's' : ''}`}
+            {tf('alerts.active', { count: alerts.length })}
           </Text>
           <TouchableOpacity
             onPress={handleClearAll}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             accessibilityRole="button"
-            accessibilityLabel="Clear all alerts"
+            accessibilityLabel={tf('alerts.clearAllA11y')}
           >
-            <Text style={styles.clearAll}>Clear all</Text>
+            <Text style={styles.clearAll}>{tf('alerts.clearAll')}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -140,7 +140,7 @@ export default function AlertsScreen() {
           major.length === 0 && minor.length > 0 ? (
             <View style={styles.noMajorRow}>
               <Ionicons name="checkmark-circle-outline" size={20} color={Colors.skytrainCanada} />
-              <Text style={styles.noMajorText}>No major disruptions right now.</Text>
+              <Text style={styles.noMajorText}>{tf('alerts.noMajor')}</Text>
             </View>
           ) : null
         }
@@ -148,7 +148,7 @@ export default function AlertsScreen() {
           alerts.length === 0 ? (
             <View style={styles.empty}>
               <Ionicons name="checkmark-circle-outline" size={52} color={Colors.skytrainCanada} />
-              <Text style={styles.allClearText}>All clear — no service disruptions.</Text>
+              <Text style={styles.allClearText}>{tf('alerts.allClear')}</Text>
             </View>
           ) : null
         }
@@ -160,10 +160,10 @@ export default function AlertsScreen() {
                 onPress={() => setShowMinor((v) => !v)}
                 activeOpacity={0.7}
                 accessibilityRole="button"
-                accessibilityLabel={`${showMinor ? 'Hide' : 'Show'} ${minor.length} minor notices`}
+                accessibilityLabel={showMinor ? tf('alerts.hideMinor', { count: minor.length }) : tf('alerts.showMinor', { count: minor.length })}
               >
                 <Text style={styles.minorToggleText}>
-                  {showMinor ? 'Hide' : 'Show'} {minor.length} minor notice{minor.length !== 1 ? 's' : ''} · stop moves, accessibility
+                  {showMinor ? tf('alerts.hideMinor', { count: minor.length }) : tf('alerts.showMinor', { count: minor.length })}
                 </Text>
                 <Ionicons name={showMinor ? 'chevron-up' : 'chevron-down'} size={16} color={c.textSecondary} />
               </TouchableOpacity>

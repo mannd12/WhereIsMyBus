@@ -2,7 +2,7 @@
   "expo": {
     "name": "BusPulse",
     "slug": "whereismybus",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "whereismybus",
@@ -18,7 +18,8 @@
       "buildNumber": "1",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "BusPulse uses your location to show nearby bus stops and real-time arrivals.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleLocalizations": ["en", "pa"]
       }
     },
     "android": {
@@ -57,7 +58,8 @@
           "color": "#005CA9",
           "sounds": []
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true

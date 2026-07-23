@@ -1,5 +1,6 @@
 import type { Arrival, ScheduledArrival, ServiceAlert, VehiclePosition } from '../types/translink';
 import { getRoute, getRouteForTrip, getTrip } from './gtfsStatic';
+import { t } from '../locales/i18n';
 import {
   TRIP_UPDATES_URL,
   VEHICLE_POSITIONS_URL,
@@ -356,7 +357,7 @@ export async function getServiceAlerts(
     if (!a) continue;
 
     const header =
-      a.headerText?.translation?.[0]?.text ?? 'Service Alert';
+      a.headerText?.translation?.[0]?.text ?? t('alerts.serviceAlertFallback');
     const description =
       a.descriptionText?.translation?.[0]?.text ?? '';
     const routes = (a.informedEntity ?? [])

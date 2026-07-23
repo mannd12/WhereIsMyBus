@@ -10,6 +10,7 @@ import { VehicleMarker } from '../../components/map/VehicleMarker';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
 import { VANCOUVER_REGION } from '../../constants/config';
+import { useT } from '../../locales/i18n';
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -52,6 +53,7 @@ export default function RouteMapScreen() {
   const { routeId } = useLocalSearchParams<{ routeId: string }>();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+  const tf = useT();
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapView>(null);
   const fitted = useRef(false);
@@ -112,10 +114,10 @@ export default function RouteMapScreen() {
 
       <View style={[styles.banner, { top: insets.top + 8 }]}>
         <Text style={styles.bannerText} numberOfLines={1}>
-          {route?.route_short_name ?? 'Route'} {route?.route_long_name ? `· ${route.route_long_name}` : ''}
+          {route?.route_short_name ?? tf('common.route')} {route?.route_long_name ? `· ${route.route_long_name}` : ''}
         </Text>
         <Text style={styles.bannerSub}>
-          {routeVehicles.length} live bus{routeVehicles.length !== 1 ? 'es' : ''} on this route
+          {tf('route.liveOnRoute', { count: routeVehicles.length })}
         </Text>
       </View>
 
@@ -125,7 +127,7 @@ export default function RouteMapScreen() {
         activeOpacity={0.8}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         accessibilityRole="button"
-        accessibilityLabel="Close route map"
+        accessibilityLabel={tf('route.closeMap')}
       >
         <Ionicons name="close" size={22} color="#fff" />
       </TouchableOpacity>

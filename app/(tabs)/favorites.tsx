@@ -13,6 +13,7 @@ import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
 import { formatDistance, walkMinutes } from '../../constants/format';
 import type { Arrival } from '../../types/translink';
+import { useT } from '../../locales/i18n';
 
 interface Coords { latitude: number; longitude: number }
 
@@ -94,6 +95,7 @@ function FavoriteStopCard({
   const stop = getStop(stopId);
   const removeFavorite = useFavoritesStore((s) => s.removeFavorite);
   const moveFavorite = useFavoritesStore((s) => s.moveFavorite);
+  const tf = useT();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
   const next = (arrivals ?? []).slice(0, 2);
@@ -111,15 +113,15 @@ function FavoriteStopCard({
           onPress={() => router.push(`/stop/${stopId}`)}
           activeOpacity={0.7}
           accessibilityRole="button"
-          accessibilityLabel={`${stop?.stop_name ?? 'Stop'} ${stop?.stop_code ?? stopId}, open arrivals`}
+          accessibilityLabel={tf('fav.openArrivalsA11y', { name: stop?.stop_name ?? tf('common.stopHash', { code: stopId }), code: stop?.stop_code ?? stopId })}
         >
-          <Text style={styles.stopName} numberOfLines={2}>{stop?.stop_name ?? `Stop #${stopId}`}</Text>
+          <Text style={styles.stopName} numberOfLines={2}>{stop?.stop_name ?? tf('common.stopHash', { code: stopId })}</Text>
           <Text style={styles.stopId}>#{stop?.stop_code ?? stopId}</Text>
           {distance !== null && (
             <Text style={styles.walk}>
               {formatDistance(distance)}
               {/* Walk time only when it's plausibly walkable — a "211 min walk" is noise. */}
-              {distance < 3000 ? ` · ~${walkMinutes(distance)} min walk` : ''}
+              {distance < 3000 ? ` · ${tf('dist.minWalk', { n: walkMinutes(distance) })}` : ''}
             </Text>
           )}
         </TouchableOpacity>
@@ -130,7 +132,7 @@ function FavoriteStopCard({
               onPress={() => moveFavorite(stopId, -1)}
               hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               accessibilityRole="button"
-              accessibilityLabel="Move favourite up"
+              accessibilityLabel={tf('fav.moveUp')}
             >
               <Ionicons name="chevron-up" size={20} color={index === 0 ? c.border : c.textSecondary} />
             </TouchableOpacity>
@@ -139,7 +141,7 @@ function FavoriteStopCard({
               onPress={() => moveFavorite(stopId, 1)}
               hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               accessibilityRole="button"
-              accessibilityLabel="Move favourite down"
+              accessibilityLabel={tf('fav.moveDown')}
             >
               <Ionicons name="chevron-down" size={20} color={index === total - 1 ? c.border : c.textSecondary} />
             </TouchableOpacity>
@@ -149,7 +151,7 @@ function FavoriteStopCard({
           onPress={() => removeFavorite(stopId)}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           accessibilityRole="button"
-          accessibilityLabel="Remove from favourites"
+          accessibilityLabel={tf('fav.remove')}
         >
           <Ionicons name="star" size={20} color="#FFB800" />
         </TouchableOpacity>
@@ -158,7 +160,7 @@ function FavoriteStopCard({
       {isLoading ? (
         <ArrivalListSkeleton rows={2} />
       ) : next.length === 0 ? (
-        <Text style={styles.noArrivals}>No upcoming arrivals</Text>
+        <Text style={styles.noArrivals}>{tf('fav.noUpcoming')}</Text>
       ) : (
         next.map((a) => (
           // tripId alone — arrivalTime drifts each refetch and would remount rows.
@@ -176,6 +178,7 @@ export default function FavoritesScreen() {
     ? { latitude: location.coords.latitude, longitude: location.coords.longitude }
     : null;
   const { data: arrivalsByStop, isLoading, isFetching, refetch } = useFavoriteArrivals(stopIds);
+  const tf = useT();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
 
@@ -185,19 +188,17 @@ export default function FavoritesScreen() {
         <View style={styles.emptyIconWrap}>
           <Ionicons name="star" size={40} color={Colors.primary} />
         </View>
-        <Text style={styles.emptyTitle}>No favourites yet</Text>
-        <Text style={styles.emptySubtitle}>
-          Star a stop and it'll show up here with live arrivals at a glance.
-        </Text>
+        <Text style={styles.emptyTitle}>{tf('fav.emptyTitle')}</Text>
+        <Text style={styles.emptySubtitle}>{tf('fav.emptyBody')}</Text>
         <TouchableOpacity
           style={styles.emptyCta}
           onPress={() => router.push('/search')}
           activeOpacity={0.85}
           accessibilityRole="button"
-          accessibilityLabel="Find a stop to add"
+          accessibilityLabel={tf('fav.findAStopA11y')}
         >
           <Ionicons name="search" size={16} color="#fff" />
-          <Text style={styles.emptyCtaText}>Find a stop</Text>
+          <Text style={styles.emptyCtaText}>{tf('fav.findAStop')}</Text>
         </TouchableOpacity>
       </View>
     );

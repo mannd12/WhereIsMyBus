@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import type { LocationObject, LocationSubscription } from 'expo-location';
 import { VANCOUVER_REGION } from '../constants/config';
+import { t } from '../locales/i18n';
 
 // Fallback used when GPS is unavailable or permission denied
 const VANCOUVER_FALLBACK: LocationObject = {
@@ -33,7 +34,7 @@ export function useLocation() {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (cancelled) return;
       if (status !== 'granted') {
-        setError('Location permission denied — showing Vancouver centre.');
+        setError(t('nearby.locationDenied'));
         setLocation(VANCOUVER_FALLBACK);
         setLoading(false);
         return;

@@ -13,6 +13,7 @@ import { CountdownBadge } from '../../components/ui/CountdownBadge';
 import { RouteChip } from '../../components/ui/RouteChip';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
+import { useT } from '../../locales/i18n';
 
 /** Bright yellow blinking beacon so the live bus is instantly findable on the map. */
 function BlinkingBeacon() {
@@ -115,6 +116,7 @@ export default function TripDetailScreen() {
 
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
+  const tf = useT();
   const mapRef = useRef<MapView>(null);
   const hasCentered = useRef(false);
   const insets = useSafeAreaInsets();
@@ -198,7 +200,7 @@ export default function TripDetailScreen() {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          title: `Route ${routeShortName ?? ''}`,
+          title: tf('title.routeN', { route: routeShortName ?? '' }),
           headerStyle: { backgroundColor: Colors.primary },
           headerTintColor: '#fff',
           headerTitleStyle: { fontWeight: '700' },
@@ -221,7 +223,7 @@ export default function TripDetailScreen() {
             <View style={stopPinStyles.wrap}>
               <View style={stopPinStyles.label}>
                 <Text style={stopPinStyles.labelText} numberOfLines={1}>
-                  Your stop
+                  {tf('trip.yourStop')}
                 </Text>
               </View>
               <View style={stopPinStyles.dot} />
@@ -252,14 +254,14 @@ export default function TripDetailScreen() {
 
       {!vehicle && (
         <View style={[styles.noVehicle, { top: insets.top + 56 }]}>
-          <Text style={styles.noVehicleText}>No live vehicle data for this trip</Text>
+          <Text style={styles.noVehicleText}>{tf('trip.noVehicle')}</Text>
         </View>
       )}
 
       {vehicle && (
         <TouchableOpacity style={styles.recenter} onPress={recenter} activeOpacity={0.8}>
           <Ionicons name="locate" size={16} color={Colors.primary} />
-          <Text style={styles.recenterText}>Find bus</Text>
+          <Text style={styles.recenterText}>{tf('trip.findBus')}</Text>
         </TouchableOpacity>
       )}
 
@@ -271,17 +273,17 @@ export default function TripDetailScreen() {
             textColor="FFFFFF"
           />
           <Text style={styles.headsign} numberOfLines={2}>
-            {headsign || 'In service'}
+            {headsign || tf('arrival.inService')}
           </Text>
           {eta && <CountdownBadge arrivalTime={eta} />}
         </View>
         {stopName && (
           // Router params arrive already decoded — decoding again would throw
           // URIError on any stop name containing '%'.
-          <Text style={styles.meta}>Arriving at {stopName}</Text>
+          <Text style={styles.meta}>{tf('trip.arrivingAt', { stop: stopName })}</Text>
         )}
         {vehicle && (
-          <Text style={styles.meta}>Vehicle updated {timeAgo(vehicle.timestamp)}</Text>
+          <Text style={styles.meta}>{tf('trip.vehicleUpdated', { time: timeAgo(vehicle.timestamp) })}</Text>
         )}
       </View>
     </View>
