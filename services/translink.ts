@@ -33,6 +33,16 @@ export function getNearbyStops(
     .slice(0, MAX_NEARBY_STOPS);
 }
 
+/** Distance in metres to the single nearest bus stop (Infinity if no data). */
+export function nearestStopDistance(lat: number, lon: number): number {
+  let min = Infinity;
+  for (const stop of getBusStops()) {
+    const d = haversineDistance(lat, lon, stop.stop_lat, stop.stop_lon);
+    if (d < min) min = d;
+  }
+  return min;
+}
+
 /** Set of route IDs that serve any stop within `radius` metres of a point. */
 export function getRoutesNear(lat: number, lon: number, radius: number): Set<string> {
   const set = new Set<string>();

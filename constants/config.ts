@@ -35,6 +35,11 @@ export const ALERTS_REFRESH_MS = 120_000;   // 2min — was 60s
 
 export const NEARBY_RADIUS_M = 500;
 export const MAX_NEARBY_STOPS = 20;
+// If the nearest TransLink stop is farther than this, the user is outside
+// Metro Vancouver (e.g. Vancouver Island, the Interior) — show a coverage
+// message instead of the misleading "no stops within 500 m". Metro Van riders
+// are effectively never this far from a stop, so this won't false-positive.
+export const COVERAGE_MAX_M = 10_000;
 // Alerts are filtered to routes serving stops within this radius of the user.
 // 25 mi (~40km) covers nearly all of Metro Vancouver, so we use a tighter
 // "your area" radius that actually trims the list. Tune freely.

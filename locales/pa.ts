@@ -51,6 +51,8 @@ export const pa: Record<TranslationKey, string> = {
   'nearby.locating': 'ਟਿਕਾਣਾ ਲੱਭਿਆ ਜਾ ਰਿਹਾ ਹੈ…',
   'nearby.stopsNearby': '{count} ਸਟਾਪ ਨੇੜੇ',
   'nearby.stopsNearby_plural': '{count} ਸਟਾਪ ਨੇੜੇ',
+  'nearby.outOfCoverage':
+    'ਤੁਸੀਂ ਸੇਵਾ ਖੇਤਰ ਤੋਂ ਬਾਹਰ ਹੋ। BusPulse ਸਿਰਫ਼ ਮੈਟਰੋ ਵੈਨਕੂਵਰ (TransLink) ਲਈ ਲਾਈਵ ਬੱਸਾਂ ਵਿਖਾਉਂਦਾ ਹੈ।',
   'nearby.noStops': 'ਤੁਹਾਡੇ 500 ਮੀਟਰ ਦੇ ਘੇਰੇ ਵਿੱਚ ਕੋਈ ਬੱਸ ਸਟਾਪ ਨਹੀਂ। ਨਕਸ਼ਾ ਵਰਤੋ ਜਾਂ ਨਾਂ ਜਾਂ ਨੰਬਰ ਨਾਲ ਸਟਾਪ ਖੋਜੋ।',
   'nearby.noFilterStops': 'ਨਜ਼ਰ ਵਿੱਚ ਕੋਈ {filter} ਸਟਾਪ ਨਹੀਂ। ਹੋਰ ਫਿਲਟਰ ਅਜ਼ਮਾਓ ਜਾਂ ਜ਼ੂਮ ਆਊਟ ਕਰੋ।',
   'nearby.noStopsInView': 'ਨਜ਼ਰ ਵਿੱਚ ਕੋਈ ਸਟਾਪ ਨਹੀਂ। ਹੋਰ ਫਿਲਟਰ ਅਜ਼ਮਾਓ ਜਾਂ ਜ਼ੂਮ ਆਊਟ ਕਰੋ।',

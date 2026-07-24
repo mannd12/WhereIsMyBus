@@ -14,8 +14,8 @@ import type { NearbyStop, VehiclePosition } from '../../types/translink';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
 import { Colors } from '../../constants/colors';
 import { getRouteColor } from '../../constants/routeTypes';
-import { getStopsInRegion } from '../../services/translink';
-import { VANCOUVER_REGION } from '../../constants/config';
+import { getStopsInRegion, nearestStopDistance } from '../../services/translink';
+import { VANCOUVER_REGION, COVERAGE_MAX_M } from '../../constants/config';
 import { formatDistance, walkMinutes } from '../../constants/format';
 import { getStopRoutes, getRoute, getRouteShape } from '../../services/gtfsStatic';
 import { useSettingsStore } from '../../store/settings';
@@ -221,6 +221,15 @@ export default function NearbyScreen() {
     () => nearbyStops.filter((s) => matchesFilter(s, activeFilter)),
     [nearbyStops, activeFilter],
   );
+
+  // No stops within 500 m could mean "quiet spot in Metro Van" or "wrong region
+  // entirely" (Vancouver Island, the Interior). Only scan for the nearest stop
+  // when there are none nearby, and flag genuinely out-of-coverage locations so
+  // we can say so honestly instead of the misleading "none within 500 m".
+  const outOfCoverage = useMemo(() => {
+    if (!location || nearbyStops.length > 0) return false;
+    return nearestStopDistance(location.coords.latitude, location.coords.longitude) > COVERAGE_MAX_M;
+  }, [location?.coords.latitude, location?.coords.longitude, nearbyStops.length]);
 
   // Map markers: every stop inside the visible region (so zoom/pan reveals them all),
   // not just the handful near the user.
@@ -473,7 +482,9 @@ export default function NearbyScreen() {
         {locLoading && nearbyStops.length === 0 ? (
           <ActivityIndicator color={Colors.primary} style={{ margin: 16 }} />
         ) : nearbyStops.length === 0 ? (
-          <Text style={styles.emptyText}>{tf('nearby.noStops')}</Text>
+          <Text style={styles.emptyText}>
+            {tf(outOfCoverage ? 'nearby.outOfCoverage' : 'nearby.noStops')}
+          </Text>
         ) : (
           <FlatList
             data={filteredStops}

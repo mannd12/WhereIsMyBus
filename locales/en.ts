@@ -48,6 +48,8 @@ export const en = {
   'nearby.locating': 'Locating…',
   'nearby.stopsNearby': '{count} stop nearby',
   'nearby.stopsNearby_plural': '{count} stops nearby',
+  'nearby.outOfCoverage':
+    "You're outside the coverage area. BusPulse shows live buses for Metro Vancouver (TransLink) only.",
   'nearby.noStops':
     'No bus stops within 500 m of you. Try the map or search for a stop by name or number.',
   'nearby.noFilterStops': 'No {filter} stops in view. Try another filter or zoom out.',
