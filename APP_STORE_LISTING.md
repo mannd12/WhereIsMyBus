@@ -23,6 +23,12 @@ Free
 
 ---
 
+## Promotional Text (170 chars max — live-editable, no build/review needed)
+Real-time TransLink arrivals for every stop in Metro Vancouver. Watch your bus move on the map and get a reminder before it comes.
+
+> Note: this replaced the old promo text (2026-08-23) which duplicated the
+> description's opening line on the product page. Live on 1.0 now.
+
 ## Description (paste into App Store Connect)
 
 BusPulse is the fastest way to catch your bus across Metro Vancouver — live, GPS-tracked arrivals and real-time bus positions on the map.
@@ -53,7 +59,14 @@ Star your regular stops. Favourite stops show live arrivals at a glance without 
 **SERVICE ALERTS**
 Active TransLink service disruptions appear with a badge on the Alerts tab so you never miss a delay or detour.
 
+**COVERAGE**
+BusPulse works across Metro Vancouver on the TransLink network. It does not cover Vancouver Island (Victoria, Nanaimo, Tofino/Ucluelet) or the Fraser Valley (Abbotsford, Chilliwack), which are served by BC Transit.
+
 Powered by TransLink's official GTFS real-time feed. Arrivals update every 60 seconds.
+
+> COVERAGE paragraph added 2026-08-23. NOT yet on the live 1.0 description
+> (that field is locked on a released version). Paste it into the 1.1
+> description when creating the 1.1 version for build 23.
 
 ---
 
@@ -88,6 +101,10 @@ upload as-is). Best order: Nearby map with live buses → stop arrivals with
 countdown → bus tracking beacon → Search → Alerts.
 
 ---
+
+## What's New (version 1.1.0) — build 24
+• BusPulse now speaks Punjabi (ਪੰਜਾਬੀ)! Switch languages anytime in Settings.
+• A friendlier heads-up when you're outside Metro Vancouver's TransLink network — no more confusing "no stops nearby."
 
 ## What's New (version 1.0.0)
 Initial release.
