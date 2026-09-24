@@ -1,4 +1,4 @@
-# BusPulse — Feature Roadmap (approved 2026-06-25)
+# BusPulse Vancouver — Feature Roadmap (approved 2026-06-25)
 
 Everything below is approved. Split by **what I can build + verify now** (pure
 JS/React Native, testable on the emulator) vs **native iOS** (needs a dev build

@@ -191,7 +191,7 @@ export default function SettingsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{tf('settings.about')}</Text>
           <View style={[styles.card, styles.padRow]}>
-            <Text style={styles.aboutName}>BusPulse</Text>
+            <Text style={styles.aboutName}>BusPulse Vancouver</Text>
             <Text style={styles.aboutVersion}>{tf('settings.version', { v: version })}</Text>
             <Text style={styles.aboutBody}>{tf('settings.aboutBody')}</Text>
           </View>

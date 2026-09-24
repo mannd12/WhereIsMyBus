@@ -1,139 +1,93 @@
-# BusPulse — Handoff
+# BusPulse Vancouver — Handoff
 
-_Last updated: 2026-07-02_
+_Last updated: 2026-09-23 · Punjabi marketing kit drafted; 1.1.0 is LIVE._
 
-Real-time **bus** tracking for Metro Vancouver. **Expo SDK 56 / React Native (TypeScript strict)**,
-GTFS static (`data/*.json`) + TransLink GTFS-RT V3 live feeds, through a caching proxy on EAS
-Hosting. Shipping **iOS-only** via EAS Build → TestFlight → App Store. (Display name **BusPulse**;
-internal slug/bundle stay `whereismybus` / `com.whereismybus.app` — do NOT change: renaming the
-AsyncStorage `whereismybus-*` keys wipes users' favourites.)
+## Now
+**BusPulse Vancouver 1.1.0 (build 24) is LIVE on the App Store (released 2026-08-27).** Listing
+shows "Languages: English and Punjabi", 5.0 (1 rating). Carries the **Punjabi (ਪੰਜਾਬੀ)
+localization** and the **honest out-of-coverage message**.
 
-## Now (state)
-- Branch **`master`** @ **`5f12947`** — everything committed + pushed, tree clean.
-  `npx tsc --noEmit` clean · `npx expo export --platform ios` clean.
-- **Build 21 (1.0.0) is on TestFlight** (build id `f647de4e`) — first build wired to the live
-  backend. It's testable now.
-- **Backend proxy is LIVE** on EAS Hosting → https://whereismybus.expo.app (see Backend).
-- A **Fable-audit fix batch** is pushed but **not yet in a build** — it ships in **build 22**.
+**2026-09-23 — Punjabi community marketing kit** (all in `docs/marketing/`, uncommitted):
+- `launch-post.md` — WhatsApp/family post (Punjabi-first), Instagram caption, one-liner,
+  student-group version. Rules baked in: say *iPhone*; post Surrey/Delta/Vancouver only,
+  **not Abbotsford** (BC Transit → out-of-coverage → 1-star reviews).
+- `radio-pitch.md` — email pitch (RED FM / Sher-E-Punjab / Connect FM / Spice / OMNI),
+  Punjabi on-air talking points, likely-questions sheet.
+- `poster-punjabi.html` + `.pdf` — Letter-size notice-board poster (gurdwara/langar hall,
+  settlement agencies) with App Store QR (`qr-appstore.svg`). 1 page, validated render.
+- **Claim verified:** of 196 Vancouver-transit apps on the CA App Store, BusPulse Vancouver is the
+  only real-time TransLink bus app listing Punjabi. Use "only", not "first".
+- `APP_STORE_LISTING.md`: new Punjabi promo text (169 chars, paste now — live-editable)
+  + a "1.1.1 staged metadata" section (keywords swap `livebus`→`punjabi`, Punjabi in the
+  description's first sentence, one Punjabi screenshot). Those fields are LOCKED on 1.1.0.
+- ASC session had expired → promo text is **not yet applied** (needs you signed in).
+- **Name → "BusPulse Vancouver" everywhere** (user's call, 2026-09-23): all docs, marketing,
+  support/privacy pages, AND the in-app strings (`locales/en.ts`+`pa.ts` ×5 each, About/setup
+  labels, iOS location-permission text). Uncommitted; in-app part ships with 1.1.1.
+  `app.json` → `name` deliberately stays "BusPulse" — iOS truncates icon labels at ~12–13
+  chars, so the full name would show as "BusPulse Van…". `tsc` clean.
 
-## Open actions (redeploy is DONE — only build + submit remain)
-1. ~~Redeploy the proxy~~ **DONE 2026-07-03.** Live + verified: security fix (`/api/toString`→404),
-   `/api/arrivals` (per-stop JSON), `/api/schedule` (real departures — 31 MB loaded fine, no OOM).
-   `EXPO_PUBLIC_SCHEDULE_ENABLED=1` set in EAS prod → timetable fallback activates in build 22.
-   To redeploy again: `npm run build-schedule-web` → `npx expo export --platform web --output-dir dist`
-   → `npx eas deploy --prod --environment production`.
-2. **Remove `EXPO_PUBLIC_TRANSLINK_API_KEY` from EAS prod env BEFORE build 22.** `EXPO_PUBLIC_` vars
-   are always inlined into the bundle, so build 22 would still embed (and leak) the key otherwise.
-   Removed → build 22 is keyless and works via the proxy (`USE_PROXY` gates every arrival hook +
-   AuthGuard on `apiKey || USE_PROXY`; feedUrl omits `?apikey=` when proxying — verified in code).
-   Cmd: `npx eas env:delete --variable-name EXPO_PUBLIC_TRANSLINK_API_KEY --variable-environment
-   production --non-interactive`. (Was permission-blocked 2026-07-07 — needs explicit user OK; it's
-   a prod env change. Leave the SERVER var `TRANSLINK_API_KEY` in place — the proxy needs it.)
-3. **Build 22** (spends a credit) — see Finalization path. Endpoints are live; build after step 2.
-4. **Rotate the TransLink key** — builds ≤21 embedded it (extractable). Get a new key at
-   developer.translink.ca, set it as EAS server var `TRANSLINK_API_KEY`, revoke the old one.
-   Build 21 (proxy mode) keeps working via the new server key. Do after build 22 or anytime.
+Done 2026-08-26:
+- Fixed a real duplicate on the **live 1.0** App Store page — the Promotional Text
+  echoed the description’s opening line. Rewrote it (coverage-forward); it’s live now,
+  no build needed.
+- Diagnosed the **Ucluelet “no buses” report**: not a bug — TransLink is Metro Vancouver
+  only; the Island is BC Transit (~162 km to the nearest TransLink stop). The fix is the
+  new coverage message, shipping in build 24.
+- Repo audit: **GitHub is public but exposes no secrets** (key is git-ignored + kept
+  server-side by the proxy).
+- Docs committed + pushed (`f83a069`).
+- Closeout visualization published as an artifact (transit-line map of the whole release):
+  https://claude.ai/code/artifact/5ac6e211-b943-4197-8fc7-a3b1db381b6c
+  Source: `docs/release-1.1-closeout.html`.
 
-## Finalization path (to App Store)
-1. **Build 22** (spends 1 credit — only on explicit user OK):
-   `npx eas build -p ios --profile production --non-interactive --no-wait` (creds stored on EAS, no
-   Apple login), then `npx eas submit -p ios --latest --non-interactive` (ASC key `5Q43V42TAQ` on EAS).
-   Auto-increments to build 22; `EXPO_PUBLIC_API_BASE` is already in EAS env so it wires the proxy.
-2. **On-device verify** build 22 via `VERIFY_ON_BUILD.md` (notifications firing, Apple Maps + yellow
-   beacon, haptics, VoiceOver, dark mode, share sheet, onboarding — all emulator-blind). Especially:
-   **do arrivals load?** = proves the proxy path end-to-end.
-3. **Do the two open actions above** (redeploy proxy; then key rotation after build 22 is good).
-4. **App Store Connect listing** — follow `SUBMIT_GUIDE.md` + `APP_STORE_LISTING.md`:
-   Name BusPulse, Subtitle "Real-time TransLink arrivals", Category Navigation/Travel, Free,
-   screenshots (iPhone 6.7"), keywords, **App Privacy = collects Location (not tracking; on-device)**,
-   Age 4+, Support/Privacy URLs (below), attach build 22 → **Submit for Review** (~24–48h).
-
-## Features (full app surface)
-4 tabs + modals:
-- **Nearby** — Apple Maps + nearby bus stops; region-based stop loading; 5 route-based filter chips
-  (All / Bus / B-Line / RapidBus / Night); tap a bus → route highlight + yellow beacon; "next bus"
-  countdown on cards; distance + walk time; grouped FABs (settings, my-location); onboarding on
-  first run; viewport-filtered vehicle markers (cap 200).
-- **Search** — stops (name or sign number/`stop_code`) + routes; recent stops AND recent routes;
-  distance on results.
-- **Favourites** — one shared feed fetch for all cards; reorder; walk time (<3 km); pull-to-refresh;
-  empty-state "Find a stop" CTA.
-- **Alerts** — nearby bus-route filter, major/minor triage, Clear-all, 3am (local) auto-clear badge,
-  affected routes as route NUMBERS, relative "posted" time.
-- **Stop detail** — live arrivals, NEXT BUS hero, "can I make it?" chip, freshness dot, **keeps last
-  times on refresh failure**, route chips, star, **Share stop**, X. (Scheduled fallback UI exists but
-  is off unless a schedule-capable host + `EXPO_PUBLIC_SCHEDULE_ENABLED=1`.)
-- **Trip tracking** — live bus, yellow blinking beacon, "Your stop" pin, "Find bus".
-- **Route detail** + **Route map** (polyline + live buses, fits on `onMapReady`).
-- **Settings** — reminder lead time (2/5/10), privacy/support links, clear recent, about.
-- One-tap local notification reminders (stable per route+stop). Dark mode, reduce-motion aware,
-  root ErrorBoundary, a11y labels throughout. Polling pauses when backgrounded / tab off-screen.
-
-## Backend — LIVE on EAS Hosting
-- Proxy = Expo Router API route `app/api/[feed]+api.ts` → https://whereismybus.expo.app/api/{gtfsrealtime,gtfsposition,gtfsalerts}.
-  Caches per-window so all clients share ~1 upstream fetch; TransLink key server-side (EAS var
-  `TRANSLINK_API_KEY`, production). `Object.hasOwn` whitelist, in-flight dedupe, stale-on-error,
-  forwards 429/403. Deploy/redeploy: `eas deploy --prod` (no login).
-- **Web-build enablement** (needed so EAS Hosting builds): `web.output:"server"` +
-  `react-dom`/`react-native-web`; `react-native-maps` stubbed for WEB ONLY (`web-stubs/` + a
-  `metro.config.js` resolver). **Native iOS uses the real library — unaffected.**
-- **Serverless caveat:** cache dedupes under sustained traffic (warm workers); low-traffic cold
-  starts ≈ direct (never worse). **`/api/schedule` returns empty** — the 31 MB timetable can't ride
-  in a serverless fn, so the scheduled fallback is off on this host.
-- **Alternative: `server/`** (Express, NOT deployed) = same proxy PLUS the `/v3/schedule` timetable
-  fallback (31 MB schedule built at deploy by `buildSchedule.js`; Vancouver-time + calendar logic).
-  To enable the timetable feature: deploy `server/` to a persistent host (`render.yaml` one-click),
-  set `EXPO_PUBLIC_API_BASE=<url>/v3` + `EXPO_PUBLIC_SCHEDULE_ENABLED=1` in the build env.
-
-## Key facts / IDs
-- **Apple Developer / EAS / Expo login:** `mannprabhdeep95@gmail.com` (Team `J54NAB6FCX`).
-  `mannd012@…` is billing only — ignore for sign-in.
-- **ascAppId:** `6782258055` · **EAS projectId:** `bdab8c0f-191b-4ab5-acb8-d57109162516` ·
-  **ASC submit key:** `5Q43V42TAQ` (on EAS servers) · GitHub `mannd12/WhereIsMyBus`.
-- **Live pages:** Privacy `https://mannd12.github.io/WhereIsMyBus/privacy-policy.html` ·
-  Support `https://mannd12.github.io/WhereIsMyBus/support.html`.
-- **API key:** `.env.local` → `EXPO_PUBLIC_TRANSLINK_API_KEY`; also EAS prod env (remove after
-  build 22). Free tier = 1,000 req/day shared → the proxy is the real fix.
-- More IDs in `PROJECT_IDS.txt` (gitignored).
+## Next
+1. **Sign in to ASC**, then apply the Punjabi promo text from `APP_STORE_LISTING.md`
+   (App Store tab → 1.1.0 → Promotional Text → Edit → Save). No build.
+2. **Send the WhatsApp post** to family groups (`docs/marketing/launch-post.md` §A) —
+   this is the channel that actually spreads. Then one radio pitch email.
+3. **Print `docs/marketing/poster-punjabi.pdf`** and ask to post it on a gurdwara
+   notice board / settlement-agency office.
+4. **Collect word-choice feedback** from 5 Punjabi-speaking elders → fix `locales/pa.ts`
+   → 1.1.1 with the staged metadata (keywords, description, Punjabi screenshot). One
+   build credit; make it count.
+5. Commit `docs/marketing/` + `HANDOFF.md` + `APP_STORE_LISTING.md` (user OK needed).
 
 ## Watch out
-- **Never** run `eas build`/`eas submit` (spends credits) or `git commit`/`push` without explicit
-  user OK. `eas deploy` (hosting) is credit-free but still confirm.
-- All APP `npm install`s need `--legacy-peer-deps` (`.npmrc` has it for EAS `npm ci`). `server/`
-  installs normally.
-- **stop_id vs stop_code:** display + search use `stop_code` (sign number); nav + real-time matching
-  use `stop_id`. Never mix.
-- `store/settings.ts` `merge` makes the env key always win over persisted — keep it (rotations
-  reach existing users).
-- Refresh GTFS ~4×/year: `node scripts/fetchGtfsStatic.js`; QA: `node scripts/verifyStops.js`.
-- Pre-ship: `npx tsc --noEmit` (no ESLint config).
-- Emulator: Android map blank (no Google key) — iOS uses Apple Maps. Deep-link to navigate:
-  `exp://127.0.0.1:8081/--/<route>` (tab taps get hijacked by system UI; emulator sleeps — cold-boot).
+- **OneDrive sync conflicts between PCs.** On 2026-09-23 the working `APP_STORE_LISTING.md`
+  and `HANDOFF.md` had silently reverted to July versions, with the real ones renamed
+  `*-HomePC.md`. Resolved (listing restored from git, handoff from the HomePC copy,
+  duplicates removed). If you ever see `*-HomePC.md` / `*-<PCNAME>.md` files: the
+  **newer** one is usually the real one; check `git diff` before trusting the working copy.
+  Committing promptly is the real fix — uncommitted work is what the conflict eats.
+- **Don’t make the GitHub repo private on a free plan.** The App Store’s Privacy Policy
+  and Support URLs are GitHub Pages (`mannd12.github.io/WhereIsMyBus/...`); Pages only
+  serves a private repo with GitHub Pro. Going private without Pro breaks those required
+  links. Keep it public (nothing leaks) unless you get Pro or move the pages first.
+- **EAS builds expire after 30 days.** Build 23 expired unsubmitted and forced the rebuild
+  to 24 — don’t let the next build sit.
+- **`eas build`/`submit` are classifier-gated for the assistant** — run them yourself via
+  the `!` prefix if needed. ~1 build credit likely left.
+- Version bump is manual in `app.json` (`version`); build number auto-increments remotely
+  (EAS, `appVersionSource: remote`) — the local `ios.buildNumber` is ignored.
+- Punjabi word-choices are the user’s to tweak (optional, none are bugs): ਆਮਦਾਂ/arrivals,
+  ਨਾਈਟ/night, ਸਟਾਪ/stop.
 
-## Improvements 1–4 — DONE (commit a311f8e), activation steps below
-- **#1 Per-stop arrivals endpoint** (`app/api/arrivals+api.ts`): server decodes trip-updates and
-  returns only requested stops as tiny JSON (~300 B/stop vs ~700 KB feed). The 3 arrival hooks use it
-  when `USE_PROXY`. **Activate: `eas deploy --prod`** (the endpoint must be live before build 22 uses it).
-- **#2 Scheduled fallback on EAS Hosting** (`app/api/schedule+api.ts`): lazy-loads static
-  `public/schedule/*.json`. Fail-safe (empty on error). **Activate: `npm run build-schedule-web`
-  (builds ~31 MB into public/schedule/, gitignored) → `eas deploy --prod` → set
-  `EXPO_PUBLIC_SCHEDULE_ENABLED=1` in EAS prod env for the next build.** (Serverless memory profile of
-  loading 31 MB is unverified — worst case it fails safe to empty.)
-- **#3 Persisted reminders**: `syncScheduledFromOS()` at startup — ships in build 22.
-- **#4 Multi-shape routes**: `shapes.json` is now polylines-per-direction; 241/246 routes show both
-  directions. GTFS data regenerated (8731 stops). Ships in build 22.
+## Touched
+- **i18n:** `locales/en.ts` (165 keys), `locales/pa.ts` (Gurmukhi mirror), `locales/i18n.ts`
+- **Coverage fix:** `constants/config.ts` (`COVERAGE_MAX_M`), `services/translink.ts`
+  (`nearestStopDistance`), `app/(tabs)/index.tsx` (`outOfCoverage`)
+- **Config:** `app.json` (v1.1.0, `CFBundleLocalizations`), `eas.json`
+- **Docs:** `APP_STORE_LISTING.md` (promo + coverage paragraph + 1.1 notes),
+  `docs/release-1.1-closeout.html`
+- **Commits since 1.0:** `e2378ef` (Punjabi) · `62cd5ab` (coverage message) · `f83a069` (docs)
+- **Checks:** `npx tsc --noEmit` (clean) · `npx expo export --platform ios` (clean) ·
+  i18n parity 165/165
 
-## Remaining backlog (NOT started)
-- ~~Verify possibly-unused deps~~ **VERIFIED 2026-07-03 — KEEP all three.** `react-native-reanimated`
-  is required by expo-router / gesture-handler / react-native-screens; `react-native-worklets` by
-  expo-modules-core + reanimated; `protobufjs` by gtfs-realtime-bindings. Removing any would break
-  the app. Do not re-investigate.
-- Cancel/reschedule a reminder when its prediction moves materially (minor).
-
-## Run (dev / preview)
-```powershell
-cd C:\Users\mannp\OneDrive\Desktop\WhereIsMyBus
-npx expo start --clear   # load in Expo Go on the Pixel_8 emulator
-# Redeploy proxy: npx expo export --platform web --output-dir dist ; npx eas deploy --prod --environment production
-# Local server+schedule test: cd server ; TRANSLINK_API_KEY=<key> npm run build-schedule ; npm start
-```
+## Key facts
+- Bundle ID `com.whereismybus.app` (never rename) · ASC App ID `6782258055` ·
+  Apple Team `J54NAB6FCX` · dev Apple ID `mannprabhdeep95@gmail.com`
+- Keyless proxy build: `EXPO_PUBLIC_API_BASE=https://whereismybus.expo.app/api` (EAS prod);
+  server key `TRANSLINK_API_KEY` (EAS prod, sensitive); `EXPO_PUBLIC_TRANSLINK_API_KEY`
+  removed from EAS prod so it’s **not** embedded. Local key lives in `.env.local` (git-ignored).
+- Credentials (cert + provisioning profile) valid through **19 Jun 2027**.

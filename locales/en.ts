@@ -32,7 +32,7 @@ export const en = {
 
   // Error boundary
   'error.somethingWrong': 'Something went wrong',
-  'error.unexpected': 'BusPulse hit an unexpected error. Try again — your favourites are safe.',
+  'error.unexpected': 'BusPulse Vancouver hit an unexpected error. Try again — your favourites are safe.',
   'error.tryAgain': 'Try again',
 
   // Time ago / distance
@@ -49,7 +49,7 @@ export const en = {
   'nearby.stopsNearby': '{count} stop nearby',
   'nearby.stopsNearby_plural': '{count} stops nearby',
   'nearby.outOfCoverage':
-    "You're outside the coverage area. BusPulse shows live buses for Metro Vancouver (TransLink) only.",
+    "You're outside the coverage area. BusPulse Vancouver shows live buses for Metro Vancouver (TransLink) only.",
   'nearby.noStops':
     'No bus stops within 500 m of you. Try the map or search for a stop by name or number.',
   'nearby.noFilterStops': 'No {filter} stops in view. Try another filter or zoom out.',
@@ -126,7 +126,7 @@ export const en = {
 
   // Stop detail
   'stop.share': 'Share this stop',
-  'stop.shareMessage': '{name} — Stop #{code}. Check live bus arrivals on BusPulse.',
+  'stop.shareMessage': '{name} — Stop #{code}. Check live bus arrivals on BusPulse Vancouver.',
   'stop.walkSummary': '~{walk} min walk · next bus in {next} min',
   'stop.makeIt': ' — you can make it',
   'stop.hurry': ' — better hurry',
@@ -177,7 +177,7 @@ export const en = {
   'route.closeMap': 'Close route map',
 
   // Onboarding
-  'onboard.title': 'Welcome to BusPulse',
+  'onboard.title': 'Welcome to BusPulse Vancouver',
   'onboard.body':
     'Real-time bus tracking for Metro Vancouver. See live arrivals, tap a bus to follow it on the map, and get a reminder before it comes.',
   'onboard.note':
@@ -204,7 +204,7 @@ export const en = {
   'settings.aboutBody':
     "Real-time bus arrivals and live tracking for Metro Vancouver, powered by TransLink's public GTFS real-time feed. Arrivals update every 60 seconds.",
   'settings.attribution':
-    'Transit data © TransLink. BusPulse is an independent app and is not affiliated with or endorsed by TransLink.',
+    'Transit data © TransLink. BusPulse Vancouver is an independent app and is not affiliated with or endorsed by TransLink.',
   'settings.close': 'Close settings',
 
   // Notifications (system)

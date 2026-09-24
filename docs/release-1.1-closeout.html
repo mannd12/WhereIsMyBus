@@ -1,0 +1,522 @@
+<title>BusPulse Vancouver 1.1 — Release Closeout</title>
+<style>
+  :root {
+    --line: #0060AE;
+    --line-soft: #cfe0f1;
+    --terminus: #E4002B;
+    --verified: #1B8A5A;
+    --ground: #F5F8FB;
+    --surface: #FFFFFF;
+    --surface-2: #EEF3F8;
+    --ink: #0F1E2E;
+    --muted: #57697C;
+    --hair: #DDE6EF;
+    --mono: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
+    --sans: "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --line: #4C9BE0;
+      --line-soft: #23405c;
+      --terminus: #FF5A6E;
+      --verified: #46B683;
+      --ground: #0A121B;
+      --surface: #101E2B;
+      --surface-2: #16283a;
+      --ink: #E7EEF4;
+      --muted: #8DA0B3;
+      --hair: #213648;
+    }
+  }
+  :root[data-theme="dark"] {
+    --line: #4C9BE0;
+    --line-soft: #23405c;
+    --terminus: #FF5A6E;
+    --verified: #46B683;
+    --ground: #0A121B;
+    --surface: #101E2B;
+    --surface-2: #16283a;
+    --ink: #E7EEF4;
+    --muted: #8DA0B3;
+    --hair: #213648;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: clamp(28px, 5vw, 64px) clamp(18px, 4vw, 40px) 80px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-size: clamp(30px, 5.5vw, 46px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
+    text-wrap: balance;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(16px, 2.2vw, 18px);
+    color: var(--muted);
+    max-width: 62ch;
+    margin: 0 0 26px;
+  }
+
+  .statusbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+  }
+  .beacon {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--terminus);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--terminus) 55%, transparent);
+    animation: pulse 2.4s ease-out infinite;
+    flex: none;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--terminus) 55%, transparent); }
+    70% { box-shadow: 0 0 0 12px color-mix(in srgb, var(--terminus) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--terminus) 0%, transparent); }
+  }
+  @media (prefers-reduced-motion: reduce) { .beacon { animation: none; } }
+  .status-label { font-weight: 700; }
+  .status-meta { color: var(--muted); font-size: 14px; }
+  .status-sep { color: var(--hair); }
+
+  /* stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    margin: 34px 0 10px;
+    background: var(--hair);
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .stat { background: var(--surface); padding: 18px 16px; }
+  .stat .n {
+    font-size: clamp(24px, 4vw, 32px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .l { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+  @media (max-width: 560px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+
+  section { margin-top: 52px; }
+  .sec-eyebrow {
+    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; margin: 0 0 6px;
+  }
+  h2 {
+    font-size: clamp(21px, 3vw, 26px);
+    margin: 0 0 10px; letter-spacing: -0.01em; font-weight: 700;
+    text-wrap: balance;
+  }
+  .sec-intro { color: var(--muted); max-width: 64ch; margin: 0 0 24px; }
+
+  /* ---- the transit line ---- */
+  .phase { margin-top: 30px; }
+  .phase-head {
+    display: flex; align-items: baseline; gap: 12px;
+    padding-bottom: 8px; margin-bottom: 4px;
+  }
+  .phase-idx {
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    color: var(--line); letter-spacing: 0.04em;
+  }
+  .phase-name { font-size: 16px; font-weight: 700; }
+  .phase-note { font-size: 13px; color: var(--muted); margin-left: auto; }
+
+  .line { list-style: none; margin: 0; padding: 0; }
+  .stop {
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 4px;
+  }
+  /* the vertical rail lives in the 40px rail column; each phase is one segment */
+  .rail { position: relative; }
+  .rail::before {
+    content: "";
+    position: absolute;
+    left: 19px; top: 0; bottom: 0;
+    width: 2px; background: var(--line);
+  }
+  .stop:first-child .rail::before { top: 14px; }
+  .stop:last-child .rail::before { bottom: auto; height: 16px; }
+  .dot {
+    position: absolute; left: 12px; top: 8px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--surface);
+    border: 3px solid var(--line);
+    z-index: 1;
+  }
+  .stop.fail .dot {
+    border-color: var(--terminus);
+    background: var(--surface);
+  }
+  .stop.fail .dot::after {
+    content: "\00d7";
+    position: absolute; inset: -4px 0 0 0;
+    text-align: center; color: var(--terminus);
+    font-size: 15px; font-weight: 700; line-height: 1;
+  }
+  .stop.gate .dot { border-color: var(--verified); }
+  .stop.milestone .dot {
+    width: 20px; height: 20px; left: 10px; top: 6px;
+    background: var(--terminus); border-color: var(--terminus);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--terminus) 18%, transparent);
+  }
+
+  .stop .card { padding: 4px 0 18px; }
+  .stop .t { font-weight: 600; font-size: 15.5px; margin: 4px 0 3px; }
+  .stop .d { color: var(--muted); font-size: 14px; margin: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+  .chip {
+    font-family: var(--mono); font-size: 11.5px;
+    padding: 2px 8px; border-radius: 6px;
+    background: var(--surface-2); color: var(--ink);
+    border: 1px solid var(--hair);
+  }
+  .chip.ok { color: var(--verified); border-color: color-mix(in srgb, var(--verified) 40%, var(--hair)); }
+  .chip.red { color: var(--terminus); border-color: color-mix(in srgb, var(--terminus) 40%, var(--hair)); }
+  .chip.blue { color: var(--line); border-color: color-mix(in srgb, var(--line) 40%, var(--hair)); }
+
+  /* architecture figure */
+  figure { margin: 0; }
+  .fig-card {
+    background: var(--surface); border: 1px solid var(--hair);
+    border-radius: 14px; padding: 26px clamp(16px, 4vw, 34px) 20px;
+  }
+  .fig-card svg { display: block; width: 100%; height: auto; color: var(--ink); }
+  .fig-card svg text { font-family: var(--sans); }
+  .fig-card svg .muted { fill: var(--muted); }
+  .fig-card svg .accent { fill: var(--line); }
+  .fig-card svg .accent-stroke { stroke: var(--line); }
+  figcaption { color: var(--muted); font-size: 13.5px; margin-top: 14px; text-wrap: pretty; }
+
+  /* status table */
+  .where { display: grid; gap: 1px; background: var(--hair);
+           border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
+  .where .row {
+    display: grid; grid-template-columns: 1.1fr 1.4fr auto;
+    gap: 12px; align-items: center;
+    background: var(--surface); padding: 13px 16px;
+  }
+  .where .row .k { font-weight: 650; font-size: 14.5px; }
+  .where .row .v { color: var(--muted); font-size: 13.5px; }
+  .badge {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.03em;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .badge.live { background: color-mix(in srgb, var(--verified) 16%, transparent); color: var(--verified); }
+  .badge.wait { background: color-mix(in srgb, var(--terminus) 14%, transparent); color: var(--terminus); }
+  .badge.done { background: color-mix(in srgb, var(--line) 15%, transparent); color: var(--line); }
+  @media (max-width: 560px) {
+    .where .row { grid-template-columns: 1fr auto; }
+    .where .row .v { grid-column: 1 / -1; }
+  }
+
+  .next { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 620px) { .next { grid-template-columns: 1fr; } }
+  .note {
+    background: var(--surface); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 16px 18px;
+  }
+  .note h3 { margin: 0 0 8px; font-size: 15px; }
+  .note ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px; }
+  .note li { margin: 5px 0; }
+  .note.warn { border-left: 3px solid var(--terminus); }
+
+  footer {
+    margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--hair);
+    color: var(--muted); font-size: 13px;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .mono { font-family: var(--mono); }
+</style>
+
+<div class="wrap">
+
+  <p class="eyebrow">BusPulse Vancouver · Release Closeout</p>
+  <h1>Shipping 1.1: from “add Punjabi” to the review queue</h1>
+  <p class="lede">Every stop on the line that took BusPulse Vancouver from its live 1.0 to version 1.1 — a Punjabi localization, an honest coverage message, a listing fix, and one rebuilt binary now waiting on Apple.</p>
+
+  <div class="statusbar">
+    <span class="beacon" aria-hidden="true"></span>
+    <span class="status-label">1.1.0 · Build 24 — Waiting for Review</span>
+    <span class="status-sep">·</span>
+    <span class="status-meta">Auto-release on approval · submitted 2026-08-26</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n">165</div><div class="l">strings localized · 100% parity</div></div>
+    <div class="stat"><div class="n">24</div><div class="l">build submitted · v1.1.0</div></div>
+    <div class="stat"><div class="n">3</div><div class="l">commits since 1.0</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">secrets in the public repo</div></div>
+  </div>
+
+  <section>
+    <p class="sec-eyebrow">The route</p>
+    <h2>Five phases, twenty stops</h2>
+    <p class="sec-intro">Read it top to bottom like a transit line. Green rings are validation gates that had to pass; the red × is where build 23 expired and we rerouted; the red beacon marks the terminus of the journey — the moment 1.1 entered Apple’s review queue — with the closeout tidy-up below it.</p>
+
+    <!-- PHASE 1 -->
+    <div class="phase">
+      <div class="phase-head">
+        <span class="phase-idx">01</span>
+        <span class="phase-name">Punjabi localization</span>
+        <span class="phase-note">the feature</span>
+      </div>
+      <ul class="line">
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Scope the i18n architecture</div>
+          <p class="d">A master English dictionary, a typed Punjabi mirror, a reactive <span class="mono">useT()</span> hook plus a plain <span class="mono">t()</span> for non-React code, and a Settings language picker.</p>
+          <div class="chips"><span class="chip">locales/en.ts</span><span class="chip">locales/pa.ts</span><span class="chip">locales/i18n.ts</span></div>
+        </div></li>
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Translate everything to Gurmukhi</div>
+          <p class="d">All 165 user-facing strings — tabs, screens, a11y labels, notifications, share text. Brand names and GTFS stop names stay English on purpose.</p>
+          <div class="chips"><span class="chip">ਪੰਜਾਬੀ</span><span class="chip">165 keys</span></div>
+        </div></li>
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Wire device detection + iOS locale</div>
+          <p class="d">Language preference is <span class="mono">system · en · pa</span>; the binary declares both locales so iOS lists Punjabi and can auto-pick it.</p>
+          <div class="chips"><span class="chip">CFBundleLocalizations</span><span class="chip">expo-localization</span></div>
+        </div></li>
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Catch two hard-coded English leaks</div>
+          <p class="d">A grep found “Loading arrivals” and “Service Alert” bypassing the dictionary — both rerouted through translation keys.</p>
+          <div class="chips"><span class="chip">Skeleton.tsx</span><span class="chip">gtfsRealtime.ts</span></div>
+        </div></li>
+        <li class="stop gate"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Validation gate</div>
+          <p class="d">Type check clean · key parity 165/165 · every <span class="mono">{param}</span> placeholder matches · native-speaker sense-check of grammar and gender agreement.</p>
+          <div class="chips"><span class="chip ok">tsc clean</span><span class="chip ok">165/165</span><span class="chip ok">params ✓</span></div>
+        </div></li>
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Commit &amp; bump to 1.1.0</div>
+          <p class="d">The whole localization layer lands in one commit; marketing version steps to 1.1.0.</p>
+          <div class="chips"><span class="chip blue">e2378ef</span><span class="chip">v1.1.0</span></div>
+        </div></li>
+      </ul>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="phase">
+      <div class="phase-head">
+        <span class="phase-idx">02</span>
+        <span class="phase-name">The Ucluelet coverage report</span>
+        <span class="phase-note">a diagnostic detour</span>
+      </div>
+      <ul class="line">
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Bug report: “no buses on the Island”</div>
+          <p class="d">A user in Ucluelet, on Vancouver Island, opened the app and saw nothing.</p>
+        </div></li>
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Diagnose — not a bug, a boundary</div>
+          <p class="d">BusPulse Vancouver rides TransLink, which is Metro Vancouver only. The nearest TransLink stop to Ucluelet is ~162 km away; the Island is BC Transit territory.</p>
+          <div class="chips"><span class="chip">~162 km to nearest stop</span><span class="chip">8,731 stops audited</span></div>
+        </div></li>
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Fix the misleading empty state</div>
+          <p class="d">Instead of “no stops within 500 m,” the app now checks the nearest stop and, past a 10 km threshold, says you’re outside the coverage area — in English and Punjabi.</p>
+          <div class="chips"><span class="chip">COVERAGE_MAX_M</span><span class="chip">nearestStopDistance()</span><span class="chip">outOfCoverage</span></div>
+        </div></li>
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Commit &amp; push</div>
+          <p class="d">The honest coverage message ships in code — waiting for the next binary to carry it to users.</p>
+          <div class="chips"><span class="chip blue">62cd5ab</span></div>
+        </div></li>
+      </ul>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="phase">
+      <div class="phase-head">
+        <span class="phase-idx">03</span>
+        <span class="phase-name">Live listing fix</span>
+        <span class="phase-note">metadata · no build</span>
+      </div>
+      <ul class="line">
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Spotted: a “duplicate” in the description</div>
+          <p class="d">The App Store page seemed to repeat itself near the top.</p>
+        </div></li>
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Diagnose — two fields, one sentence</div>
+          <p class="d">The Promotional Text echoed the description’s opening line almost verbatim, so they stacked back-to-back on the product page.</p>
+        </div></li>
+        <li class="stop gate"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Rewrite the promo, verify live</div>
+          <p class="d">Replaced with a coverage-forward line. Promotional Text is editable with no new build or review — confirmed persisted after reload.</p>
+          <div class="chips"><span class="chip ok">live on 1.0</span><span class="chip">no build needed</span></div>
+        </div></li>
+      </ul>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="phase">
+      <div class="phase-head">
+        <span class="phase-idx">04</span>
+        <span class="phase-name">Build &amp; submit</span>
+        <span class="phase-note">the reroute</span>
+      </div>
+      <ul class="line">
+        <li class="stop fail"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Submit build 23 — expired</div>
+          <p class="d">The attempt failed: EAS build artifacts expire after 30 days, and build 23 was a month old. It couldn’t be submitted — a rebuild was forced.</p>
+          <div class="chips"><span class="chip red">artifact expired</span><span class="chip">EAS 30-day limit</span></div>
+        </div></li>
+        <li class="stop gate"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Pre-build audit + validation loop</div>
+          <p class="d">Before spending a credit: type check, a full iOS export, i18n re-check, and a config sweep — env vars, keyless-proxy wiring, bundle ID, versioning. All clean.</p>
+          <div class="chips"><span class="chip ok">tsc clean</span><span class="chip ok">export ok</span><span class="chip ok">env ✓</span></div>
+        </div></li>
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Build 24 + auto-submit</div>
+          <p class="d">One credit produced v1.1.0 / build 24 — carrying <em>both</em> the Punjabi feature and the coverage fix — and pushed it straight to App Store Connect.</p>
+          <div class="chips"><span class="chip">v1.1.0 · build 24</span><span class="chip">--auto-submit</span></div>
+        </div></li>
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Assemble the 1.1 version in ASC</div>
+          <p class="d">Created the version, attached build 24, added a COVERAGE paragraph to the description and a warm “What’s New,” carried the screenshots over.</p>
+          <div class="chips"><span class="chip">coverage paragraph</span><span class="chip">what’s new</span></div>
+        </div></li>
+        <li class="stop milestone"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Submit for review — terminus</div>
+          <p class="d">Release set to automatic on approval, all users, rating kept. Status flipped to <strong>Waiting for Review</strong>.</p>
+          <div class="chips"><span class="chip red">Waiting for Review</span></div>
+        </div></li>
+      </ul>
+    </div>
+
+    <!-- PHASE 5 -->
+    <div class="phase">
+      <div class="phase-head">
+        <span class="phase-idx">05</span>
+        <span class="phase-name">Closeout</span>
+        <span class="phase-note">housekeeping</span>
+      </div>
+      <ul class="line">
+        <li class="stop"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Sync &amp; push the docs</div>
+          <p class="d">The App Store listing copy (new promo, coverage paragraph, 1.1 notes) committed and pushed so the repo matches what’s live.</p>
+          <div class="chips"><span class="chip blue">f83a069</span><span class="chip">pushed</span></div>
+        </div></li>
+        <li class="stop gate"><div class="rail"><span class="dot"></span></div><div class="card">
+          <div class="t">Repo audit — public, but clean</div>
+          <p class="d">The GitHub repo is public. Verified no secrets are exposed: the API key stays in a git-ignored file and the keyless-proxy build keeps it server-side. Flagged that making it private on a free plan would take the Pages-hosted privacy/support URLs offline.</p>
+          <div class="chips"><span class="chip ok">no secrets</span><span class="chip">Pages caveat noted</span></div>
+        </div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-eyebrow">How it’s wired</p>
+    <h2>Why the API key isn’t in the app</h2>
+    <p class="sec-intro">The one piece of the build worth a picture: 1.1 ships without the TransLink key embedded. The phone talks to a caching proxy that holds the key server-side, so nothing sensitive rides in the binary or in the public repo.</p>
+    <figure>
+      <div class="fig-card">
+        <svg viewBox="0 0 720 200" role="img" aria-label="The app calls a caching proxy over HTTPS; the proxy holds the TransLink API key and calls the TransLink feed. The key never leaves the server.">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+          <!-- app -->
+          <rect x="18" y="66" width="150" height="68" rx="12" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <text x="93" y="94" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">BusPulse Vancouver app</text>
+          <text x="93" y="114" text-anchor="middle" font-size="12" class="muted">no key in binary</text>
+
+          <!-- proxy -->
+          <rect x="285" y="56" width="170" height="88" rx="12" fill="none" class="accent-stroke" stroke-width="2"/>
+          <text x="370" y="86" text-anchor="middle" font-size="15" font-weight="700" class="accent">Caching proxy</text>
+          <text x="370" y="105" text-anchor="middle" font-size="12" class="accent">holds the key</text>
+          <text x="370" y="123" text-anchor="middle" font-size="11" class="muted">whereismybus.expo.app</text>
+
+          <!-- translink -->
+          <rect x="558" y="66" width="150" height="68" rx="12" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <text x="633" y="94" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">TransLink</text>
+          <text x="633" y="114" text-anchor="middle" font-size="12" class="muted">GTFS-RT feed</text>
+
+          <!-- arrows -->
+          <line x1="170" y1="100" x2="281" y2="100" stroke="currentColor" stroke-width="1.5" marker-end="url(#ah)"/>
+          <text x="225" y="90" text-anchor="middle" font-size="11.5" class="muted">HTTPS · stop IDs</text>
+          <line x1="457" y1="100" x2="554" y2="100" stroke="currentColor" stroke-width="1.5" marker-end="url(#ah)"/>
+          <text x="505" y="90" text-anchor="middle" font-size="11.5" class="muted">key added</text>
+        </svg>
+      </div>
+      <figcaption>The key lives only on the proxy. Remove the proxy and the app talks to TransLink directly with a key you’d have to embed — which is exactly what 1.1 avoids.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <p class="sec-eyebrow">Where it lives now</p>
+    <h2>State of play</h2>
+    <div class="where">
+      <div class="row"><span class="k">App Store · 1.0</span><span class="v">Live. Promo-text duplicate already fixed in place.</span><span class="badge live">Live</span></div>
+      <div class="row"><span class="k">App Store · 1.1</span><span class="v">Build 24 submitted; auto-releases on approval.</span><span class="badge wait">In review</span></div>
+      <div class="row"><span class="k">GitHub · master</span><span class="v">Public, no secrets. HEAD at <span class="mono">f83a069</span>.</span><span class="badge done">Synced</span></div>
+      <div class="row"><span class="k">Punjabi feature</span><span class="v">165/165, validated; in build 24.</span><span class="badge done">Shipped</span></div>
+      <div class="row"><span class="k">Coverage message</span><span class="v">Fixed in code; reaches users with 1.1.</span><span class="badge done">In build 24</span></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-eyebrow">From here</p>
+    <h2>What’s left, and what to watch</h2>
+    <div class="next">
+      <div class="note">
+        <h3>When review clears</h3>
+        <ul>
+          <li>Apple emails a decision — usually 24–48 h.</li>
+          <li>On approval, 1.1 auto-releases to everyone.</li>
+          <li>Nothing to click; the release is automatic.</li>
+        </ul>
+      </div>
+      <div class="note warn">
+        <h3>Watch-outs</h3>
+        <ul>
+          <li>Don’t make the repo private on a free plan — it kills the Pages privacy/support URLs Apple requires.</li>
+          <li>Builds expire in 30 days — don’t let the next one sit unsubmitted.</li>
+          <li>Do a one-time visual check of Punjabi tab labels in Expo Go.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>BusPulse Vancouver — bundle <span class="mono">com.whereismybus.app</span></span>
+    <span>Release 1.1 closeout · 2026-08-26</span>
+  </footer>
+
+</div>

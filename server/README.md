@@ -1,10 +1,10 @@
-# BusPulse proxy
+# BusPulse Vancouver proxy
 
 A tiny caching proxy for TransLink's GTFS-RT feeds.
 
 ## Why
 
-Every BusPulse device currently calls `gtfsapi.translink.ca` directly with the
+Every BusPulse Vancouver device currently calls `gtfsapi.translink.ca` directly with the
 same baked-in API key. TransLink's free tier allows **1,000 requests/day per
 key** — shared across *all* users. That caps the app at a handful of active
 users before the key is exhausted.
@@ -34,7 +34,7 @@ Mirrors TransLink's paths so the app only needs a base-URL swap:
 cd server
 npm install
 TRANSLINK_API_KEY=your_key npm start
-# → BusPulse proxy listening on :8080
+# → BusPulse Vancouver proxy listening on :8080
 curl -s localhost:8080/health
 ```
 

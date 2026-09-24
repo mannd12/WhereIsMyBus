@@ -17,7 +17,7 @@
       "bundleIdentifier": "com.whereismybus.app",
       "buildNumber": "1",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "BusPulse uses your location to show nearby bus stops and real-time arrivals.",
+        "NSLocationWhenInUseUsageDescription": "BusPulse Vancouver uses your location to show nearby bus stops and real-time arrivals.",
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleLocalizations": ["en", "pa"]
       }
@@ -48,7 +48,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "BusPulse uses your location to show nearby stops and real-time arrivals."
+          "locationWhenInUsePermission": "BusPulse Vancouver uses your location to show nearby stops and real-time arrivals."
         }
       ],
       [

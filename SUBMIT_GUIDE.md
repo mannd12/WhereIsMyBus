@@ -1,4 +1,4 @@
-# BusPulse — App Store Submission Guide (click-by-click)
+# BusPulse Vancouver — App Store Submission Guide (click-by-click)
 
 Everything below happens at **https://appstoreconnect.apple.com** signed in as
 **mannprabhdeep95@gmail.com**. Your app's numeric ID is **6782258055**.
@@ -8,7 +8,7 @@ Estimated time: ~45–60 min. Apple review after submit: ~24–48h.
 ---
 
 ## 0. Before you start
-- On your iPhone, open **TestFlight → BusPulse → Update** to get the latest build.
+- On your iPhone, open **TestFlight → BusPulse Vancouver → Update** to get the latest build.
 - Take **3–5 screenshots** in the app (each = press Volume Up + Side button):
   1. The **map** zoomed in so lots of stops show (best hero shot)
   2. A **stop's arrivals** with the live countdown
@@ -23,7 +23,7 @@ Estimated time: ~45–60 min. Apple review after submit: ~24–48h.
 ---
 
 ## 1. App Information  (left sidebar → "App Information")
-- **Name:** `BusPulse`  *(if it still says WhereIsMyBus, change it here and Save —
+- **Name:** `BusPulse Vancouver`  *(if it still says WhereIsMyBus, change it here and Save —
   this also confirms the name is available)*
 - **Subtitle:** `Live Vancouver bus arrivals`
 - **Category:** Primary = **Navigation**, Secondary = **Travel**
@@ -85,7 +85,7 @@ Leave blank.
 ## 4. App Privacy  (left sidebar → "App Privacy")
 - Click **Get Started** / **Edit**.
 - "Do you or your third-party partners collect data from this app?" → **No**.
-  (BusPulse has no analytics, no account; location stays on the device.)
+  (BusPulse Vancouver has no analytics, no account; location stays on the device.)
 - **Publish**.
 
 ---

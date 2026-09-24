@@ -1,4 +1,4 @@
-# BusPulse — App Store Listing Copy
+# BusPulse Vancouver — App Store Listing Copy
 
 Paste these directly into App Store Connect. (Everything here is final — URLs are live,
 IDs are filled in eas.json.)
@@ -6,7 +6,7 @@ IDs are filled in eas.json.)
 ---
 
 ## Name
-BusPulse
+BusPulse Vancouver
 
 ## Subtitle (30 chars max)
 Live Vancouver bus arrivals
@@ -24,19 +24,25 @@ Free
 ---
 
 ## Promotional Text (170 chars max — live-editable, no build/review needed)
+
+**Punjabi launch version — paste now (169 chars; promo is the only field editable on the released 1.1.0):**
+ਹੁਣ ਪੰਜਾਬੀ ਵਿੱਚ · Now in Punjabi. The only TransLink bus app that speaks Punjabi. Live arrivals for every stop in Metro Vancouver, plus a reminder before your bus comes.
+
+**Previous (coverage-forward, 130 chars — live since 2026-08-23):**
 Real-time TransLink arrivals for every stop in Metro Vancouver. Watch your bus move on the map and get a reminder before it comes.
 
-> Note: this replaced the old promo text (2026-08-23) which duplicated the
-> description's opening line on the product page. Live on 1.0 now.
+> Keywords, description and screenshots are LOCKED on a released version.
+> Their Punjabi changes are staged in the "1.1.1 staged metadata" section at
+> the bottom and ship with the next build.
 
 ## Description (paste into App Store Connect)
 
-BusPulse is the fastest way to catch your bus across Metro Vancouver — live, GPS-tracked arrivals and real-time bus positions on the map.
+BusPulse Vancouver is the fastest way to catch your bus across Metro Vancouver — live, GPS-tracked arrivals and real-time bus positions on the map.
 
 No account. No sign-up. Open the app and see what's coming.
 
 **LIVE, GPS-TRACKED ARRIVALS**
-Every countdown ticks live to the second and turns red when your bus is due. When a route isn't transmitting yet — early mornings, peak-only expresses — BusPulse shows the scheduled timetable instead, so you're never left staring at an empty screen.
+Every countdown ticks live to the second and turns red when your bus is due. When a route isn't transmitting yet — early mornings, peak-only expresses — BusPulse Vancouver shows the scheduled timetable instead, so you're never left staring at an empty screen.
 
 **NEARBY MAP**
 See live positions for buses on the map. Zoom in to reveal stop markers. Filter by route type — Bus, B-Line, RapidBus, or Night Bus — with one tap.
@@ -60,7 +66,7 @@ Star your regular stops. Favourite stops show live arrivals at a glance without 
 Active TransLink service disruptions appear with a badge on the Alerts tab so you never miss a delay or detour.
 
 **COVERAGE**
-BusPulse works across Metro Vancouver on the TransLink network. It does not cover Vancouver Island (Victoria, Nanaimo, Tofino/Ucluelet) or the Fraser Valley (Abbotsford, Chilliwack), which are served by BC Transit.
+BusPulse Vancouver works across Metro Vancouver on the TransLink network. It does not cover Vancouver Island (Victoria, Nanaimo, Tofino/Ucluelet) or the Fraser Valley (Abbotsford, Chilliwack), which are served by BC Transit.
 
 Powered by TransLink's official GTFS real-time feed. Arrivals update every 60 seconds.
 
@@ -103,13 +109,35 @@ countdown → bus tracking beacon → Search → Alerts.
 ---
 
 ## What's New (version 1.1.0) — build 24
-• BusPulse now speaks Punjabi (ਪੰਜਾਬੀ)! Switch languages anytime in Settings.
+• BusPulse Vancouver now speaks Punjabi (ਪੰਜਾਬੀ)! Switch languages anytime in Settings.
 • A friendlier heads-up when you're outside Metro Vancouver's TransLink network — no more confusing "no stops nearby."
 
 ## What's New (version 1.0.0)
 Initial release.
 
 ---
+
+## 1.1.1 staged metadata (Punjabi marketing — needs the next build)
+
+Locked fields on 1.1.0; apply when creating the 1.1.1 version (pair with the
+Punjabi word-choice fixes so the build credit does double duty).
+
+**Keywords (98/100 — `livebus` swapped for `punjabi`):**
+translink,bus,vancouver,transit,arrivals,stops,realtime,bline,rapidbus,nightbus,punjabi,bustracker
+
+**Description — new opening (Apple truncates after ~3 lines; Punjabi must be in the first sentence):**
+BusPulse Vancouver is the fastest way to catch your bus across Metro Vancouver — live, GPS-tracked arrivals and real-time bus positions on the map. Now fully in Punjabi (ਪੰਜਾਬੀ), the only TransLink bus app that is.
+
+(rest of the description unchanged; keep the COVERAGE paragraph.)
+
+**Screenshots:** add ONE Punjabi screenshot — the Nearby or stop-arrivals screen with
+the UI in ਪੰਜਾਬੀ — as slot 2 (right after the map). Apple has no Punjabi metadata
+locale, so the screenshot is the only way a Punjabi speaker *sees* the language
+before installing. Take it on your iPhone in 1.1.0 (Settings → ਭਾਸ਼ਾ → ਪੰਜਾਬੀ).
+
+**What's New (1.1.1):**
+• Punjabi wording improvements from community feedback (ਧੰਨਵਾਦ!)
+• Small fixes
 
 ## If Apple pushes back on trademarks
 "TransLink" appears in the keywords and description as a factual data-source

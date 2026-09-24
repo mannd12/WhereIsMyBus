@@ -5,7 +5,7 @@ import type { TranslationKey } from './en';
  * makes a missing or extra key a compile error.
  *
  * Kept in English on purpose: route/stop names (GTFS data has no Punjabi
- * forms), brand names (BusPulse, TransLink, SkyTrain, B-Line, RapidBus), and
+ * forms), brand names (BusPulse Vancouver, TransLink, SkyTrain, B-Line, RapidBus), and
  * route numbers.
  */
 export const pa: Record<TranslationKey, string> = {
@@ -35,7 +35,7 @@ export const pa: Record<TranslationKey, string> = {
 
   // Error boundary
   'error.somethingWrong': 'ਕੁਝ ਗੜਬੜ ਹੋ ਗਈ',
-  'error.unexpected': 'BusPulse ਵਿੱਚ ਅਚਾਨਕ ਖਰਾਬੀ ਆ ਗਈ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ — ਤੁਹਾਡੇ ਮਨਪਸੰਦ ਸੁਰੱਖਿਅਤ ਹਨ।',
+  'error.unexpected': 'BusPulse Vancouver ਵਿੱਚ ਅਚਾਨਕ ਖਰਾਬੀ ਆ ਗਈ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ — ਤੁਹਾਡੇ ਮਨਪਸੰਦ ਸੁਰੱਖਿਅਤ ਹਨ।',
   'error.tryAgain': 'ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
 
   // Time ago / distance
@@ -52,7 +52,7 @@ export const pa: Record<TranslationKey, string> = {
   'nearby.stopsNearby': '{count} ਸਟਾਪ ਨੇੜੇ',
   'nearby.stopsNearby_plural': '{count} ਸਟਾਪ ਨੇੜੇ',
   'nearby.outOfCoverage':
-    'ਤੁਸੀਂ ਸੇਵਾ ਖੇਤਰ ਤੋਂ ਬਾਹਰ ਹੋ। BusPulse ਸਿਰਫ਼ ਮੈਟਰੋ ਵੈਨਕੂਵਰ (TransLink) ਲਈ ਲਾਈਵ ਬੱਸਾਂ ਵਿਖਾਉਂਦਾ ਹੈ।',
+    'ਤੁਸੀਂ ਸੇਵਾ ਖੇਤਰ ਤੋਂ ਬਾਹਰ ਹੋ। BusPulse Vancouver ਸਿਰਫ਼ ਮੈਟਰੋ ਵੈਨਕੂਵਰ (TransLink) ਲਈ ਲਾਈਵ ਬੱਸਾਂ ਵਿਖਾਉਂਦਾ ਹੈ।',
   'nearby.noStops': 'ਤੁਹਾਡੇ 500 ਮੀਟਰ ਦੇ ਘੇਰੇ ਵਿੱਚ ਕੋਈ ਬੱਸ ਸਟਾਪ ਨਹੀਂ। ਨਕਸ਼ਾ ਵਰਤੋ ਜਾਂ ਨਾਂ ਜਾਂ ਨੰਬਰ ਨਾਲ ਸਟਾਪ ਖੋਜੋ।',
   'nearby.noFilterStops': 'ਨਜ਼ਰ ਵਿੱਚ ਕੋਈ {filter} ਸਟਾਪ ਨਹੀਂ। ਹੋਰ ਫਿਲਟਰ ਅਜ਼ਮਾਓ ਜਾਂ ਜ਼ੂਮ ਆਊਟ ਕਰੋ।',
   'nearby.noStopsInView': 'ਨਜ਼ਰ ਵਿੱਚ ਕੋਈ ਸਟਾਪ ਨਹੀਂ। ਹੋਰ ਫਿਲਟਰ ਅਜ਼ਮਾਓ ਜਾਂ ਜ਼ੂਮ ਆਊਟ ਕਰੋ।',
@@ -128,7 +128,7 @@ export const pa: Record<TranslationKey, string> = {
 
   // Stop detail
   'stop.share': 'ਇਹ ਸਟਾਪ ਸਾਂਝਾ ਕਰੋ',
-  'stop.shareMessage': '{name} — ਸਟਾਪ #{code}। BusPulse ਉੱਤੇ ਲਾਈਵ ਬੱਸ ਆਮਦਾਂ ਵੇਖੋ।',
+  'stop.shareMessage': '{name} — ਸਟਾਪ #{code}। BusPulse Vancouver ਉੱਤੇ ਲਾਈਵ ਬੱਸ ਆਮਦਾਂ ਵੇਖੋ।',
   'stop.walkSummary': '~{walk} ਮਿੰਟ ਪੈਦਲ · ਅਗਲੀ ਬੱਸ {next} ਮਿੰਟ ਵਿੱਚ',
   'stop.makeIt': ' — ਤੁਸੀਂ ਪਹੁੰਚ ਜਾਓਗੇ',
   'stop.hurry': ' — ਛੇਤੀ ਕਰੋ',
@@ -179,7 +179,7 @@ export const pa: Record<TranslationKey, string> = {
   'route.closeMap': 'ਰੂਟ ਨਕਸ਼ਾ ਬੰਦ ਕਰੋ',
 
   // Onboarding
-  'onboard.title': 'BusPulse ਵਿੱਚ ਜੀ ਆਇਆਂ ਨੂੰ',
+  'onboard.title': 'BusPulse Vancouver ਵਿੱਚ ਜੀ ਆਇਆਂ ਨੂੰ',
   'onboard.body':
     'ਮੈਟਰੋ ਵੈਨਕੂਵਰ ਲਈ ਰੀਅਲ-ਟਾਈਮ ਬੱਸ ਟਰੈਕਿੰਗ। ਲਾਈਵ ਆਮਦਾਂ ਵੇਖੋ, ਨਕਸ਼ੇ ਉੱਤੇ ਬੱਸ ਨੂੰ ਛੂਹ ਕੇ ਉਸ ਦਾ ਪਿੱਛਾ ਕਰੋ, ਅਤੇ ਬੱਸ ਆਉਣ ਤੋਂ ਪਹਿਲਾਂ ਰਿਮਾਈਂਡਰ ਪਾਓ।',
   'onboard.note':
@@ -206,7 +206,7 @@ export const pa: Record<TranslationKey, string> = {
   'settings.aboutBody':
     'ਮੈਟਰੋ ਵੈਨਕੂਵਰ ਲਈ ਰੀਅਲ-ਟਾਈਮ ਬੱਸ ਆਮਦਾਂ ਅਤੇ ਲਾਈਵ ਟਰੈਕਿੰਗ, TransLink ਦੀ ਜਨਤਕ GTFS ਰੀਅਲ-ਟਾਈਮ ਫੀਡ ਨਾਲ। ਆਮਦਾਂ ਹਰ 60 ਸਕਿੰਟ ਵਿੱਚ ਅੱਪਡੇਟ ਹੁੰਦੀਆਂ ਹਨ।',
   'settings.attribution':
-    'ਟ੍ਰਾਂਜ਼ਿਟ ਡਾਟਾ © TransLink। BusPulse ਇੱਕ ਸੁਤੰਤਰ ਐਪ ਹੈ ਅਤੇ TransLink ਨਾਲ ਸੰਬੰਧਿਤ ਜਾਂ ਉਸ ਵੱਲੋਂ ਪ੍ਰਮਾਣਿਤ ਨਹੀਂ ਹੈ।',
+    'ਟ੍ਰਾਂਜ਼ਿਟ ਡਾਟਾ © TransLink। BusPulse Vancouver ਇੱਕ ਸੁਤੰਤਰ ਐਪ ਹੈ ਅਤੇ TransLink ਨਾਲ ਸੰਬੰਧਿਤ ਜਾਂ ਉਸ ਵੱਲੋਂ ਪ੍ਰਮਾਣਿਤ ਨਹੀਂ ਹੈ।',
   'settings.close': 'ਸੈਟਿੰਗਾਂ ਬੰਦ ਕਰੋ',
 
   // Notifications (system)

@@ -1,4 +1,4 @@
-# BusPulse — UAT Checklist (User Acceptance Testing)
+# BusPulse Vancouver — UAT Checklist (User Acceptance Testing)
 
 **How to use:** Test on a real iPhone via TestFlight (build the UAT build first).
 Mark each: ✅ pass / ❌ fail (note what happened) / ⏭️ skip.
@@ -11,7 +11,7 @@ map uses Apple Maps, notifications, etc.).
 ---
 
 ## 1. Launch & first run
-- [ ] App opens to **Nearby**; name under the icon is **BusPulse**
+- [ ] App opens to **Nearby**; name under the icon is **BusPulse Vancouver**
 - [ ] 📱 Location permission is requested **at launch**
 - [ ] No "enter API key" setup screen appears (baked-in key works, live data loads)
 - [ ] Cold start feels fast (stops appear quickly via last-known location)
