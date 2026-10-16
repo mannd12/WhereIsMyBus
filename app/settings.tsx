@@ -101,12 +101,13 @@ export default function SettingsScreen() {
     ]);
   };
 
-  // English/Punjabi options label themselves in their own language so each is
+  // English/Punjabi/Spanish options label themselves in their own language so each is
   // always readable no matter which language is active.
   const LANGUAGE_OPTIONS: { value: LanguagePref; label: string }[] = [
     { value: 'system', label: tf('settings.langSystem') },
     { value: 'en', label: 'English' },
     { value: 'pa', label: 'ਪੰਜਾਬੀ' },
+    { value: 'es', label: 'Español' },
   ];
 
   return (

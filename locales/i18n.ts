@@ -3,20 +3,22 @@ import { getLocales } from 'expo-localization';
 import { useSettingsStore, type LanguagePref } from '../store/settings';
 import { en, type TranslationKey } from './en';
 import { pa } from './pa';
+import { es } from './es';
 
-export type ResolvedLang = 'en' | 'pa';
+export type ResolvedLang = 'en' | 'pa' | 'es';
 export type TParams = Record<string, string | number>;
 
 // Read once — the device language can't change while the app is running
 // (iOS restarts the app when the system language changes).
-const deviceLang: ResolvedLang = getLocales()[0]?.languageCode === 'pa' ? 'pa' : 'en';
+const deviceCode = getLocales()[0]?.languageCode;
+const deviceLang: ResolvedLang = deviceCode === 'pa' ? 'pa' : deviceCode === 'es' ? 'es' : 'en';
 
 export function resolveLang(pref: LanguagePref): ResolvedLang {
   return pref === 'system' ? deviceLang : pref;
 }
 
 function translate(lang: ResolvedLang, key: TranslationKey, params?: TParams): string {
-  const dict = lang === 'pa' ? pa : en;
+  const dict = lang === 'pa' ? pa : lang === 'es' ? es : en;
   let str: string = dict[key] ?? en[key] ?? key;
   // "_plural" sibling wins when count !== 1 (English "1 stop" / "2 stops" etc.).
   if (params && typeof params.count === 'number' && params.count !== 1) {

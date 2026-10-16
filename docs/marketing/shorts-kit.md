@@ -119,3 +119,21 @@ https://apps.apple.com/ca/app/id6782258055
 ## Order to post
 1 The Flip (pin it) → 3 Mom's phone → 2 Countdown → 5 Reminder → 6 Live map → 4 Walk or run.
 Re-post **3** after two weeks with a different hook: `My dad took the bus alone today.`
+
+---
+
+## Spanish cuts (HOLD until 1.1.1 ships Spanish in-app)
+
+Same recipe: app in Spanish (Ajustes → Idioma → Español), ElevenLabs Multilingual, speed 0.95.
+Audience: newcomers and international students (Mexican, Colombian, Venezuelan) — Surrey Central,
+Metrotown, Downtown, Commercial-Broadway. Hashtags: #VancouverEnEspañol #LatinosEnVancouver
+#MexicanosEnCanada #ColombianosEnCanada #EstudiantesInternacionales #Vancouver #TransLink.
+
+- **1 The Flip — hook:** `La app de buses de Vancouver… en español 🚌` · **VO:** "La app de buses de Vancouver, ahora en español. Un toque."
+- **2 Countdown — hook:** `¿Cuándo llega el bus? 🤔` · **VO:** "Cada parada del área metropolitana de Vancouver, en vivo, al segundo. Cuando se pone roja, tu bus ya llegó."
+- **3 Family — hook:** `Recién llegaste a Vancouver y no entiendes los buses? 60 segundos.` · **VO:** "Instálala. Ponla en español. Marca tu parada con la estrella. Ahora ves cuándo llega el bus, y te avisa antes de que llegue. Así de simple."
+- **4 Walk or run — hook:** `¿Camino… o corro? 🏃` · **VO:** "Abre cualquier parada. Tu tiempo a pie, junto al próximo bus. En dos segundos sabes si caminar o correr."
+- **5 Reminder — hook:** `Nunca más pierdas el bus 🔔` · **VO:** "Toca la campana. Bloquea el teléfono. Te avisa antes de que llegue el bus, incluso con la app cerrada."
+- **6 Live map — hook:** `¿Dónde está mi bus AHORA? 📍` · **VO:** "Mira cada bus moverse en vivo. Toca uno: se ilumina toda su ruta y lo ves venir."
+
+**Bio line (ES):** 🚌 Buses de Vancouver en tiempo real · Ahora en español · Gratis · iPhone

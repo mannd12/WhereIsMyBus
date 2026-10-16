@@ -143,3 +143,58 @@ before installing. Take it on your iPhone in 1.1.0 (Settings → ਭਾਸ਼ਾ
 "TransLink" appears in the keywords and description as a factual data-source
 reference. If review objects, reword to "Metro Vancouver transit" and resubmit —
 metadata-only changes don't need a new build.
+
+---
+
+## Spanish listing (es-MX AND es-ES — paste the same copy into both locales)
+
+> Add both localizations in ASC → App Store tab → version → "+" next to English (Canada).
+> Metadata-only once 1.1.1 (which ships Spanish in-app) is the version being edited.
+> Do NOT add to 1.1.0 — the app can't speak Spanish yet.
+
+**Nombre:** BusPulse Vancouver
+**Subtítulo (30):** Buses de Vancouver en vivo
+
+**Texto promocional (170):**
+Ahora en español. Llegadas en tiempo real de TransLink para cada parada del área metropolitana de Vancouver, con un recordatorio antes de que llegue tu bus.
+
+**Descripción:**
+BusPulse Vancouver es la forma más rápida de tomar tu bus en el área metropolitana de Vancouver: llegadas en tiempo real con GPS y la posición de cada bus en el mapa. Ahora en español, inglés y panyabí.
+
+Sin cuenta. Sin registro. Abre la app y mira qué viene.
+
+LLEGADAS EN TIEMPO REAL CON GPS
+Cada cuenta regresiva avanza al segundo y se pone roja cuando tu bus está por llegar. Si una ruta aún no transmite (de madrugada, expresos de hora pico), BusPulse Vancouver muestra el horario programado para que nunca te quedes mirando una pantalla vacía.
+
+MAPA CERCANO
+Mira la posición en vivo de los buses en el mapa. Acerca para ver las paradas. Filtra por tipo de ruta (Bus, B-Line, RapidBus o Nocturno) con un toque.
+
+RUTA EN EL MAPA
+Toca cualquier bus para resaltar su ruta completa y seguirlo en vivo con una baliza brillante. Ve exactamente dónde está y hacia dónde va.
+
+TIEMPO A PIE VS. PRÓXIMO BUS
+Abre cualquier parada y compara al instante tu tiempo a pie con la próxima llegada. Sabrás en segundos si caminar o correr.
+
+BÚSQUEDA INTELIGENTE DE PARADAS
+Busca por el número de 5 dígitos que aparece en cada letrero, por nombre de parada o por número de ruta. Cubre las más de 8,700 paradas del área metropolitana de Vancouver.
+
+ALERTAS DE SALIDA
+Toca la campana en cualquier llegada para recibir una notificación antes de que llegue tu bus: con 2, 5 o 10 minutos de aviso. Funciona incluso con la app cerrada.
+
+FAVORITOS
+Marca con estrella tus paradas habituales. Verás sus llegadas en vivo de un vistazo, sin entrar.
+
+ALERTAS DE SERVICIO
+Las interrupciones activas de TransLink aparecen con una insignia en la pestaña Alertas, para que no te pierdas ningún retraso o desvío.
+
+COBERTURA
+BusPulse Vancouver funciona en toda el área metropolitana de Vancouver, en la red de TransLink. No cubre la isla de Vancouver (Victoria, Nanaimo, Tofino/Ucluelet) ni el valle del Fraser (Abbotsford, Chilliwack), que atiende BC Transit.
+
+Con datos del feed oficial GTFS en tiempo real de TransLink. Las llegadas se actualizan cada 60 segundos.
+
+**Palabras clave (100 máx, sin espacios):**
+translink,bus,vancouver,transporte,llegadas,paradas,tiemporeal,autobus,espanol,rapidbus,horarios
+
+**Novedades (1.1.1):**
+• BusPulse Vancouver ahora habla español. Cámbialo cuando quieras en Ajustes.
+• Mejoras en la traducción al panyabí gracias a la comunidad.

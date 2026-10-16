@@ -41,7 +41,19 @@ Done 2026-08-26:
   https://claude.ai/code/artifact/5ac6e211-b943-4197-8fc7-a3b1db381b6c
   Source: `docs/release-1.1-closeout.html`.
 
+**2026-10-16 — Spanish localization BUILT (uncommitted, needs 1.1.1 build):** `locales/es.ts`
+(165/165 keys, neutral LatAm/Spain Spanish, tú form), `es` wired into `store/settings.ts`,
+`locales/i18n.ts` (device detection + dict), Español pill in `app/settings.tsx`, `"es"` in
+`CFBundleLocalizations`. `tsc` clean, param parity 0 issues. **User has a Spanish speaker to
+sense-check before shipping.** No-build pieces ready and HELD until 1.1.1 is live: Spanish ASC
+copy for es-MX + es-ES (`APP_STORE_LISTING.md`), `docs/marketing/poster-spanish.*`,
+`sticker-circle-spanish.*`, Spanish shorts VO lines (`shorts-kit.md`). Earlier (Oct 8–16):
+posters EN/PA, stickers EN/PA, shorts kit + end card — committed `c561d45`, `b87bc96`.
+
 ## Next
+0. **1.1.1 is now a real release:** Punjabi word fixes + full-name strings + **Spanish**. Get the
+   Spanish reviewer's pass on `locales/es.ts`, bump `version` to 1.1.1, then (user-run) `eas build
+   --auto-submit`. In ASC add es-MX + es-ES localizations with the staged copy. About 1 credit left.
 1. **Sign in to ASC**, then apply the Punjabi promo text from `APP_STORE_LISTING.md`
    (App Store tab → 1.1.0 → Promotional Text → Edit → Save). No build.
 2. **Send the WhatsApp post** to family groups (`docs/marketing/launch-post.md` §A) —

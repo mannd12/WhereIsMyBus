@@ -1,6 +1,6 @@
 /**
  * English strings — the master dictionary. Every user-facing string in the app
- * lives here; `locales/pa.ts` must define the same keys (typed against this).
+ * lives here; `locales/pa.ts` and `locales/es.ts` must define the same keys (typed against this).
  *
  * Interpolation: `{name}` placeholders are replaced by t()'s params.
  * Plurals: when params.count !== 1 and a `<key>_plural` entry exists, it wins.

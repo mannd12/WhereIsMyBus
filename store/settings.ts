@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/** UI language preference: follow the device, or force English / Punjabi. */
-export type LanguagePref = 'system' | 'en' | 'pa';
+/** UI language preference: follow the device, or force English / Punjabi / Spanish. */
+export type LanguagePref = 'system' | 'en' | 'pa' | 'es';
 
 interface SettingsState {
   apiKey: string;
