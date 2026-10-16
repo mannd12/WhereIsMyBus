@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BusPulse Vancouver Sticker</title>
+<meta name="description" content="3-inch die-cut circle sticker artwork (3.125in with bleed) with App Store QR.">
+<style>
+  /* Print artwork — fixed palette on purpose. Canvas 3.125in = 3in cut + 1/16in bleed each side.
+     Keep content inside the 2.75in safe circle. */
+  @page { size: 3.125in 3.125in; margin: 0; }
+  :root { --brand:#005CA9; --deep:#003F75; --accent:#E3311D; --ink:#10203A; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; background:#fff; }
+  body { position:relative; width:3.125in; height:3.125in; overflow:hidden;
+    font-family:"Nirmala UI","Raavi","Segoe UI",-apple-system,"Helvetica Neue",Arial,sans-serif;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .disc { position:absolute; inset:0; border-radius:50%; background:var(--brand); color:#fff;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .ring { position:absolute; inset:0.19in; border-radius:50%; border:0.035in solid rgba(255,255,255,.35); }
+  .cut  { position:absolute; inset:0.0625in; border-radius:50%; border:0 dashed transparent; } /* cut line guide (invisible) */
+  h1 { margin:0.02in 0 0; font-size:17.5pt; line-height:1.08; font-weight:800; letter-spacing:-0.01em;
+       text-shadow:0 0.01in 0.03in rgba(0,0,0,.2); }
+  .qr { background:#fff; border-radius:0.1in; padding:0.06in; margin:0.07in 0 0.06in; }
+  .qr svg { width:1.0in; height:1.0in; display:block; }
+  .name { font-size:8.6pt; font-weight:700; letter-spacing:.01em; }
+  .tag { margin-top:0.02in; background:var(--accent); color:#fff; font-size:6.8pt; font-weight:700;
+         border-radius:999px; padding:0.025in 0.11in; }
+</style>
+</head>
+<body>
+  <div class="disc">
+    <div class="ring"></div>
+    <h1>When’s my<br>bus coming?</h1>
+    <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" shape-rendering="crispEdges" role="img" aria-label="QR code to the App Store"><path fill="#ffffff" d="M0 0h45v45H0z"/><path stroke="#10203A" d="M4 4.5h7m1 0h1m2 0h1m2 0h1m1 0h1m2 0h3m1 0h1m6 0h7M4 5.5h1m5 0h1m1 0h1m1 0h3m1 0h2m3 0h2m2 0h1m3 0h2m1 0h1m5 0h1M4 6.5h1m1 0h3m1 0h1m1 0h3m5 0h1m1 0h2m1 0h1m1 0h1m3 0h2m1 0h1m1 0h3m1 0h1M4 7.5h1m1 0h3m1 0h1m2 0h1m5 0h2m2 0h2m3 0h2m1 0h1m2 0h1m1 0h3m1 0h1M4 8.5h1m1 0h3m1 0h1m4 0h4m1 0h1m5 0h2m1 0h1m4 0h1m1 0h3m1 0h1M4 9.5h1m5 0h1m1 0h3m3 0h2m1 0h2m1 0h2m1 0h6m1 0h1m5 0h1M4 10.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M12 11.5h2m1 0h6m3 0h2m3 0h1m2 0h1M6 12.5h3m1 0h1m1 0h3m5 0h2m1 0h1m1 0h3m2 0h1m1 0h4m2 0h3M7 13.5h2m2 0h1m2 0h1m2 0h3m1 0h1m1 0h1m3 0h1m1 0h1m1 0h1m1 0h3m1 0h2M6 14.5h2m1 0h2m1 0h1m1 0h1m2 0h1m2 0h2m3 0h2m2 0h4m1 0h1m1 0h3m1 0h1M4 15.5h1m1 0h1m2 0h1m1 0h2m1 0h1m1 0h3m2 0h1m2 0h2m1 0h1m2 0h2m2 0h1m2 0h4M7 16.5h1m1 0h2m2 0h3m1 0h1m2 0h2m4 0h9m1 0h4M4 17.5h1m2 0h1m5 0h5m1 0h1m1 0h1m1 0h1m1 0h2m2 0h1m2 0h2m3 0h3M5 18.5h1m1 0h1m2 0h4m2 0h3m2 0h1m1 0h2m2 0h1m1 0h3m2 0h2m1 0h1m1 0h2M5 19.5h3m3 0h2m2 0h1m1 0h1m1 0h1m1 0h1m6 0h1m2 0h1m2 0h1m5 0h1M6 20.5h2m2 0h2m4 0h2m2 0h1m2 0h1m1 0h1m3 0h3m1 0h4m1 0h1m1 0h1M9 21.5h1m1 0h2m1 0h1m2 0h2m2 0h4m1 0h2m1 0h1m2 0h2m1 0h1m1 0h1M5 22.5h1m1 0h2m1 0h1m3 0h2m2 0h1m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m1 0h1m2 0h3M4 23.5h1m3 0h2m1 0h4m1 0h1m2 0h1m4 0h2m1 0h2m1 0h4m3 0h1m2 0h1M4 24.5h3m1 0h4m4 0h3m1 0h1m1 0h5m1 0h3m2 0h6m1 0h1M4 25.5h4m1 0h1m1 0h3m2 0h1m4 0h3m2 0h2m7 0h1m2 0h1M4 26.5h2m2 0h4m3 0h1m3 0h1m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h2m3 0h1m1 0h1M4 27.5h1m1 0h2m1 0h1m2 0h3m1 0h1m6 0h4m3 0h1m2 0h3m4 0h1M5 28.5h2m2 0h2m3 0h1m1 0h3m1 0h1m2 0h1m1 0h3m6 0h5m1 0h1M4 29.5h1m2 0h3m1 0h6m3 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h2M4 30.5h1m3 0h1m1 0h1m3 0h1m2 0h1m1 0h4m1 0h2m8 0h1m2 0h4M4 31.5h1m2 0h1m3 0h3m1 0h2m1 0h2m1 0h3m1 0h2m1 0h1m1 0h1m1 0h2m2 0h2m1 0h1M4 32.5h1m1 0h1m1 0h1m1 0h1m7 0h1m1 0h2m2 0h2m3 0h2m1 0h5m1 0h2M12 33.5h1m3 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h1m3 0h1m2 0h1M4 34.5h7m3 0h3m1 0h3m1 0h1m2 0h2m1 0h2m2 0h1m1 0h1m1 0h2m1 0h2M4 35.5h1m5 0h1m3 0h1m2 0h1m1 0h1m1 0h1m1 0h3m4 0h1m1 0h1m3 0h1m3 0h1M4 36.5h1m1 0h3m1 0h1m1 0h1m2 0h2m1 0h3m1 0h1m2 0h2m1 0h9m1 0h1m1 0h1M4 37.5h1m1 0h3m1 0h1m1 0h1m6 0h1m1 0h2m6 0h1m4 0h1m1 0h1m1 0h1M4 38.5h1m1 0h3m1 0h1m1 0h7m2 0h1m1 0h1m1 0h4m2 0h1m1 0h1m1 0h1m1 0h2m1 0h1M4 39.5h1m5 0h1m4 0h1m2 0h6m1 0h1m1 0h1m2 0h3m1 0h3m3 0h1M4 40.5h7m9 0h5m1 0h5m3 0h1m2 0h4"/></svg></div>
+    <div class="name">BusPulse Vancouver</div>
+    <div class="tag">Now in Punjabi · iPhone</div>
+  </div>
+</body>
+</html>
