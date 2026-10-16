@@ -195,7 +195,7 @@ export const es: Record<TranslationKey, string> = {
   'settings.leadTimeSub': 'Tiempo de aviso predeterminado para los recordatorios de salida.',
   'settings.minutesBefore': '{m} minutos antes',
   'settings.minShort': '{m} min',
-  'settings.language': 'Idioma',
+  'settings.language': 'Idioma / Language',
   'settings.languageSub': 'Elige el idioma de la app.',
   'settings.langSystem': 'Sistema',
   'settings.dataPrivacy': 'Datos y privacidad',
