@@ -19,7 +19,11 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "BusPulse Vancouver uses your location to show nearby bus stops and real-time arrivals.",
         "ITSAppUsesNonExemptEncryption": false,
-        "CFBundleLocalizations": ["en", "pa", "es"]
+        "CFBundleLocalizations": [
+          "en",
+          "pa",
+          "es"
+        ]
       }
     },
     "android": {
@@ -70,6 +74,11 @@
         "projectId": "bdab8c0f-191b-4ab5-acb8-d57109162516"
       }
     },
-    "owner": "mannprabhdeep95"
+    "owner": "mannprabhdeep95",
+    "locales": {
+      "en": "./locales/ios/en.json",
+      "pa": "./locales/ios/pa.json",
+      "es": "./locales/ios/es.json"
+    }
   }
 }
