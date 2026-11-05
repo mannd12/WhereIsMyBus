@@ -1,10 +1,10 @@
 # BusPulse Vancouver — Handoff
 
-_Last updated: 2026-10-19 · 1.1.1 build-ready, UNCOMMITTED. User said: do not push until they say so._
+_Last updated: 2026-11-05 · 1.1.1 COMMITTED + PUSHED (`4732b4d`); build on hold pending Spanish human review._
 
 ## Now
 **Live:** 1.1.0 (English + Punjabi), released 2026-08-27.
-**Ready locally:** 1.1.1 — `version` bumped, ~29 files changed, nothing committed or built.
+**Committed:** 1.1.1 — `4732b4d` on `master` (pushed 2026-11-05; gates re-run that day: tsc clean, 170/170 keys × 3). **Not built yet.**
 
 What 1.1.1 contains:
 - **Spanish** (`locales/es.ts`, 170 keys), wired into the picker + device-language detection;
@@ -27,9 +27,11 @@ Also staged (no build needed): Spanish ASC copy for es-MX + es-ES and 1.1.1 What
 
 ## Next
 1. **Human language check:** user's Spanish reviewer reads `locales/es.ts`; user skims the
-   Punjabi diff (`git diff HEAD -- locales/pa.ts`) — Punjabi word choices are the user's call.
-2. **User says go → commit + push** (commit message: Spanish + GTFS refresh + fixes).
-3. **User runs the build** (last credit): `eas build -p ios --profile production --auto-submit`.
+   Punjabi diff (`git diff 6a3fab4 4732b4d -- locales/pa.ts`) — Punjabi word choices are the user's call.
+2. ~~Commit + push~~ — done 2026-11-05 (`4732b4d`).
+3. **User runs the build** (last credit) only after step 1:
+   `eas build -p ios --profile production --auto-submit`. If it's past early Jan (TransLink
+   winter service change), re-run `node scripts/fetchGtfsStatic.js` first and commit the data.
 4. On TestFlight: confirm a **reminder notification fires** in Punjabi and Spanish (couldn't be
    tested in Expo Go), and that destinations show (e.g. "To Newton Exchange").
 5. In ASC: add **es-MX + es-ES** localizations from `APP_STORE_LISTING.md`; apply the Punjabi
