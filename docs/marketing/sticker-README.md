@@ -16,3 +16,6 @@ shelters, poles or SkyTrain property — TransLink/city bylaw, removed in days, 
 traced back to the "community app."
 
 **Test before ordering:** print one on plain paper at 100% and scan it from 30 cm with your phone.
+
+**Spanish sticker (`sticker-circle-spanish.*`) — HOLD.** It says "Ahora en español". Do not order
+until version 1.1.1 (Spanish in-app) is live on the App Store.

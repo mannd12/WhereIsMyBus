@@ -45,7 +45,7 @@ No account. No sign-up. Open the app and see what's coming.
 Every countdown ticks live to the second and turns red when your bus is due. When a route isn't transmitting yet — early mornings, peak-only expresses — BusPulse Vancouver shows the scheduled timetable instead, so you're never left staring at an empty screen.
 
 **NEARBY MAP**
-See live positions for buses on the map. Zoom in to reveal stop markers. Filter by route type — Bus, B-Line, RapidBus, or Night Bus — with one tap.
+See live positions for buses on the map. Zoom in to reveal stop markers. Filter by route type — Bus, B-Line, RapidBus, or Night — with one tap.
 
 **ROUTE ON THE MAP**
 Tap any bus to highlight its full route and follow it live with a bright tracking beacon. See exactly where your bus is and where it's headed.
@@ -133,11 +133,12 @@ BusPulse Vancouver is the fastest way to catch your bus across Metro Vancouver �
 **Screenshots:** add ONE Punjabi screenshot — the Nearby or stop-arrivals screen with
 the UI in ਪੰਜਾਬੀ — as slot 2 (right after the map). Apple has no Punjabi metadata
 locale, so the screenshot is the only way a Punjabi speaker *sees* the language
-before installing. Take it on your iPhone in 1.1.0 (Settings → ਭਾਸ਼ਾ → ਪੰਜਾਬੀ).
+before installing. Take it on your iPhone in 1.1.0 (ਸੈਟਿੰਗਾਂ → ਭਾਸ਼ਾ / Language → ਪੰਜਾਬੀ).
 
 **What's New (1.1.1):**
-• Punjabi wording improvements from community feedback (ਧੰਨਵਾਦ!)
-• Small fixes
+• BusPulse Vancouver now speaks Spanish (Español)! Switch anytime in Settings → Language.
+• Bus destinations show correctly again after TransLink's fall schedule change.
+• Clearer Punjabi wording, and a few small fixes.
 
 ## If Apple pushes back on trademarks
 "TransLink" appears in the keywords and description as a factual data-source
@@ -166,17 +167,17 @@ Sin cuenta. Sin registro. Abre la app y mira qué viene.
 LLEGADAS EN TIEMPO REAL CON GPS
 Cada cuenta regresiva avanza al segundo y se pone roja cuando tu bus está por llegar. Si una ruta aún no transmite (de madrugada, expresos de hora pico), BusPulse Vancouver muestra el horario programado para que nunca te quedes mirando una pantalla vacía.
 
-MAPA CERCANO
-Mira la posición en vivo de los buses en el mapa. Acerca para ver las paradas. Filtra por tipo de ruta (Bus, B-Line, RapidBus o Nocturno) con un toque.
+MAPA DE PARADAS CERCANAS
+Mira la posición en vivo de los buses en el mapa. Acerca el mapa para ver las paradas. Filtra por tipo de ruta (Bus, B-Line, RapidBus o Nocturno) con un toque.
 
 RUTA EN EL MAPA
 Toca cualquier bus para resaltar su ruta completa y seguirlo en vivo con una baliza brillante. Ve exactamente dónde está y hacia dónde va.
 
 TIEMPO A PIE VS. PRÓXIMO BUS
-Abre cualquier parada y compara al instante tu tiempo a pie con la próxima llegada. Sabrás en segundos si caminar o correr.
+Abre cualquier parada y compara al instante tu tiempo a pie con la próxima llegada. Sabrás en segundos si te da tiempo caminando o tienes que correr.
 
 BÚSQUEDA INTELIGENTE DE PARADAS
-Busca por el número de 5 dígitos que aparece en cada letrero, por nombre de parada o por número de ruta. Cubre las más de 8,700 paradas del área metropolitana de Vancouver.
+Busca por el número de 5 dígitos que aparece en cada letrero, por nombre de parada o por número de ruta. Cubre las más de 8700 paradas del área metropolitana de Vancouver.
 
 ALERTAS DE SALIDA
 Toca la campana en cualquier llegada para recibir una notificación antes de que llegue tu bus: con 2, 5 o 10 minutos de aviso. Funciona incluso con la app cerrada.
@@ -193,8 +194,9 @@ BusPulse Vancouver funciona en toda el área metropolitana de Vancouver, en la r
 Con datos del feed oficial GTFS en tiempo real de TransLink. Las llegadas se actualizan cada 60 segundos.
 
 **Palabras clave (100 máx, sin espacios):**
-translink,bus,vancouver,transporte,llegadas,paradas,tiemporeal,autobus,espanol,rapidbus,horarios
+translink,transporte,autobus,parada,llegadas,horario,tiempo,real,rapidbus,surrey,burnaby,richmond
 
 **Novedades (1.1.1):**
 • BusPulse Vancouver ahora habla español. Cámbialo cuando quieras en Ajustes.
-• Mejoras en la traducción al panyabí gracias a la comunidad.
+• Los destinos de los buses vuelven a mostrarse correctamente tras el cambio de horarios de TransLink.
+• Traducción al panyabí más clara y pequeñas correcciones.

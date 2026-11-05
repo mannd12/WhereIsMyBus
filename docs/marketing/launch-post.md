@@ -47,7 +47,7 @@ BusPulse Vancouver is the only TransLink bus app on the App Store that speaks Pu
 
 Built here, for our community — especially for the parents and grandparents who've been asking their kids "ਬੱਸ ਕਦੋਂ ਆਊ?" Install it on their iPhone and show them once.
 
-📲 Link in bio (iPhone) · Switch language in ਸੈਟਿੰਗਾਂ → ਭਾਸ਼ਾ
+📲 Link in bio (iPhone) · Switch language in ਸੈਟਿੰਗਾਂ → ਭਾਸ਼ਾ / Language
 
 #Surrey #SurreyBC #Punjabi #ਪੰਜਾਬੀ #TransLink #MetroVancouver #Vancouver #Delta #NewtonSurrey #KPU #SFUSurrey #InternationalStudents #NewToCanada #PunjabiCanadian
 

@@ -32,18 +32,24 @@ export const pa: Record<TranslationKey, string> = {
   'common.thisStop': 'ਇਸ ਸਟਾਪ',
   'common.route': 'ਰੂਟ',
   'common.loadingArrivals': 'ਆਮਦਾਂ ਲੋਡ ਹੋ ਰਹੀਆਂ ਹਨ',
+  'common.close': 'ਬੰਦ ਕਰੋ',
 
   // Error boundary
   'error.somethingWrong': 'ਕੁਝ ਗੜਬੜ ਹੋ ਗਈ',
   'error.unexpected': 'BusPulse Vancouver ਵਿੱਚ ਅਚਾਨਕ ਖਰਾਬੀ ਆ ਗਈ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ — ਤੁਹਾਡੇ ਮਨਪਸੰਦ ਸੁਰੱਖਿਅਤ ਹਨ।',
   'error.tryAgain': 'ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
 
+  // Unknown link (+not-found)
+  'notFound.title': 'ਪੰਨਾ ਨਹੀਂ ਮਿਲਿਆ',
+  'notFound.body': 'ਇਹ ਲਿੰਕ BusPulse Vancouver ਵਿੱਚ ਕਿਸੇ ਪੰਨੇ ਤੱਕ ਨਹੀਂ ਜਾਂਦਾ।',
+  'notFound.cta': 'ਨੇੜਲੇ ਸਟਾਪ ਵੇਖੋ',
+
   // Time ago / distance
   'time.justNow': 'ਹੁਣੇ-ਹੁਣੇ',
   'time.minAgo': '{n} ਮਿੰਟ ਪਹਿਲਾਂ',
   'time.hoursAgo': '{n} ਘੰਟੇ ਪਹਿਲਾਂ',
   'time.daysAgo': '{n} ਦਿਨ ਪਹਿਲਾਂ',
-  'dist.m': '{n} ਮੀ',
+  'dist.m': '{n} ਮੀ.',
   'dist.km': '{n} ਕਿ.ਮੀ.',
   'dist.minWalk': '~{n} ਮਿੰਟ ਪੈਦਲ',
 
@@ -54,7 +60,7 @@ export const pa: Record<TranslationKey, string> = {
   'nearby.outOfCoverage':
     'ਤੁਸੀਂ ਸੇਵਾ ਖੇਤਰ ਤੋਂ ਬਾਹਰ ਹੋ। BusPulse Vancouver ਸਿਰਫ਼ ਮੈਟਰੋ ਵੈਨਕੂਵਰ (TransLink) ਲਈ ਲਾਈਵ ਬੱਸਾਂ ਵਿਖਾਉਂਦਾ ਹੈ।',
   'nearby.noStops': 'ਤੁਹਾਡੇ 500 ਮੀਟਰ ਦੇ ਘੇਰੇ ਵਿੱਚ ਕੋਈ ਬੱਸ ਸਟਾਪ ਨਹੀਂ। ਨਕਸ਼ਾ ਵਰਤੋ ਜਾਂ ਨਾਂ ਜਾਂ ਨੰਬਰ ਨਾਲ ਸਟਾਪ ਖੋਜੋ।',
-  'nearby.noFilterStops': 'ਨਜ਼ਰ ਵਿੱਚ ਕੋਈ {filter} ਸਟਾਪ ਨਹੀਂ। ਹੋਰ ਫਿਲਟਰ ਅਜ਼ਮਾਓ ਜਾਂ ਜ਼ੂਮ ਆਊਟ ਕਰੋ।',
+  'nearby.noFilterStops': "ਫਿਲਟਰ '{filter}' ਨਾਲ ਨਜ਼ਰ ਵਿੱਚ ਕੋਈ ਸਟਾਪ ਨਹੀਂ। ਹੋਰ ਫਿਲਟਰ ਅਜ਼ਮਾਓ ਜਾਂ ਜ਼ੂਮ ਆਊਟ ਕਰੋ।",
   'nearby.noStopsInView': 'ਨਜ਼ਰ ਵਿੱਚ ਕੋਈ ਸਟਾਪ ਨਹੀਂ। ਹੋਰ ਫਿਲਟਰ ਅਜ਼ਮਾਓ ਜਾਂ ਜ਼ੂਮ ਆਊਟ ਕਰੋ।',
   'nearby.tapToShowStops': 'ਨੇੜਲੇ ਸਟਾਪ ਵੇਖਣ ਲਈ ਛੂਹੋ',
   'nearby.nextBus': 'ਅਗਲੀ ਬੱਸ',
@@ -66,13 +72,14 @@ export const pa: Record<TranslationKey, string> = {
   'nearby.centerOnMe': 'ਨਕਸ਼ਾ ਮੇਰੇ ਟਿਕਾਣੇ ਉੱਤੇ ਕੇਂਦਰਿਤ ਕਰੋ',
   'nearby.showStopsOnMap': 'ਨਕਸ਼ੇ ਉੱਤੇ ਨੇੜਲੇ ਸਟਾਪ ਵਿਖਾਓ',
   'nearby.locationDenied': 'ਟਿਕਾਣੇ ਦੀ ਇਜਾਜ਼ਤ ਨਹੀਂ ਮਿਲੀ — ਵੈਨਕੂਵਰ ਸੈਂਟਰ ਵਿਖਾਇਆ ਜਾ ਰਿਹਾ ਹੈ।',
+  'nearby.locationError': 'ਤੁਹਾਡਾ ਟਿਕਾਣਾ ਨਹੀਂ ਮਿਲ ਸਕਿਆ — ਵੈਨਕੂਵਰ ਸੈਂਟਰ ਵਿਖਾਇਆ ਜਾ ਰਿਹਾ ਹੈ।',
 
   // Route filter chips (B-Line / RapidBus are brand names)
   'filter.all': 'ਸਾਰੇ',
   'filter.bus': 'ਬੱਸ',
   'filter.bline': 'B-Line',
   'filter.rapidbus': 'RapidBus',
-  'filter.night': 'ਨਾਈਟ',
+  'filter.night': 'ਰਾਤ',
   'filter.a11y': 'ਫਿਲਟਰ: {label}',
 
   // Map stop callout
@@ -96,7 +103,7 @@ export const pa: Record<TranslationKey, string> = {
   'fav.add': 'ਮਨਪਸੰਦ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ',
   'fav.remove': 'ਮਨਪਸੰਦ ਵਿੱਚੋਂ ਹਟਾਓ',
   'fav.emptyTitle': 'ਹਾਲੇ ਕੋਈ ਮਨਪਸੰਦ ਨਹੀਂ',
-  'fav.emptyBody': 'ਕਿਸੇ ਸਟਾਪ ਉੱਤੇ ਤਾਰਾ ਲਗਾਓ — ਉਹ ਇੱਥੇ ਲਾਈਵ ਆਮਦਾਂ ਸਮੇਤ ਇੱਕ ਨਜ਼ਰੇ ਦਿਸੇਗਾ।',
+  'fav.emptyBody': 'ਕਿਸੇ ਸਟਾਪ ਉੱਤੇ ਤਾਰਾ ਲਗਾਓ — ਉਹ ਇੱਥੇ ਲਾਈਵ ਆਮਦਾਂ ਨਾਲ ਦਿਸੇਗਾ।',
   'fav.findAStop': 'ਸਟਾਪ ਲੱਭੋ',
   'fav.findAStopA11y': 'ਸ਼ਾਮਲ ਕਰਨ ਲਈ ਸਟਾਪ ਲੱਭੋ',
   'fav.noUpcoming': 'ਕੋਈ ਆਉਣ ਵਾਲੀ ਬੱਸ ਨਹੀਂ',
@@ -107,7 +114,7 @@ export const pa: Record<TranslationKey, string> = {
   // Alerts screen
   'alerts.loading': 'ਸੂਚਨਾਵਾਂ ਲੋਡ ਹੋ ਰਹੀਆਂ ਹਨ…',
   'alerts.serviceAlertFallback': 'ਸੇਵਾ ਸੂਚਨਾ',
-  'alerts.busy': 'ਲਾਈਵ ਡਾਟਾ ਰੁੱਝਿਆ ਹੋਇਆ ਹੈ',
+  'alerts.busy': 'ਲਾਈਵ ਡਾਟਾ ਇਸ ਵੇਲੇ ਨਹੀਂ ਮਿਲ ਰਿਹਾ',
   'alerts.loadFailed': 'ਸੂਚਨਾਵਾਂ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀਆਂ',
   'alerts.feedLimit': 'ਰੀਅਲ-ਟਾਈਮ ਫੀਡ ਆਪਣੀ ਹੱਦ ਉੱਤੇ ਪਹੁੰਚ ਗਈ ਹੈ। ਥੋੜ੍ਹੀ ਦੇਰ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ।',
   'alerts.checkConnection': 'ਆਪਣਾ ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਚੈੱਕ ਕਰ ਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।',
@@ -117,12 +124,12 @@ export const pa: Record<TranslationKey, string> = {
   'alerts.clearAllA11y': 'ਸਾਰੀਆਂ ਸੂਚਨਾਵਾਂ ਹਟਾਓ',
   'alerts.noMajor': 'ਇਸ ਵੇਲੇ ਕੋਈ ਵੱਡੀ ਰੁਕਾਵਟ ਨਹੀਂ।',
   'alerts.allClear': 'ਸਭ ਠੀਕ — ਸੇਵਾ ਵਿੱਚ ਕੋਈ ਰੁਕਾਵਟ ਨਹੀਂ।',
-  'alerts.showMinor': '{count} ਛੋਟੀ ਸੂਚਨਾ ਵਿਖਾਓ · ਸਟਾਪ ਬਦਲੀਆਂ, ਪਹੁੰਚਯੋਗਤਾ',
-  'alerts.showMinor_plural': '{count} ਛੋਟੀਆਂ ਸੂਚਨਾਵਾਂ ਵਿਖਾਓ · ਸਟਾਪ ਬਦਲੀਆਂ, ਪਹੁੰਚਯੋਗਤਾ',
-  'alerts.hideMinor': '{count} ਛੋਟੀ ਸੂਚਨਾ ਲੁਕਾਓ · ਸਟਾਪ ਬਦਲੀਆਂ, ਪਹੁੰਚਯੋਗਤਾ',
-  'alerts.hideMinor_plural': '{count} ਛੋਟੀਆਂ ਸੂਚਨਾਵਾਂ ਲੁਕਾਓ · ਸਟਾਪ ਬਦਲੀਆਂ, ਪਹੁੰਚਯੋਗਤਾ',
+  'alerts.showMinor': '{count} ਛੋਟੀ ਸੂਚਨਾ ਵਿਖਾਓ · ਸਟਾਪ ਤਬਦੀਲੀਆਂ, ਪਹੁੰਚਯੋਗਤਾ',
+  'alerts.showMinor_plural': '{count} ਛੋਟੀਆਂ ਸੂਚਨਾਵਾਂ ਵਿਖਾਓ · ਸਟਾਪ ਤਬਦੀਲੀਆਂ, ਪਹੁੰਚਯੋਗਤਾ',
+  'alerts.hideMinor': '{count} ਛੋਟੀ ਸੂਚਨਾ ਲੁਕਾਓ · ਸਟਾਪ ਤਬਦੀਲੀਆਂ, ਪਹੁੰਚਯੋਗਤਾ',
+  'alerts.hideMinor_plural': '{count} ਛੋਟੀਆਂ ਸੂਚਨਾਵਾਂ ਲੁਕਾਓ · ਸਟਾਪ ਤਬਦੀਲੀਆਂ, ਪਹੁੰਚਯੋਗਤਾ',
   'alerts.affectedRoutes': 'ਪ੍ਰਭਾਵਿਤ ਰੂਟ: {routes}',
-  'alerts.posted': '{time} ਪੋਸਟ ਕੀਤਾ',
+  'alerts.posted': '{time} ਪੋਸਟ ਕੀਤੀ ਗਈ',
   'alerts.readMore': 'ਹੋਰ ਪੜ੍ਹੋ',
   'alerts.showLess': 'ਘੱਟ ਵਿਖਾਓ',
 
@@ -130,16 +137,16 @@ export const pa: Record<TranslationKey, string> = {
   'stop.share': 'ਇਹ ਸਟਾਪ ਸਾਂਝਾ ਕਰੋ',
   'stop.shareMessage': '{name} — ਸਟਾਪ #{code}। BusPulse Vancouver ਉੱਤੇ ਲਾਈਵ ਬੱਸ ਆਮਦਾਂ ਵੇਖੋ।',
   'stop.walkSummary': '~{walk} ਮਿੰਟ ਪੈਦਲ · ਅਗਲੀ ਬੱਸ {next} ਮਿੰਟ ਵਿੱਚ',
-  'stop.makeIt': ' — ਤੁਸੀਂ ਪਹੁੰਚ ਜਾਓਗੇ',
+  'stop.makeIt': ' — ਬੱਸ ਮਿਲ ਜਾਵੇਗੀ',
   'stop.hurry': ' — ਛੇਤੀ ਕਰੋ',
   'stop.missIt': ' — ਸ਼ਾਇਦ ਬੱਸ ਨਿਕਲ ਜਾਵੇ',
   'stop.walkA11y': '{walk} ਮਿੰਟ ਪੈਦਲ, ਅਗਲੀ ਬੱਸ {next} ਮਿੰਟ ਵਿੱਚ। {verdict}',
-  'stop.makeItFull': 'ਤੁਸੀਂ ਪਹੁੰਚ ਜਾਓਗੇ।',
+  'stop.makeItFull': 'ਬੱਸ ਮਿਲ ਜਾਵੇਗੀ।',
   'stop.hurryFull': 'ਛੇਤੀ ਕਰੋ।',
   'stop.missItFull': 'ਸ਼ਾਇਦ ਬੱਸ ਨਿਕਲ ਜਾਵੇ।',
-  'stop.stale': 'ਤਾਜ਼ਾ ਨਹੀਂ ਹੋ ਸਕਿਆ — ਆਖਰੀ ਜਾਣੇ ਸਮੇਂ ਵਿਖਾਏ ਜਾ ਰਹੇ ਹਨ',
-  'stop.updatedAgo': '{s} ਸਕਿੰਟ ਪਹਿਲਾਂ ਅੱਪਡੇਟ ਹੋਇਆ · ਹਰ 60 ਸਕਿੰਟ ਵਿੱਚ ਆਪੇ ਤਾਜ਼ਾ ਹੁੰਦਾ ਹੈ',
-  'stop.busyNow': 'ਲਾਈਵ ਡਾਟਾ ਇਸ ਵੇਲੇ ਰੁੱਝਿਆ ਹੋਇਆ ਹੈ',
+  'stop.stale': 'ਤਾਜ਼ਾ ਨਹੀਂ ਹੋ ਸਕਿਆ — ਆਖਰੀ ਮਿਲੇ ਸਮੇਂ ਵਿਖਾਏ ਜਾ ਰਹੇ ਹਨ',
+  'stop.updatedAgo': '{s} ਸਕਿੰਟ ਪਹਿਲਾਂ ਅੱਪਡੇਟ ਹੋਇਆ · ਹਰ 60 ਸਕਿੰਟ ਬਾਅਦ ਆਪੇ ਤਾਜ਼ਾ ਹੁੰਦਾ ਹੈ',
+  'stop.busyNow': 'ਲਾਈਵ ਡਾਟਾ ਇਸ ਵੇਲੇ ਨਹੀਂ ਮਿਲ ਰਿਹਾ',
   'stop.loadFailed': 'ਆਮਦਾਂ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀਆਂ।',
   'stop.feedLimitBit': 'ਰੀਅਲ-ਟਾਈਮ ਫੀਡ ਆਪਣੀ ਹੱਦ ਉੱਤੇ ਪਹੁੰਚ ਗਈ ਹੈ — ਥੋੜ੍ਹੀ ਦੇਰ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ।',
   'stop.noRealtime': 'ਕੋਈ ਰੀਅਲ-ਟਾਈਮ ਆਮਦ ਨਹੀਂ',
@@ -157,7 +164,7 @@ export const pa: Record<TranslationKey, string> = {
   'arrival.reminderSet': 'ਰਿਮਾਈਂਡਰ ਲੱਗ ਗਿਆ',
   'arrival.reminderSetRoute': 'ਰੂਟ {route} ਲਈ ਰਿਮਾਈਂਡਰ ਲੱਗ ਗਿਆ',
   'arrival.remindBefore': 'ਇਸ ਬੱਸ ਤੋਂ {lead} ਮਿੰਟ ਪਹਿਲਾਂ ਯਾਦ ਕਰਵਾਓ',
-  'arrival.remindBeforeRoute': 'ਰੂਟ {route} ਤੋਂ {lead} ਮਿੰਟ ਪਹਿਲਾਂ ਯਾਦ ਕਰਵਾਓ',
+  'arrival.remindBeforeRoute': 'ਰੂਟ {route} ਦੀ ਬੱਸ ਤੋਂ {lead} ਮਿੰਟ ਪਹਿਲਾਂ ਯਾਦ ਕਰਵਾਓ',
 
   // Trip tracking
   'trip.noVehicle': 'ਇਸ ਸਫ਼ਰ ਲਈ ਕੋਈ ਲਾਈਵ ਬੱਸ ਡਾਟਾ ਨਹੀਂ',
@@ -181,7 +188,7 @@ export const pa: Record<TranslationKey, string> = {
   // Onboarding
   'onboard.title': 'BusPulse Vancouver ਵਿੱਚ ਜੀ ਆਇਆਂ ਨੂੰ',
   'onboard.body':
-    'ਮੈਟਰੋ ਵੈਨਕੂਵਰ ਲਈ ਰੀਅਲ-ਟਾਈਮ ਬੱਸ ਟਰੈਕਿੰਗ। ਲਾਈਵ ਆਮਦਾਂ ਵੇਖੋ, ਨਕਸ਼ੇ ਉੱਤੇ ਬੱਸ ਨੂੰ ਛੂਹ ਕੇ ਉਸ ਦਾ ਪਿੱਛਾ ਕਰੋ, ਅਤੇ ਬੱਸ ਆਉਣ ਤੋਂ ਪਹਿਲਾਂ ਰਿਮਾਈਂਡਰ ਪਾਓ।',
+    'ਮੈਟਰੋ ਵੈਨਕੂਵਰ ਲਈ ਰੀਅਲ-ਟਾਈਮ ਬੱਸ ਟਰੈਕਿੰਗ। ਲਾਈਵ ਆਮਦਾਂ ਵੇਖੋ, ਨਕਸ਼ੇ ਉੱਤੇ ਬੱਸ ਨੂੰ ਛੂਹ ਕੇ ਉਸ ਦਾ ਪਿੱਛਾ ਕਰੋ, ਅਤੇ ਬੱਸ ਆਉਣ ਤੋਂ ਪਹਿਲਾਂ ਰਿਮਾਈਂਡਰ ਲਵੋ।',
   'onboard.note':
     'ਲਾਈਵ ਡਾਟਾ ਸਿਰਫ਼ ਬੱਸਾਂ ਲਈ ਹੈ। SkyTrain, SeaBus ਅਤੇ West Coast Express TransLink ਦੀ ਜਨਤਕ ਫੀਡ ਵਿੱਚ ਟਰੈਕ ਨਹੀਂ ਹੁੰਦੇ।',
   'onboard.cta': 'ਸ਼ੁਰੂ ਕਰੋ',
@@ -189,7 +196,7 @@ export const pa: Record<TranslationKey, string> = {
   // Settings
   'settings.notifications': 'ਨੋਟੀਫਿਕੇਸ਼ਨ',
   'settings.remindBefore': 'ਬੱਸ ਤੋਂ ਪਹਿਲਾਂ ਯਾਦ ਕਰਵਾਓ',
-  'settings.leadTimeSub': 'ਰਵਾਨਗੀ ਰਿਮਾਈਂਡਰਾਂ ਲਈ ਮੂਲ ਸਮਾਂ।',
+  'settings.leadTimeSub': 'ਰਿਮਾਈਂਡਰ ਬੱਸ ਤੋਂ ਕਿੰਨੇ ਮਿੰਟ ਪਹਿਲਾਂ ਆਵੇ।',
   'settings.minutesBefore': '{m} ਮਿੰਟ ਪਹਿਲਾਂ',
   'settings.minShort': '{m} ਮਿੰਟ',
   'settings.language': 'ਭਾਸ਼ਾ / Language',
@@ -199,21 +206,21 @@ export const pa: Record<TranslationKey, string> = {
   'settings.privacyPolicy': 'ਪਰਦੇਦਾਰੀ ਨੀਤੀ',
   'settings.support': 'ਸਹਾਇਤਾ',
   'settings.clearRecent': 'ਹਾਲੀਆ ਖੋਜਾਂ ਮਿਟਾਓ',
-  'settings.clearRecentTitle': 'ਹਾਲੀਆ ਖੋਜਾਂ ਮਿਟਾਉਣੀਆਂ?',
+  'settings.clearRecentTitle': 'ਕੀ ਹਾਲੀਆ ਖੋਜਾਂ ਮਿਟਾਉਣੀਆਂ ਹਨ?',
   'settings.clearRecentBody': 'ਇਸ ਨਾਲ ਤੁਹਾਡੇ ਹਾਲ ਹੀ ਵਿੱਚ ਵੇਖੇ ਸਟਾਪ ਹਟ ਜਾਣਗੇ।',
-  'settings.about': 'ਬਾਰੇ',
+  'settings.about': 'ਐਪ ਬਾਰੇ',
   'settings.version': 'ਵਰਜਨ {v}',
   'settings.aboutBody':
-    'ਮੈਟਰੋ ਵੈਨਕੂਵਰ ਲਈ ਰੀਅਲ-ਟਾਈਮ ਬੱਸ ਆਮਦਾਂ ਅਤੇ ਲਾਈਵ ਟਰੈਕਿੰਗ, TransLink ਦੀ ਜਨਤਕ GTFS ਰੀਅਲ-ਟਾਈਮ ਫੀਡ ਨਾਲ। ਆਮਦਾਂ ਹਰ 60 ਸਕਿੰਟ ਵਿੱਚ ਅੱਪਡੇਟ ਹੁੰਦੀਆਂ ਹਨ।',
+    'ਮੈਟਰੋ ਵੈਨਕੂਵਰ ਲਈ ਰੀਅਲ-ਟਾਈਮ ਬੱਸ ਆਮਦਾਂ ਅਤੇ ਲਾਈਵ ਟਰੈਕਿੰਗ, TransLink ਦੀ ਜਨਤਕ GTFS ਰੀਅਲ-ਟਾਈਮ ਫੀਡ ਨਾਲ। ਆਮਦਾਂ ਹਰ 60 ਸਕਿੰਟ ਬਾਅਦ ਅੱਪਡੇਟ ਹੁੰਦੀਆਂ ਹਨ।',
   'settings.attribution':
     'ਟ੍ਰਾਂਜ਼ਿਟ ਡਾਟਾ © TransLink। BusPulse Vancouver ਇੱਕ ਸੁਤੰਤਰ ਐਪ ਹੈ ਅਤੇ TransLink ਨਾਲ ਸੰਬੰਧਿਤ ਜਾਂ ਉਸ ਵੱਲੋਂ ਪ੍ਰਮਾਣਿਤ ਨਹੀਂ ਹੈ।',
   'settings.close': 'ਸੈਟਿੰਗਾਂ ਬੰਦ ਕਰੋ',
 
   // Notifications (system)
   'notif.disabledTitle': 'ਨੋਟੀਫਿਕੇਸ਼ਨ ਬੰਦ ਹਨ',
-  'notif.disabledBody': 'ਬੱਸ ਆਉਣ ਤੋਂ ਪਹਿਲਾਂ ਸੂਚਨਾ ਪਾਉਣ ਲਈ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਨੋਟੀਫਿਕੇਸ਼ਨ ਚਾਲੂ ਕਰੋ।',
+  'notif.disabledBody': 'ਬੱਸ ਆਉਣ ਤੋਂ ਪਹਿਲਾਂ ਰਿਮਾਈਂਡਰ ਲੈਣ ਲਈ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਨੋਟੀਫਿਕੇਸ਼ਨ ਚਾਲੂ ਕਰੋ।',
   'notif.arrivingNow': 'ਬੱਸ ਹੁਣੇ ਆ ਰਹੀ ਹੈ',
-  'notif.arrivingSoon': 'ਬੱਸ ਛੇਤੀ ਆ ਰਹੀ ਹੈ',
-  'notif.bodyNow': 'ਰੂਟ {route} {stop} ਉੱਤੇ ਪਹੁੰਚ ਰਹੀ ਹੈ',
-  'notif.bodySoon': 'ਰੂਟ {route} {lead} ਮਿੰਟ ਵਿੱਚ {stop} ਉੱਤੇ ਪਹੁੰਚੇਗੀ',
+  'notif.arrivingSoon': 'ਬੱਸ ਆਉਣ ਵਾਲੀ ਹੈ',
+  'notif.bodyNow': 'ਰੂਟ {route} ਦੀ ਬੱਸ {stop} ਉੱਤੇ ਪਹੁੰਚ ਰਹੀ ਹੈ',
+  'notif.bodySoon': 'ਰੂਟ {route} ਦੀ ਬੱਸ {lead} ਮਿੰਟ ਵਿੱਚ {stop} ਉੱਤੇ ਪਹੁੰਚੇਗੀ',
 };

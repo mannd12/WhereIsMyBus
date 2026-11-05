@@ -6,7 +6,7 @@ _Drafted 2026-10-14. Organic only. Screen-recorded app + ElevenLabs voice. Every
 ## Production recipe (same for every short)
 
 1. **Record the app** on your iPhone: Control Centre → Screen Record. Put the phone in Punjabi
-   (ਸੈਟਿੰਗਾਂ → ਭਾਸ਼ਾ → ਪੰਜਾਬੀ) for the Punjabi cut, English for the English cut. Record each
+   (ਸੈਟਿੰਗਾਂ → ਭਾਸ਼ਾ / Language → ਪੰਜਾਬੀ) for the Punjabi cut, English for the English cut. Record each
    action slowly — you'll speed it up 1.5–2× in the edit. Use a real stop you ride (e.g. a stop
    on the R1 / 319 / 321) so the arrivals look alive.
 2. **Voice:** ElevenLabs → *Eleven Multilingual v2* (or v3). Pick a warm voice; **speed 0.95**,
@@ -124,7 +124,7 @@ Re-post **3** after two weeks with a different hook: `My dad took the bus alone 
 
 ## Spanish cuts (HOLD until 1.1.1 ships Spanish in-app)
 
-Same recipe: app in Spanish (Ajustes → Idioma → Español), ElevenLabs Multilingual, speed 0.95.
+Same recipe: app in Spanish (Ajustes → Idioma / Language → Español), ElevenLabs Multilingual, speed 0.95.
 Audience: newcomers and international students (Mexican, Colombian, Venezuelan) — Surrey Central,
 Metrotown, Downtown, Commercial-Broadway. Hashtags: #VancouverEnEspañol #LatinosEnVancouver
 #MexicanosEnCanada #ColombianosEnCanada #EstudiantesInternacionales #Vancouver #TransLink.

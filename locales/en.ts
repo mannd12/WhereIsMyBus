@@ -29,11 +29,17 @@ export const en = {
   'common.thisStop': 'this stop',
   'common.route': 'Route',
   'common.loadingArrivals': 'Loading arrivals',
+  'common.close': 'Close',
 
   // Error boundary
   'error.somethingWrong': 'Something went wrong',
   'error.unexpected': 'BusPulse Vancouver hit an unexpected error. Try again — your favourites are safe.',
   'error.tryAgain': 'Try again',
+
+  // Unknown link (+not-found)
+  'notFound.title': 'Page not found',
+  'notFound.body': "This link doesn't lead anywhere in BusPulse Vancouver.",
+  'notFound.cta': 'See nearby stops',
 
   // Time ago / distance
   'time.justNow': 'just now',
@@ -64,6 +70,7 @@ export const en = {
   'nearby.centerOnMe': 'Center the map on my location',
   'nearby.showStopsOnMap': 'Show nearby stops on the map',
   'nearby.locationDenied': 'Location permission denied — showing Vancouver centre.',
+  'nearby.locationError': "Couldn't get your location — showing Vancouver centre.",
 
   // Route filter chips
   'filter.all': 'All',

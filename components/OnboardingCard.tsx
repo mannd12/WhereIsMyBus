@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 4,
   },
-  title: { fontSize: 20, fontWeight: '800', color: '#111' },
+  title: { fontSize: 20, fontWeight: '800', color: '#111', textAlign: 'center' },
   body: { fontSize: 15, color: '#333', textAlign: 'center', lineHeight: 21 },
   note: { fontSize: 12, color: '#777', textAlign: 'center', lineHeight: 17 },
   button: {

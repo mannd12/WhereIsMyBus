@@ -23,6 +23,9 @@ import { Colors } from '../../constants/colors';
 import { useT } from '../../locales/i18n';
 
 const WALK_SPEED_M_PER_MIN = 80;
+// Beyond this the rider isn't walking to the stop (planning from home, across
+// town) — a walk-vs-bus verdict would be nonsense, so hide it. Matches Favourites.
+const WALK_MAX_M = 3000;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -118,6 +121,8 @@ export default function StopDetailScreen() {
           }}
           style={{ marginLeft: 4, paddingRight: 12 }}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          accessibilityRole="button"
+          accessibilityLabel={tf(isFav ? 'fav.remove' : 'fav.add')}
         >
           <Ionicons name={isFav ? 'star' : 'star-outline'} size={24} color={isFav ? '#FFB800' : '#fff'} />
         </TouchableOpacity>
@@ -128,6 +133,8 @@ export default function StopDetailScreen() {
           onPress={() => navigation.goBack()}
           style={{ marginRight: 4 }}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          accessibilityRole="button"
+          accessibilityLabel={tf('common.close')}
         >
           <Ionicons name="close" size={26} color="#fff" />
         </TouchableOpacity>
@@ -141,6 +148,7 @@ export default function StopDetailScreen() {
       location.coords.latitude, location.coords.longitude,
       stop.stop_lat, stop.stop_lon,
     );
+    if (dist >= WALK_MAX_M) return null;
     return Math.round(dist / WALK_SPEED_M_PER_MIN);
   }, [location, stop]);
 

@@ -248,6 +248,8 @@ export default function TripDetailScreen() {
         onPress={close}
         activeOpacity={0.8}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        accessibilityRole="button"
+        accessibilityLabel={tf('common.close')}
       >
         <Ionicons name="close" size={22} color="#fff" />
       </TouchableOpacity>

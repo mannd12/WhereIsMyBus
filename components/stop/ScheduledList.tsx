@@ -5,14 +5,15 @@ import type { ScheduledArrival } from '../../types/translink';
 import { RouteChip } from '../ui/RouteChip';
 import { getRouteByShortName } from '../../services/gtfsStatic';
 import { useThemeColors, type ThemeColors } from '../../hooks/useThemeColors';
-import { useT } from '../../locales/i18n';
+import { useT, useLocaleTag } from '../../locales/i18n';
 
-const clockTime = (epoch: number) =>
-  new Date(epoch * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+const clockTime = (epoch: number, locale: string) =>
+  new Date(epoch * 1000).toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
 
 /** Timetable fallback shown when a stop has no live bus. Clearly not real-time. */
 export function ScheduledList({ items }: { items: ScheduledArrival[] }) {
   const tf = useT();
+  const locale = useLocaleTag();
   const c = useThemeColors();
   const styles = useMemo(() => makeStyles(c), [c]);
 
@@ -25,7 +26,7 @@ export function ScheduledList({ items }: { items: ScheduledArrival[] }) {
       <Text style={styles.note}>{tf('sched.note')}</Text>
       {items.map((a, i) => {
         const r = getRouteByShortName(a.routeShortName);
-        const time = clockTime(a.arrivalTime);
+        const time = clockTime(a.arrivalTime, locale);
         return (
           <View
             key={`${a.routeShortName}-${a.arrivalTime}-${i}`}

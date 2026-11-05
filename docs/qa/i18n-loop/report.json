@@ -1,0 +1,258 @@
+[
+ {
+  "L": "en",
+  "name": "01-settings",
+  "dumped": true,
+  "strings": 29,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "02-nearby",
+  "dumped": true,
+  "strings": 42,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "03-stop",
+  "dumped": true,
+  "strings": 19,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "04-reminder-dialog",
+  "dumped": true,
+  "strings": 3,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "05-trip",
+  "dumped": true,
+  "strings": 8,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "06-route",
+  "dumped": true,
+  "strings": 43,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "07-route-map",
+  "dumped": true,
+  "strings": 6,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "08-search",
+  "dumped": true,
+  "strings": 33,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "09-favourites",
+  "dumped": true,
+  "strings": 26,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "10-alerts",
+  "dumped": true,
+  "strings": 33,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "11-out-of-coverage",
+  "dumped": true,
+  "strings": 40,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "en",
+  "name": "12-stop-far-away",
+  "dumped": true,
+  "strings": 6,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "pa",
+  "name": "01-settings",
+  "dumped": true,
+  "strings": 28,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "pa",
+  "name": "02-nearby",
+  "dumped": true,
+  "strings": 28,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "pa",
+  "name": "03-stop",
+  "dumped": true,
+  "strings": 11,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "pa",
+  "name": "06-route",
+  "dumped": true,
+  "strings": 43,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "pa",
+  "name": "07-route-map",
+  "dumped": true,
+  "strings": 6,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "pa",
+  "name": "08-search",
+  "dumped": true,
+  "strings": 33,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "pa",
+  "name": "09-favourites",
+  "dumped": true,
+  "strings": 26,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "pa",
+  "name": "10-alerts",
+  "dumped": true,
+  "strings": 32,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "pa",
+  "name": "11-out-of-coverage",
+  "dumped": true,
+  "strings": 31,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "pa",
+  "name": "12-stop-far-away",
+  "dumped": true,
+  "strings": 6,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "es",
+  "name": "01-settings",
+  "dumped": true,
+  "strings": 28,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "es",
+  "name": "02-nearby",
+  "dumped": true,
+  "strings": 28,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "es",
+  "name": "03-stop",
+  "dumped": true,
+  "strings": 11,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "es",
+  "name": "06-route",
+  "dumped": true,
+  "strings": 43,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "es",
+  "name": "07-route-map",
+  "dumped": true,
+  "strings": 6,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "es",
+  "name": "08-search",
+  "dumped": true,
+  "strings": 33,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "es",
+  "name": "09-favourites",
+  "dumped": true,
+  "strings": 26,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "es",
+  "name": "10-alerts",
+  "dumped": true,
+  "strings": 33,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "es",
+  "name": "11-out-of-coverage",
+  "dumped": true,
+  "strings": 31,
+  "leaks": [],
+  "foreign": false
+ },
+ {
+  "L": "es",
+  "name": "12-stop-far-away",
+  "dumped": true,
+  "strings": 6,
+  "leaks": [],
+  "foreign": false
+ }
+]

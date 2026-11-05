@@ -10,7 +10,7 @@ import type { TranslationKey } from './en';
 
 export const es: Record<TranslationKey, string> = {
   // Tab bar
-  'tabs.nearby': 'Cerca',
+  'tabs.nearby': 'Cercanas',
   'tabs.search': 'Buscar',
   'tabs.favourites': 'Favoritos',
   'tabs.alerts': 'Alertas',
@@ -32,12 +32,18 @@ export const es: Record<TranslationKey, string> = {
   'common.thisStop': 'esta parada',
   'common.route': 'Ruta',
   'common.loadingArrivals': 'Cargando llegadas',
+  'common.close': 'Cerrar',
 
   // Error boundary
   'error.somethingWrong': 'Algo salió mal',
   'error.unexpected':
     'BusPulse Vancouver tuvo un error inesperado. Inténtalo de nuevo; tus favoritos están a salvo.',
   'error.tryAgain': 'Intentar de nuevo',
+
+  // Unknown link (+not-found)
+  'notFound.title': 'Página no encontrada',
+  'notFound.body': 'Este enlace no lleva a ninguna página de BusPulse Vancouver.',
+  'notFound.cta': 'Ver paradas cercanas',
 
   // Time ago / distance
   'time.justNow': 'ahora mismo',
@@ -56,7 +62,7 @@ export const es: Record<TranslationKey, string> = {
     'Estás fuera del área de cobertura. BusPulse Vancouver solo muestra buses en vivo del área metropolitana de Vancouver (TransLink).',
   'nearby.noStops':
     'No hay paradas a menos de 500 m. Prueba con el mapa o busca una parada por nombre o número.',
-  'nearby.noFilterStops': 'No hay paradas de tipo {filter} a la vista. Prueba otro filtro o aleja el mapa.',
+  'nearby.noFilterStops': 'No hay paradas con el filtro «{filter}» a la vista. Prueba otro filtro o aleja el mapa.',
   'nearby.noStopsInView': 'No hay paradas a la vista. Prueba otro filtro o aleja el mapa.',
   'nearby.tapToShowStops': 'Toca para ver paradas cercanas',
   'nearby.nextBus': 'Próximo bus',
@@ -68,6 +74,7 @@ export const es: Record<TranslationKey, string> = {
   'nearby.centerOnMe': 'Centrar el mapa en mi ubicación',
   'nearby.showStopsOnMap': 'Mostrar paradas cercanas en el mapa',
   'nearby.locationDenied': 'Permiso de ubicación denegado; se muestra el centro de Vancouver.',
+  'nearby.locationError': 'No se pudo obtener tu ubicación; se muestra el centro de Vancouver.',
 
   // Route filter chips
   'filter.all': 'Todos',
@@ -103,8 +110,8 @@ export const es: Record<TranslationKey, string> = {
   'fav.findAStop': 'Buscar una parada',
   'fav.findAStopA11y': 'Buscar una parada para añadir',
   'fav.noUpcoming': 'No hay próximas llegadas',
-  'fav.moveUp': 'Subir favorito',
-  'fav.moveDown': 'Bajar favorito',
+  'fav.moveUp': 'Mover favorito hacia arriba',
+  'fav.moveDown': 'Mover favorito hacia abajo',
   'fav.openArrivalsA11y': '{name} {code}, abrir llegadas',
 
   // Alerts screen
@@ -112,20 +119,20 @@ export const es: Record<TranslationKey, string> = {
   'alerts.serviceAlertFallback': 'Alerta de servicio',
   'alerts.busy': 'Datos en vivo saturados',
   'alerts.loadFailed': 'No se pudieron cargar las alertas',
-  'alerts.feedLimit': 'El feed en tiempo real alcanzó su límite. Inténtalo de nuevo en un momento.',
+  'alerts.feedLimit': 'Se alcanzó el límite de consultas de datos en vivo. Inténtalo de nuevo en un momento.',
   'alerts.checkConnection': 'Revisa tu conexión e inténtalo de nuevo.',
   'alerts.active': '{count} alerta activa',
   'alerts.active_plural': '{count} alertas activas',
-  'alerts.clearAll': 'Borrar todo',
-  'alerts.clearAllA11y': 'Borrar todas las alertas',
+  'alerts.clearAll': 'Descartar todas',
+  'alerts.clearAllA11y': 'Descartar todas las alertas',
   'alerts.noMajor': 'No hay interrupciones importantes ahora.',
   'alerts.allClear': 'Todo en orden: no hay interrupciones del servicio.',
-  'alerts.showMinor': 'Mostrar {count} aviso menor · cambios de parada, accesibilidad',
-  'alerts.showMinor_plural': 'Mostrar {count} avisos menores · cambios de parada, accesibilidad',
-  'alerts.hideMinor': 'Ocultar {count} aviso menor · cambios de parada, accesibilidad',
-  'alerts.hideMinor_plural': 'Ocultar {count} avisos menores · cambios de parada, accesibilidad',
+  'alerts.showMinor': 'Mostrar {count} aviso menor · paradas reubicadas, accesibilidad',
+  'alerts.showMinor_plural': 'Mostrar {count} avisos menores · paradas reubicadas, accesibilidad',
+  'alerts.hideMinor': 'Ocultar {count} aviso menor · paradas reubicadas, accesibilidad',
+  'alerts.hideMinor_plural': 'Ocultar {count} avisos menores · paradas reubicadas, accesibilidad',
   'alerts.affectedRoutes': 'Rutas afectadas: {routes}',
-  'alerts.posted': 'Publicado {time}',
+  'alerts.posted': 'Publicada {time}',
   'alerts.readMore': 'Leer más',
   'alerts.showLess': 'Mostrar menos',
 
@@ -144,27 +151,27 @@ export const es: Record<TranslationKey, string> = {
   'stop.updatedAgo': 'Actualizado hace {s} s · se actualiza cada 60 s',
   'stop.busyNow': 'Datos en vivo saturados ahora',
   'stop.loadFailed': 'No se pudieron cargar las llegadas.',
-  'stop.feedLimitBit': 'El feed en tiempo real alcanzó su límite; inténtalo de nuevo en un momento.',
-  'stop.noRealtime': 'Sin llegadas en tiempo real',
+  'stop.feedLimitBit': 'Se alcanzó el límite de consultas de datos en vivo; inténtalo de nuevo en un momento.',
+  'stop.noRealtime': 'Sin llegadas en vivo',
   'stop.noLivePull': 'No hay llegadas en vivo para esta parada ahora. Desliza hacia abajo para actualizar.',
 
   // Scheduled (timetable) fallback
   'sched.header': 'Salidas programadas',
   'sched.note': 'Horario — sin seguimiento en vivo para esta parada ahora.',
   'sched.scheduled': 'Programado',
-  'sched.rowA11y': 'Ruta {route} a {dest}, programado {time}',
+  'sched.rowA11y': 'Ruta {route} a {dest}, salida programada: {time}',
 
   // Arrival rows / reminders
   'arrival.inService': 'En servicio',
   'arrival.rowA11y': 'Ruta {route} a {dest}. Toca para seguir el bus.',
   'arrival.reminderSet': 'Recordatorio activado',
   'arrival.reminderSetRoute': 'Recordatorio activado para la ruta {route}',
-  'arrival.remindBefore': 'Avisarme {lead} minutos antes de este bus',
-  'arrival.remindBeforeRoute': 'Avisarme {lead} minutos antes de la ruta {route}',
+  'arrival.remindBefore': 'Avisarme {lead} minutos antes de que llegue este bus',
+  'arrival.remindBeforeRoute': 'Avisarme {lead} minutos antes de que llegue el {route}',
 
   // Trip tracking
   'trip.noVehicle': 'Sin datos en vivo del vehículo para este viaje',
-  'trip.findBus': 'Buscar bus',
+  'trip.findBus': 'Ubicar bus',
   'trip.yourStop': 'Tu parada',
   'trip.arrivingAt': 'Llegando a {stop}',
   'trip.vehicleUpdated': 'Vehículo actualizado {time}',
@@ -186,13 +193,13 @@ export const es: Record<TranslationKey, string> = {
   'onboard.body':
     'Seguimiento de buses en tiempo real para el área metropolitana de Vancouver. Mira las llegadas en vivo, toca un bus para seguirlo en el mapa y recibe un recordatorio antes de que llegue.',
   'onboard.note':
-    'Los datos en vivo cubren los buses. SkyTrain, SeaBus y West Coast Express no aparecen en el feed público de TransLink.',
+    'Los datos en vivo cubren los buses. SkyTrain, SeaBus y West Coast Express no aparecen en los datos públicos de TransLink.',
   'onboard.cta': 'Empezar',
 
   // Settings
   'settings.notifications': 'Notificaciones',
-  'settings.remindBefore': 'Avisarme antes del bus',
-  'settings.leadTimeSub': 'Tiempo de aviso predeterminado para los recordatorios de salida.',
+  'settings.remindBefore': 'Avisarme antes de que llegue el bus',
+  'settings.leadTimeSub': 'Tiempo de aviso predeterminado para los recordatorios.',
   'settings.minutesBefore': '{m} minutos antes',
   'settings.minShort': '{m} min',
   'settings.language': 'Idioma / Language',
@@ -207,16 +214,16 @@ export const es: Record<TranslationKey, string> = {
   'settings.about': 'Acerca de',
   'settings.version': 'Versión {v}',
   'settings.aboutBody':
-    'Llegadas de buses en tiempo real y seguimiento en vivo para el área metropolitana de Vancouver, con el feed público GTFS en tiempo real de TransLink. Las llegadas se actualizan cada 60 segundos.',
+    'Llegadas de buses en tiempo real y seguimiento en vivo para el área metropolitana de Vancouver, con los datos públicos en tiempo real de TransLink. Las llegadas se actualizan cada 60 segundos.',
   'settings.attribution':
     'Datos de transporte © TransLink. BusPulse Vancouver es una app independiente y no está afiliada a TransLink ni respaldada por ella.',
   'settings.close': 'Cerrar ajustes',
 
   // Notifications (system)
   'notif.disabledTitle': 'Notificaciones desactivadas',
-  'notif.disabledBody': 'Activa las notificaciones en Ajustes para recibir un aviso antes de que llegue tu bus.',
+  'notif.disabledBody': 'Activa las notificaciones en la configuración de tu iPhone para recibir un aviso antes de que llegue tu bus.',
   'notif.arrivingNow': 'Bus llegando ahora',
   'notif.arrivingSoon': 'Bus llegando pronto',
-  'notif.bodyNow': 'La ruta {route} está llegando a {stop}',
-  'notif.bodySoon': 'La ruta {route} llega en {lead} min a {stop}',
+  'notif.bodyNow': 'El bus {route} está llegando a {stop}',
+  'notif.bodySoon': 'El bus {route} llega a {stop} en {lead} min',
 };

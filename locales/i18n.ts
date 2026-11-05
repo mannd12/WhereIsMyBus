@@ -58,4 +58,13 @@ export function useT() {
   );
 }
 
+/** BCP-47 tag for Intl formatting (clock times) in the app's chosen language. */
+const LOCALE_TAG: Record<ResolvedLang, string> = { en: 'en-CA', pa: 'pa-IN', es: 'es' };
+
+/** Reactive locale tag — follows the in-app language, not the phone's. */
+export function useLocaleTag(): string {
+  const pref = useSettingsStore((s) => s.language);
+  return LOCALE_TAG[resolveLang(pref)];
+}
+
 export type { TranslationKey };

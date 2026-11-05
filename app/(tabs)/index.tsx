@@ -468,6 +468,8 @@ export default function NearbyScreen() {
             onPress={clearSelection}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             style={styles.routeBannerClose}
+            accessibilityRole="button"
+            accessibilityLabel={tf('common.close')}
           >
             <Text style={styles.routeBannerCloseText}>✕</Text>
           </TouchableOpacity>

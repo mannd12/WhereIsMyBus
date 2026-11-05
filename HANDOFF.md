@@ -1,105 +1,69 @@
 # BusPulse Vancouver — Handoff
 
-_Last updated: 2026-09-23 · Punjabi marketing kit drafted; 1.1.0 is LIVE._
+_Last updated: 2026-10-19 · 1.1.1 build-ready, UNCOMMITTED. User said: do not push until they say so._
 
 ## Now
-**BusPulse Vancouver 1.1.0 (build 24) is LIVE on the App Store (released 2026-08-27).** Listing
-shows "Languages: English and Punjabi", 5.0 (1 rating). Carries the **Punjabi (ਪੰਜਾਬੀ)
-localization** and the **honest out-of-coverage message**.
+**Live:** 1.1.0 (English + Punjabi), released 2026-08-27.
+**Ready locally:** 1.1.1 — `version` bumped, ~29 files changed, nothing committed or built.
 
-**2026-09-23 — Punjabi community marketing kit** (all in `docs/marketing/`, uncommitted):
-- `launch-post.md` — WhatsApp/family post (Punjabi-first), Instagram caption, one-liner,
-  student-group version. Rules baked in: say *iPhone*; post Surrey/Delta/Vancouver only,
-  **not Abbotsford** (BC Transit → out-of-coverage → 1-star reviews).
-- `radio-pitch.md` — email pitch (RED FM / Sher-E-Punjab / Connect FM / Spice / OMNI),
-  Punjabi on-air talking points, likely-questions sheet.
-- `poster-punjabi.html` + `.pdf` — Letter-size notice-board poster (gurdwara/langar hall,
-  settlement agencies) with App Store QR (`qr-appstore.svg`). 1 page, validated render.
-- **Claim verified:** of 196 Vancouver-transit apps on the CA App Store, BusPulse Vancouver is the
-  only real-time TransLink bus app listing Punjabi. Use "only", not "first".
-- `APP_STORE_LISTING.md`: new Punjabi promo text (169 chars, paste now — live-editable)
-  + a "1.1.1 staged metadata" section (keywords swap `livebus`→`punjabi`, Punjabi in the
-  description's first sentence, one Punjabi screenshot). Those fields are LOCKED on 1.1.0.
-- ASC session had expired → promo text is **not yet applied** (needs you signed in).
-- **Name → "BusPulse Vancouver" everywhere** (user's call, 2026-09-23): all docs, marketing,
-  support/privacy pages, AND the in-app strings (`locales/en.ts`+`pa.ts` ×5 each, About/setup
-  labels, iOS location-permission text). Uncommitted; in-app part ships with 1.1.1.
-  `app.json` → `name` deliberately stays "BusPulse" — iOS truncates icon labels at ~12–13
-  chars, so the full name would show as "BusPulse Van…". `tsc` clean.
+What 1.1.1 contains:
+- **Spanish** (`locales/es.ts`, 170 keys), wired into the picker + device-language detection;
+  iOS location prompt localized (`locales/ios/*.json` via `expo.locales`).
+- **Live-app fix — stale schedule data.** Static GTFS was from Jul 3; TransLink renumbered every
+  trip at the fall change, so 0% of live trips matched and **destinations showed route names
+  in the live app**. Refreshed `data/*.json`: live match 0 → 100%, bundle 9.6% smaller.
+- **Walk banner** hidden ≥ 3 km from the stop (was "~2490 min walk — you might miss it").
+- **Punjabi grammar fixes** (route/bus gender in notifications, ਰਾਤ, ਤਬਦੀਲੀਆਂ, etc.).
+- Localized themed `app/+not-found.tsx`; close/star a11y labels; timetable times follow the
+  app language (`useLocaleTag`); translated location-error message; centred onboarding title.
 
-Done 2026-08-26:
-- Fixed a real duplicate on the **live 1.0** App Store page — the Promotional Text
-  echoed the description’s opening line. Rewrote it (coverage-forward); it’s live now,
-  no build needed.
-- Diagnosed the **Ucluelet “no buses” report**: not a bug — TransLink is Metro Vancouver
-  only; the Island is BC Transit (~162 km to the nearest TransLink stop). The fix is the
-  new coverage message, shipping in build 24.
-- Repo audit: **GitHub is public but exposes no secrets** (key is git-ignored + kept
-  server-side by the proxy).
-- Docs committed + pushed (`f83a069`).
-- Closeout visualization published as an artifact (transit-line map of the whole release):
-  https://claude.ai/code/artifact/5ac6e211-b943-4197-8fc7-a3b1db381b6c
-  Source: `docs/release-1.1-closeout.html`.
+Validation done: 2 rounds of AI native-style reviews per language (both say ship) + Google
+back-translation of every changed string; emulator QA of every screen in en/pa/es incl. dark
+mode, 130% text, device-language detection, first-run welcome. Evidence: `docs/qa/i18n-loop/`.
+Gates: `npx tsc --noEmit` clean · 170/170 keys × 3, 0 param issues · `expo export -p ios` clean.
 
-**2026-10-16 — Spanish localization BUILT (uncommitted, needs 1.1.1 build):** `locales/es.ts`
-(165/165 keys, neutral LatAm/Spain Spanish, tú form), `es` wired into `store/settings.ts`,
-`locales/i18n.ts` (device detection + dict), Español pill in `app/settings.tsx`, `"es"` in
-`CFBundleLocalizations`. `tsc` clean, param parity 0 issues. **User has a Spanish speaker to
-sense-check before shipping.** No-build pieces ready and HELD until 1.1.1 is live: Spanish ASC
-copy for es-MX + es-ES (`APP_STORE_LISTING.md`), `docs/marketing/poster-spanish.*`,
-`sticker-circle-spanish.*`, Spanish shorts VO lines (`shorts-kit.md`). Earlier (Oct 8–16):
-posters EN/PA, stickers EN/PA, shorts kit + end card — committed `c561d45`, `b87bc96`.
+Also staged (no build needed): Spanish ASC copy for es-MX + es-ES and 1.1.1 What's New in
+`APP_STORE_LISTING.md`; Spanish poster/sticker/shorts in `docs/marketing/` — **HOLD until 1.1.1 is live.**
 
 ## Next
-0. **1.1.1 is now a real release:** Punjabi word fixes + full-name strings + **Spanish**. Get the
-   Spanish reviewer's pass on `locales/es.ts`, bump `version` to 1.1.1, then (user-run) `eas build
-   --auto-submit`. In ASC add es-MX + es-ES localizations with the staged copy. About 1 credit left.
-1. **Sign in to ASC**, then apply the Punjabi promo text from `APP_STORE_LISTING.md`
-   (App Store tab → 1.1.0 → Promotional Text → Edit → Save). No build.
-2. **Send the WhatsApp post** to family groups (`docs/marketing/launch-post.md` §A) —
-   this is the channel that actually spreads. Then one radio pitch email.
-3. **Print `docs/marketing/poster-punjabi.pdf`** and ask to post it on a gurdwara
-   notice board / settlement-agency office.
-4. **Collect word-choice feedback** from 5 Punjabi-speaking elders → fix `locales/pa.ts`
-   → 1.1.1 with the staged metadata (keywords, description, Punjabi screenshot). One
-   build credit; make it count.
-5. Commit `docs/marketing/` + `HANDOFF.md` + `APP_STORE_LISTING.md` (user OK needed).
+1. **Human language check:** user's Spanish reviewer reads `locales/es.ts`; user skims the
+   Punjabi diff (`git diff HEAD -- locales/pa.ts`) — Punjabi word choices are the user's call.
+2. **User says go → commit + push** (commit message: Spanish + GTFS refresh + fixes).
+3. **User runs the build** (last credit): `eas build -p ios --profile production --auto-submit`.
+4. On TestFlight: confirm a **reminder notification fires** in Punjabi and Spanish (couldn't be
+   tested in Expo Go), and that destinations show (e.g. "To Newton Exchange").
+5. In ASC: add **es-MX + es-ES** localizations from `APP_STORE_LISTING.md`; apply the Punjabi
+   promo text (still pending since Sep — needs user signed in).
+6. After 1.1.1 is live: release the Spanish marketing materials.
 
 ## Watch out
-- **OneDrive sync conflicts between PCs.** On 2026-09-23 the working `APP_STORE_LISTING.md`
-  and `HANDOFF.md` had silently reverted to July versions, with the real ones renamed
-  `*-HomePC.md`. Resolved (listing restored from git, handoff from the HomePC copy,
-  duplicates removed). If you ever see `*-HomePC.md` / `*-<PCNAME>.md` files: the
-  **newer** one is usually the real one; check `git diff` before trusting the working copy.
-  Committing promptly is the real fix — uncommitted work is what the conflict eats.
-- **Don’t make the GitHub repo private on a free plan.** The App Store’s Privacy Policy
-  and Support URLs are GitHub Pages (`mannd12.github.io/WhereIsMyBus/...`); Pages only
-  serves a private repo with GitHub Pro. Going private without Pro breaks those required
-  links. Keep it public (nothing leaks) unless you get Pro or move the pages first.
-- **EAS builds expire after 30 days.** Build 23 expired unsubmitted and forced the rebuild
-  to 24 — don’t let the next build sit.
-- **`eas build`/`submit` are classifier-gated for the assistant** — run them yourself via
-  the `!` prefix if needed. ~1 build credit likely left.
-- Version bump is manual in `app.json` (`version`); build number auto-increments remotely
-  (EAS, `appVersionSource: remote`) — the local `ios.buildNumber` is ignored.
-- Punjabi word-choices are the user’s to tweak (optional, none are bugs): ਆਮਦਾਂ/arrivals,
-  ਨਾਈਟ/night, ਸਟਾਪ/stop.
+- **Commit soon.** Repo is in OneDrive on two PCs; it has silently reverted files twice and
+  keeps restoring deleted QA screenshots / making `*-HomePC` copies. If you see `*-HomePC.*`,
+  the newer file is usually the real one — check `git diff` before trusting the working copy.
+- **Refresh GTFS before every build** (`node scripts/fetchGtfsStatic.js`) and check live
+  trip-ID match ≈100%. TransLink changes service ~Jan/Apr/Jun–Jul/Sep.
+- **95 stops retired** in the fall change: favourites on them show "Stop #id" with no arrivals
+  (no crash).
+- **One build credit left; EAS builds expire after 30 days** — don't let it sit.
+- `eas build`/`submit` and `git push` are user-run/user-approved only.
+- Don't make the GitHub repo private on a free plan — Privacy/Support URLs are GitHub Pages.
+- Expo Go quirks on the emulator (not app bugs): Metro `CI=1` doesn't reload edits (restart
+  it); first launch after `pm clear` may load the web bundle (relaunch); emulator location can
+  stick — cold-boot with `-no-snapshot-load`.
 
 ## Touched
-- **i18n:** `locales/en.ts` (165 keys), `locales/pa.ts` (Gurmukhi mirror), `locales/i18n.ts`
-- **Coverage fix:** `constants/config.ts` (`COVERAGE_MAX_M`), `services/translink.ts`
-  (`nearestStopDistance`), `app/(tabs)/index.tsx` (`outOfCoverage`)
-- **Config:** `app.json` (v1.1.0, `CFBundleLocalizations`), `eas.json`
-- **Docs:** `APP_STORE_LISTING.md` (promo + coverage paragraph + 1.1 notes),
-  `docs/release-1.1-closeout.html`
-- **Commits since 1.0:** `e2378ef` (Punjabi) · `62cd5ab` (coverage message) · `f83a069` (docs)
-- **Checks:** `npx tsc --noEmit` (clean) · `npx expo export --platform ios` (clean) ·
-  i18n parity 165/165
+- **i18n:** `locales/{en,pa,es}.ts`, `locales/i18n.ts` (`useLocaleTag`), `locales/ios/*.json`
+- **App:** `app/+not-found.tsx` (new), `app/stop/[stopId].tsx` (`WALK_MAX_M`, a11y),
+  `app/route/[routeId].tsx`, `app/trip/[tripId].tsx`, `app/(tabs)/index.tsx`,
+  `components/OnboardingCard.tsx`, `components/stop/ScheduledList.tsx`, `hooks/useLocation.ts`
+- **Data/config:** `data/*.json` (GTFS refresh), `app.json` (1.1.1)
+- **Docs:** `APP_STORE_LISTING.md`, `docs/marketing/*`, `docs/qa/i18n-loop/`
+- **Last commits:** `6a3fab4` · `8b21ae8` · `e45fa1b` (Spanish) · `b87bc96` · `c561d45`
 
 ## Key facts
-- Bundle ID `com.whereismybus.app` (never rename) · ASC App ID `6782258055` ·
-  Apple Team `J54NAB6FCX` · dev Apple ID `mannprabhdeep95@gmail.com`
+- Bundle ID `com.whereismybus.app` (never rename) · ASC App ID `6782258055` · Team `J54NAB6FCX`
+- Store name **BusPulse Vancouver**; home-screen label stays "BusPulse" (truncation).
 - Keyless proxy build: `EXPO_PUBLIC_API_BASE=https://whereismybus.expo.app/api` (EAS prod);
-  server key `TRANSLINK_API_KEY` (EAS prod, sensitive); `EXPO_PUBLIC_TRANSLINK_API_KEY`
-  removed from EAS prod so it’s **not** embedded. Local key lives in `.env.local` (git-ignored).
-- Credentials (cert + provisioning profile) valid through **19 Jun 2027**.
+  server key `TRANSLINK_API_KEY` stays server-side. Local key in `.env.local` (git-ignored).
+- Version is manual in `app.json`; build number auto-increments remotely (EAS).
+- Credentials valid through **19 Jun 2027**.

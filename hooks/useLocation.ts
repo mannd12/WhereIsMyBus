@@ -64,9 +64,12 @@ export function useLocation() {
         return;
       }
       sub = watcher;
-    })().catch((e) => {
+    })().catch(() => {
       if (!cancelled) {
-        setError(String(e));
+        // Never surface a raw exception string — show a translated message and
+        // keep the map usable from the Vancouver fallback.
+        setError(t('nearby.locationError'));
+        setLocation((prev) => prev ?? VANCOUVER_FALLBACK);
         setLoading(false);
       }
     });
